@@ -1,0 +1,27 @@
+# .pre-commit-config.yaml
+fail_fast: true
+
+repos:
+  # ---- Code Formatter: Black ----
+  - repo: https://github.com/psf/black
+    rev: 25.9.0
+    hooks:
+      - id: black
+        language_version: python3.11
+
+  # ---- Linter & Auto-fixer: Ruff ----
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.8
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+
+
+  # ---- Commit Message Linter: Commitizen ----
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.9.1
+
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
