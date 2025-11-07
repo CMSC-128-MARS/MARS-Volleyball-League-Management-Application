@@ -1,0 +1,46 @@
+# Byte-code files
+*.pyc
+__pycache__/
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Editor/IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test/build artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Log files
+*.log
+
+# Database files (if using SQLite)
+*.sqlite3
+*.db
+
+# Environment variables (sensitive information)
+.env
+.flaskenv
+
+# Jupyter Notebook specific (if used)
+.ipynb_checkpoints/
+
+.DS_STORE
+.vscode
+.idea
+.serverless
+***__pycache__**
+venv
+node_modules
+.env
+.env.*
+.ruff_cache
+
+pyrightconfig.json
