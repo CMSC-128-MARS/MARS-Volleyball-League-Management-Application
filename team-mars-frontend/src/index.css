@@ -1,9 +1,33 @@
 @import 'tailwindcss';
 @import "tw-animate-css";
-
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* font heading */
+  --font-heading: 'Montserrat', sans-serif;
+  /* h1 */
+  --h1-size: 48px;     
+  --h1-weight: 600;
+  --h1-leading: 100%;
+  --h1-tracking: -0.5px;
+  /* h2 */
+  --h2-size: 30px;     
+  --h2-weight: 600;
+  --h2-leading: 100%;
+  --h2-tracking: -0.3px;
+  /* h3 */
+  --h3-size: 24px;     
+  --h3-weight: 600;
+  --h3-leading: 120%;
+  --h3-tracking: -0.5px;
+  /* h4 */
+  --h4-size: 20px;     
+  --h4-weight: 600;
+  --h4-leading: 120%;
+  --h4-tracking: -0.4px;
+
+  
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -116,5 +140,9 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  
+  h1, h2, h3, h4 {
+    font-family: var(--font-heading);
   }
 }
