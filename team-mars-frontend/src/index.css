@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import "tw-animate-css";
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -26,8 +27,39 @@
   --h4-weight: 600;
   --h4-leading: 120%;
   --h4-tracking: -0.4px;
-  
- 
+  /* font paragraph */
+  --font-paragraph: 'Cabin', sans-serif;
+  /* paragraph-n-regular */
+  --paragraph-n-regular-size: 16px;     
+  --paragraph-n-regular-weight: 400;
+  --paragraph-n-regular-leading: 150%;
+  --paragraph-n-regular-tracking: 0px;
+  /* paragraph-n-medium */
+  --paragraph-n-medium-size: 16px;
+  --paragraph-n-medium-weight: 500;
+  --paragraph-n-medium-leading: 150%;
+  --paragraph-n-medium-tracking: 0px;
+  /* paragraph-s-regular */
+  --paragraph-s-regular-size: 14px;     
+  --paragraph-s-regular-weight: 400;
+  --paragraph-s-regular-leading: 150%;
+  --paragraph-s-regular-tracking: 0.1px;
+  /* paragraph-s-medium */
+  --paragraph-s-medium-size: 14px;
+  --paragraph-s-medium-weight: 500;
+  --paragraph-s-medium-leading: 150%;
+  --paragraph-s-medium-tracking: 0.1px;
+  /* paragraph-xs-regular */
+  --paragraph-xs-regular-size: 12px;
+  --paragraph-xs-regular-weight: 400;
+  --paragraph-xs-regular-leading: 150%;
+  --paragraph-xs-regular-tracking: 0.2px;
+  /* paragraph-xs-medium */
+  --paragraph-xs-medium-size: 12px;
+  --paragraph-xs-medium-weight: 500;
+  --paragraph-xs-medium-leading: 150%;
+  --paragraph-xs-medium-tracking: 0.2px;
+  /* border radius */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -141,44 +173,90 @@
   body {
     @apply bg-background text-foreground;
   }
-  
-  h1, h2, h3, h4 {
-    font-family: var(--font-heading);
-  }
-
+  /* Heading classes */
   h1 {
+    font-family: var(--font-heading);
     font-size: var(--h1-size);
+    font-weight: var(--h1-weight);
     line-height: var(--h1-leading);
     letter-spacing: var(--h1-tracking);
     margin: 0;
   }
-
   h2 {
+    font-family: var(--font-heading);
     font-size: var(--h2-size);
+    font-weight: var(--h2-weight);
     line-height: var(--h2-leading);
     letter-spacing: var(--h2-tracking);
     margin: 0;
   } 
-
   h3 {
+    font-family: var(--font-heading);
     font-size: var(--h3-size);
     font-weight: var(--h3-weight);
     line-height: var(--h3-leading);
     letter-spacing: var(--h3-tracking);
     margin: 0;
   }
-
   h4 {
+    font-family: var(--font-heading);
     font-size: var(--h4-size);
     font-weight: var(--h4-weight);
     line-height: var(--h4-leading);
     letter-spacing: var(--h4-tracking);
     margin: 0;
   }
-
   .heading-italic {
     font-style: italic;
   }
-
+  /* Paragraph classes */
+  .paragraph-n-regular {
+    font-family: var(--font-paragraph);
+    font-size: var(--paragraph-n-regular-size);
+    font-weight: var(--paragraph-n-regular-weight);
+    line-height: var(--paragraph-n-regular-leading);
+    letter-spacing: var(--paragraph-n-regular-tracking);
+    margin: 0;
+  }
+  .paragraph-n-medium {
+    font-family: var(--font-paragraph);
+    font-size: var(--paragraph-n-medium-size);
+    font-weight: var(--paragraph-n-medium-weight);
+    line-height: var(--paragraph-n-medium-leading);
+    letter-spacing: var(--paragraph-n-medium-tracking);
+    margin: 0;
+  }
+  .paragraph-s-regular {
+    font-family: var(--font-paragraph);
+    font-size: var(--paragraph-s-regular-size);
+    font-weight: var(--paragraph-s-regular-weight);
+    line-height: var(--paragraph-s-regular-leading);
+    letter-spacing: var(--paragraph-s-regular-tracking);
+    margin: 0;
+  }
+  .paragraph-s-medium {
+    font-family: var(--font-paragraph);
+    font-size: var(--paragraph-s-medium-size);
+    font-weight: var(--paragraph-s-medium-weight);
+    line-height: var(--paragraph-s-medium-leading);
+    letter-spacing: var(--paragraph-s-medium-tracking);
+    margin: 0;
+  }
+  .paragraph-xs-regular {
+    font-family: var(--font-paragraph);
+    font-size: var(--paragraph-xs-regular-size);
+    font-weight: var(--paragraph-xs-regular-weight);
+    line-height: var(--paragraph-xs-regular-leading);
+    letter-spacing: var(--paragraph-xs-regular-tracking);
+    margin: 0;
+  }
+  .paragraph-xs-medium {
+    font-family: var(--font-paragraph);
+    font-size: var(--paragraph-xs-medium-size);
+    font-weight: var(--paragraph-xs-medium-weight);
+    line-height: var(--paragraph-xs-medium-leading);
+    letter-spacing: var(--paragraph-xs-medium-tracking);
+    margin: 0;
+  }
 
 }
