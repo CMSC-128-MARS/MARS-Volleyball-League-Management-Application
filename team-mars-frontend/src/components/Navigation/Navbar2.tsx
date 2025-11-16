@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Navbar2 = () => {
   const navigate = useNavigate();
-  
+
   return (
     <>
       <nav className="bg-primary w-full">
