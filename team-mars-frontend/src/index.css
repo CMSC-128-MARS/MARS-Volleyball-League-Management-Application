@@ -3,7 +3,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-
 @theme inline {
   /* font heading */
   --font-heading: 'Montserrat', sans-serif;

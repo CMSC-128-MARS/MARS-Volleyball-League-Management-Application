@@ -8,7 +8,6 @@ const Navbar2 = () => {
     <>
       <nav className="bg-primary w-full">
         <div className="flex flex-row items-center justify-between px-[20px] md:px-[80px] py-[12px]">
-          
           {/* Left Section */}
           <div className="flex items-center gap-2">
             {/* Menu Icon - always visible */}
