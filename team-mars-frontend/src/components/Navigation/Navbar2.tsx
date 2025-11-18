@@ -7,13 +7,27 @@ const Navbar2 = () => {
   return (
     <>
       <nav className="bg-primary w-full">
-        <div className="flex flex-row items-center justify-between px-[80px] py-[12px]">
+        <div className="flex flex-row items-center justify-between px-[20px] md:px-[80px] py-[12px]">
+          
           {/* Left Section */}
           <div className="flex items-center gap-2">
+            {/* Menu Icon - always visible */}
             <Menu className="text-white border border-white p-2 w-9 h-9 rounded-sm bg-[rgba(255,255,255,0.10)]" />
-            <div onClick={() => navigate('/')} className="flex flex-row items-center">
-              <img src="./src/assets/MARS-logo.png" alt="MARS Logo" className="h-[45px]" />
-              <div className="font-paragraph text-white text-sm leading-tight text-left -ml-1.5">
+
+            {/* Logo + Text */}
+            <div
+              onClick={() => navigate('/')}
+              className="flex flex-row items-center cursor-pointer"
+            >
+              {/* Logo - hidden on sm, shown on md+ */}
+              <img
+                src="./src/assets/MARS-logo.png"
+                alt="MARS Logo"
+                className="h-[45px] hidden md:block"
+              />
+
+              {/* Text - only shown on lg+ */}
+              <div className="hidden lg:block font-paragraph text-white text-sm leading-tight text-left -ml-1.5">
                 <p>VOLLEYBALL LEAGUE</p>
                 <p>MANAGEMENT SYSTEM</p>
               </div>
@@ -21,13 +35,13 @@ const Navbar2 = () => {
           </div>
 
           {/* Right Section */}
-          <div className="flex flex-row items-center gap-20 rounded-[2px] bg-[rgba(255,255,255,0.10)] px-4 py-2">
+          <div className="flex flex-row items-center gap-6 md:gap-20 rounded-[2px] bg-[rgba(255,255,255,0.10)] px-4 py-2">
             <div className="flex flex-row items-center">
               <p className="border-secondary bg-primary border-2 rounded-[8px] w-8 h-8 justify-center flex items-center text-secondary">
                 A
               </p>
 
-              <div className="text-white leading-tight font-paragraph text-left mx-4">
+              <div className="text-white leading-tight font-paragraph text-left mx-2 md:mx-4">
                 <p className="text-sm">Admin</p>
                 <p className="text-xs">#12345</p>
               </div>
