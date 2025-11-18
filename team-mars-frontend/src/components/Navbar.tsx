@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   return (
@@ -10,11 +10,9 @@ const Navbar = () => {
         <li>
           <Link to={'contact'}>Contact Us</Link>
         </li>
-
       </ul>
     </nav>
-  )
-}
-
+  );
+};
 
 export default Navbar;
