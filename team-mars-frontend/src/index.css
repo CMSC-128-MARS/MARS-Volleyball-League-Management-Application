@@ -1,35 +1,36 @@
-@import 'tailwindcss';
-@import "tw-animate-css";
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap');
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
 
 @theme inline {
   /* font heading */
   --font-heading: 'Montserrat', sans-serif;
   /* h1 */
-  --h1-size: 48px;     
+  --h1-size: 48px;
   --h1-weight: 600;
   --h1-leading: 100%;
   --h1-tracking: -0.5px;
   /* h2 */
-  --h2-size: 30px;     
+  --h2-size: 30px;
   --h2-weight: 600;
   --h2-leading: 100%;
   --h2-tracking: -0.3px;
   /* h3 */
-  --h3-size: 24px;     
+  --h3-size: 24px;
   --h3-weight: 600;
   --h3-leading: 120%;
   --h3-tracking: -0.5px;
   /* h4 */
-  --h4-size: 20px;     
+  --h4-size: 20px;
   --h4-weight: 600;
   --h4-leading: 120%;
   --h4-tracking: -0.4px;
   /* font paragraph */
   --font-paragraph: 'Cabin', sans-serif;
   /* paragraph-n-regular */
-  --paragraph-n-regular-size: 16px;     
+  --paragraph-n-regular-size: 16px;
   --paragraph-n-regular-weight: 400;
   --paragraph-n-regular-leading: 150%;
   --paragraph-n-regular-tracking: 0px;
@@ -39,7 +40,7 @@
   --paragraph-n-medium-leading: 150%;
   --paragraph-n-medium-tracking: 0px;
   /* paragraph-s-regular */
-  --paragraph-s-regular-size: 14px;     
+  --paragraph-s-regular-size: 14px;
   --paragraph-s-regular-weight: 400;
   --paragraph-s-regular-leading: 150%;
   --paragraph-s-regular-tracking: 0.1px;
@@ -148,13 +149,13 @@
   --border: oklch(0.9219 0 0);
   --input: oklch(1 0 0);
   --ring: oklch(0.708 0 0);
-  
+
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
- 
+
   --sidebar-primary: oklch(0.5223 0.0703 256.77);
   --sidebar-foreground: oklch(0.9851 0 0);
   /* used for hover */
@@ -185,7 +186,7 @@
     line-height: var(--h2-leading);
     letter-spacing: var(--h2-tracking);
     margin: 0;
-  } 
+  }
   h3 {
     font-family: var(--font-heading);
     font-size: var(--h3-size);
@@ -254,5 +255,4 @@
     letter-spacing: var(--paragraph-xs-medium-tracking);
     margin: 0;
   }
-
 }
