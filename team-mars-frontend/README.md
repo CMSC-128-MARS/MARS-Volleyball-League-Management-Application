@@ -18,6 +18,7 @@ It provides a user interface to manage teams, players, schedules, and other leag
 - **Other Tools:** npm, Vite dev server
 
 ## 📂 Folder Structure
+
 ```team-mars-frontend/
 │
 ├─ src/
@@ -33,51 +34,53 @@ It provides a user interface to manage teams, players, schedules, and other leag
 ## 💻 Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/CMSC-128-MARS/team-mars-frontend.git
 cd team-mars-frontend
 
 ```
- 2. Install dependencies:
+
+2.  Install dependencies:
+
 ```bash
 npm install
 ```
- 3. Run the development server:
-``` bash
+
+3.  Run the development server:
+
+```bash
 npm run dev
 ```
- 4. Open your browser at http://localhost:5173 to view the app.
 
+4.  Open your browser at http://localhost:5173 to view the app.
 
 ## 🤝 Contributing
 
-1. Fork the repository  
-2. Create your feature branch (`git checkout -b feature/YourFeature`)  
-3. Commit your changes (`git commit -m 'Add feature'`)  
-4. Push to the branch (`git push origin feature/YourFeature`)  
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/YourFeature`)
+3. Commit your changes (`git commit -m 'Add feature'`)
+4. Push to the branch (`git push origin feature/YourFeature`)
 5. Open a Pull Request
-
 
 ## 🧰 Tech Stack
 
-- **Vite** – Fast development build tool  
-- **React** – Frontend framework for UI  
-- **TypeScript** – Type-safe JavaScript  
-- **ESLint** – Code quality and linting  
+- **Vite** – Fast development build tool
+- **React** – Frontend framework for UI
+- **TypeScript** – Type-safe JavaScript
+- **ESLint** – Code quality and linting
 
 ## ⚙️ Usage
 
-- Navigate to the **dashboard** to manage teams, players, and schedules.  
-- Click on **team/player entries** to edit or remove them.  
-- Use the **schedule tab** to view or update upcoming matches.  
-- Add new teams or matches using the **“Add” buttons** on the relevant pages.  
+- Navigate to the **dashboard** to manage teams, players, and schedules.
+- Click on **team/player entries** to edit or remove them.
+- Use the **schedule tab** to view or update upcoming matches.
+- Add new teams or matches using the **“Add” buttons** on the relevant pages.
 - Track scores and standings directly from the **match overview** page.
 
 ---
 
 ## ✅ Acceptance Criteria
 
-- The app runs successfully with `npm run dev`  
-- The standard folder structure is in place  
-
-
+- The app runs successfully with `npm run dev`
+- The standard folder structure is in place
