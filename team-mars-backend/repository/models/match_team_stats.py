@@ -1,0 +1,21 @@
+from sqlalchemy import Column, String, Integer, DateTime, Boolean, ForeignKey
+from sqlalchemy.orm import func, relationship
+from sqlalchemy.dialects.postgresql import UUID
+from repository.database import Base
+
+
+class MatchTeamStats(Base):
+    __tablename__ = "match_team_stats"
+    match_team_stats_id = Column(UUID(as_uuid=True), primary_key=True)
+    total_score = Column(Integer, nullable=True)
+    sets_won = Column(Integer, nullable=True)
+    sets_lost = Column(Integer, nullable=True)
+    is_winner = Column(Boolean, nullable=True)
+
+    # Foreign Keys
+    match_id = Column(UUID(as_uuid=True), ForeignKey("match.match_id"), nullable=False)
+    team_id = Column(UUID(as_uuid=True), ForeignKey("team.team_id"), nullable=False)
+
+    # Relationships
+    match = relationship("Match", back_populates="team_stats")
+    team = relationship("Team", back_populates="match_stats")
