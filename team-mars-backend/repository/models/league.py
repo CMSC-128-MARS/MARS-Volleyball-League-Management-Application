@@ -1,0 +1,18 @@
+from sqlalchemy import Column, String, Integer, DateTime
+from sqlalchemy.orm import func, relationship
+from sqlalchemy.dialects.postgresql import UUID
+from repository.database import Base
+
+
+class League(Base):
+    __tablename__ = "league"
+    league_id = Column(UUID(as_uuid=True), primary_key=True)
+    league_name = Column(String, nullable=False)
+    start_date = Column(DateTime(timezone=True), server_default=func.now())
+    end_date = Column(DateTime(timezone=True), nullable=True)
+    location = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+
+    # Relationships
+    teams = relationship("Team", back_populates="league")
+    matches = relationship("Match", back_populates="league")
