@@ -259,6 +259,7 @@
     width: 744px;
     height: auto;
   }
+
   .heading-responsive {
   font-family: var(--font-heading);
   font-weight: var(--h1-weight);
@@ -266,10 +267,12 @@
   letter-spacing: var(--h1-tracking);
   font-size: var(--h1-size);
   }
+
   .margin-lr-responsive{
     margin-left: auto;
     margin-right: auto;
   }
+
   .paragraph-responsive {
     font-family: var(--font-paragraph);
     font-size: var(--paragraph-n-regular-size);
@@ -278,7 +281,29 @@
     letter-spacing: var(--paragraph-n-regular-tracking);
     margin: 0;
   }
-  
+
+  .hero-bg-element-base {
+    display: block;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .hero-bg-element-bottom-right {
+    transform-origin: bottom right;
+    width: 200px;
+    height: 200px;
+    right: -50px;
+    bottom: -50px;
+  }
+
+  .hero-bg-element-bottom-left {
+    transform-origin: bottom left;
+    width: 180px;
+    height: 200px;
+    left: -40px;
+    bottom: -60px;
+  }
+
   @media (min-width: 320px) {
     .logo-responsive {
       width: 360px;
@@ -294,7 +319,11 @@
       margin-left: 28px;
       margin-right: 28px;
     }
+    .hero-bg-element-base {
+      display: none;
+    }
   }
+
   @media (min-width: 768px) {
     .logo-responsive {
       width: 560px;
@@ -310,7 +339,23 @@
       margin-left: 136px;
       margin-right: 136px;
     }
+    .hero-bg-element-base {
+      display: block;
+    }
+    .hero-bg-element-bottom-right {
+      width: 360px;
+      height: 360px;
+      right: -112px;
+      bottom: -180px;
+    }
+    .hero-bg-element-bottom-left {
+      width: 280px;
+      height: 360px;
+      left: -96px;
+      bottom: -188px;
+    }
   }
+
   @media (min-width: 1024px) {
     .logo-responsive {
       width: 760px;
@@ -325,6 +370,46 @@
     .margin-lr-responsive{
       margin-left: 212px;
       margin-right: 212px;
+    }
+    .hero-bg-element-bottom-right {
+      width: 360px;
+      height: 360px;
+      right: -96px;
+      bottom: -108px;
+    }
+    .hero-bg-element-bottom-left {
+      width: 280px;
+      height: 360px;
+      left: -88px;
+      bottom: -116px;
+    }
+  }
+  @media (min-width: 1440px) {
+    .logo-responsive {
+      width: 960px;
+      height: auto;
+    }
+    .heading-responsive {
+      font-size: var(--h2-size);
+      line-height: var(--h2-leading);
+      letter-spacing: var(--h2-tracking);
+      text-align: center;
+    }
+    .margin-lr-responsive{
+      margin-left: 212px;
+      margin-right: 212px;
+    }
+    .hero-bg-element-bottom-right {
+      width: 400px;
+      height: 400px;
+      right: -80px;
+      bottom: -100px;
+    }
+    .hero-bg-element-bottom-left {
+      width: 320px;
+      height: 400px;
+      left: -52px;
+      bottom: -112px;
     }
   }
 }
