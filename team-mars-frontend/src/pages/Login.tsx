@@ -20,11 +20,11 @@ export default function Login() {
 
       <Form {...form}>
         <form className="rounded-sm border border-border relative z-10 bg-white flex flex-col justify-center paragraph-s-regular items-center gap-6 p-8">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 md:w-lg w-full">
             <h4>Log in</h4>
             <p className="text-muted-foreground">Enter your username and password to proceed.</p>
           </div>
-          <div className="flex flex-col gap-7 w-full">
+          <div className="flex flex-col gap-7 w-full md:w-lg">
             <FormField
               control={form.control}
               name="username"
@@ -32,7 +32,7 @@ export default function Login() {
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="username" {...field} />
+                    <Input type='text' placeholder='Enter username' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -45,7 +45,7 @@ export default function Login() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="password" {...field} />
+                    <Input type="password" placeholder="Enter password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
