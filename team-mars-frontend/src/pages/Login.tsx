@@ -1,70 +1,12 @@
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from '@/components/ui/form';
-import { LogIn } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useForm } from 'react-hook-form';
+import LogIn from '../components/forms/login';
 
 export default function Login() {
-  const form = useForm();
-
   return (
     <div className="relative h-full w-full bg-primary flex flex-col justify-center items-center">
       <img src="./src/assets/bglogo.png" alt="" className="absolute z-0" />
-
-      <Form {...form}>
-        <form className="rounded-sm border border-border relative z-10 bg-white flex flex-col justify-center paragraph-s-regular items-center gap-6 p-8">
-          <div className="flex flex-col gap-2 md:w-lg w-full">
-            <h4>Log in</h4>
-            <p className="text-muted-foreground">Enter your username and password to proceed.</p>
-          </div>
-          <div className="flex flex-col gap-7 w-full md:w-lg">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input type='text' placeholder='Enter username' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="Enter password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <Button type="submit" className="w-full">
-            <LogIn className="h-4 w-4 text-white" />
-            <p>Sign In</p>
-          </Button>
-
-          <p className="text-muted-foreground">
-            Having trouble signing in?{' '}
-            <button type="button" className="text-secondary-alt underline">
-              Contact Support
-            </button>
-          </p>
-        </form>
-      </Form>
+      <div>
+        <LogIn />
+      </div>
     </div>
   );
 }
