@@ -11,7 +11,11 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
 
-export default function Login() {
+interface LoginFormProps {
+  onContactClick?: () => void;
+}
+
+export default function Login({ onContactClick }: LoginFormProps) {
   const form = useForm();
   return (
     <Form {...form}>
@@ -55,7 +59,7 @@ export default function Login() {
 
         <p className="text-muted-foreground">
           Having trouble signing in?{' '}
-          <button type="button" className="text-secondary-alt underline">
+          <button type="button" onClick={onContactClick} className="text-secondary-alt underline">
             Contact Support
           </button>
         </p>
