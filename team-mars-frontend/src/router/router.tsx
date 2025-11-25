@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import App from '@/App.tsx';
-import LandingPage from '@/pages/LandingPage';
+import Home from '@/pages/Home.tsx';
 import Contact from '@/pages/Contact';
 
 export const router = createBrowserRouter([
@@ -10,7 +10,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <LandingPage />,
+        element: <Home />,
       },
       {
         path: 'contact',
