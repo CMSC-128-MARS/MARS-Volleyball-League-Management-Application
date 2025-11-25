@@ -3,7 +3,6 @@ import { Users2 } from "lucide-react"
 import { Volleyball } from "lucide-react";
 import { Trophy } from "lucide-react";
 
-
 const LandingPage = () => {
   return (
   <>
@@ -76,6 +75,10 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
+    </div>
+    {/* Footer */}
+    <div>
+
     </div>
   </>
   );
