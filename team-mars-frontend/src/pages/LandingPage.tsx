@@ -34,7 +34,7 @@ const LandingPage = () => {
           <h2 className="heading-hero-responsive uppercase text-center">Volleyball League Management System</h2>
         </div>
         {/* Buttons */}
-        <div className="flex items-center">
+        <div className="flex gap-4 items-center">
           <Button variant="secondary" size="lg" className="text-primary uppercase ">
           Sign In
           </Button>
