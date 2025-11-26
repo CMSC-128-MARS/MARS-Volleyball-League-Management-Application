@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field, ConfigDict, field_validator
-from datetime import datetime
 from typing import Optional
 from uuid import UUID
 from model.team.team import TeamSimple
@@ -101,21 +100,6 @@ class MatchTeamStatsCreate(BaseModel):
         None, title="Is Winner", description="Whether this team won the match"
     )
 
-    @field_validator("sets_won", "sets_lost")
-    @classmethod
-    def validate_sets(cls, v: Optional[int]) -> Optional[int]:
-        if v is not None and v < 0:
-
-            raise ValueError("Sets cannot be negative")
-        return v
-
-    @field_validator("total_score")
-    @classmethod
-    def validate_score(cls, v: Optional[int]) -> Optional[int]:
-        if v is not None and v < 0:
-            raise ValueError("Score cannot be negative")
-        return v
-
 
 # Base schema - for updates
 
@@ -129,21 +113,6 @@ class MatchTeamStatsUpdate(BaseModel):
     sets_lost: Optional[int] = Field(None, title="Sets Lost", ge=0)
 
     is_winner: Optional[bool] = Field(None, title="Is Winner")
-
-    @field_validator("sets_won", "sets_lost")
-    @classmethod
-    def validate_sets(cls, v: Optional[int]) -> Optional[int]:
-        if v is not None and v < 0:
-            raise ValueError("Sets cannot be negative")
-
-        return v
-
-    @field_validator("total_score")
-    @classmethod
-    def validate_score(cls, v: Optional[int]) -> Optional[int]:
-        if v is not None and v < 0:
-            raise ValueError("Score cannot be negative")
-        return v
 
 
 # Nested schema - for use in other models

@@ -2,14 +2,12 @@ from pydantic import BaseModel, Field, ConfigDict, field_validator
 from datetime import datetime
 from typing import Optional, List
 from uuid import UUID
-from team.team import TeamNested
-from match.match import MatchNested
+from model.team.team import TeamNested
+from model.match.match import MatchNested
 
 
-# Full schema - with relationships (for detailed responses)
-
-
-class LeagueFull(BaseModel):
+# Base class with all common fields and properties
+class LeagueBase(BaseModel):
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
     league_id: UUID = Field(..., title="League ID")
@@ -18,10 +16,6 @@ class LeagueFull(BaseModel):
     end_date: Optional[datetime] = Field(None, title="End Date")
     location: str = Field(..., title="Location")
     description: Optional[str] = Field(None, title="Description")
-
-    # Relationships
-    teams: Optional[List[TeamNested]] = Field(None, title="Teams")
-    matches: Optional[List[MatchNested]] = Field(None, title="Matches")
 
     @property
     def is_active(self) -> bool:
@@ -41,6 +35,18 @@ class LeagueFull(BaseModel):
             return "completed"
         else:
             return "active"
+
+
+# Full schema - with relationships (for detailed responses)
+
+
+# Full schema - adds relationships and additional properties
+class LeagueFull(LeagueBase):
+    """League with relationships"""
+
+    # Relationships
+    teams: Optional[List[TeamNested]] = Field(None, title="Teams")
+    matches: Optional[List[MatchNested]] = Field(None, title="Matches")
 
     @property
     def team_count(self) -> int:
@@ -56,34 +62,11 @@ class LeagueFull(BaseModel):
 # Simple schema - without relationships (for basic responses)
 
 
-class LeagueSimple(BaseModel):
-    model_config = ConfigDict(from_attributes=True, extra="ignore")
+# Simple schema - just inherits the base
+class LeagueSimple(LeagueBase):
+    """League without relationships"""
 
-    league_id: UUID = Field(..., title="League ID")
-    league_name: str = Field(..., title="League Name")
-    start_date: datetime = Field(..., title="Start Date")
-    end_date: Optional[datetime] = Field(None, title="End Date")
-    location: str = Field(..., title="Location")
-    description: Optional[str] = Field(None, title="Description")
-
-    @property
-    def is_active(self) -> bool:
-        """Check if league is currently active"""
-        now = datetime.utcnow()
-        if self.end_date:
-            return self.start_date <= now <= self.end_date
-        return self.start_date <= now
-
-    @property
-    def status(self) -> str:
-        """Get league status"""
-        now = datetime.utcnow()
-        if now < self.start_date:
-            return "upcoming"
-        elif self.end_date and now > self.end_date:
-            return "completed"
-        else:
-            return "active"
+    pass
 
 
 # Base schema - for creation
