@@ -2,9 +2,9 @@ from pydantic import BaseModel, Field, ConfigDict, field_validator
 from datetime import datetime
 from typing import Optional, List
 from uuid import UUID
-from league.league import LeagueSimple
-from team.team import TeamSimple
-from match_team_stats.match_team_stats import MatchTeamStatsNested
+from model.league.league import LeagueSimple
+from model.team.team import TeamSimple
+from model.match_team_stats.match_team_stats import MatchTeamStatsNested
 
 # Full schema - with all relationships (for detailed responses)
 
@@ -110,12 +110,6 @@ class MatchCreate(BaseModel):
     location: str = Field(
         ..., title="Location", max_length=200, description="Match location"
     )
-
-    @field_validator("team1_id", "team2_id")
-    @classmethod
-    def validate_teams(cls, v: UUID, info) -> UUID:
-        # Check if both teams are different (will be validated in endpoint)
-        return v
 
 
 # Base schema - for updates

@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 from typing import Optional, List
 from uuid import UUID
-from model.team.team import TeamPlayerNested
+from model.team_player.team_player import TeamPlayerNested
 from model.league.league import LeagueSimple
 from model.match.match import MatchSimple
 

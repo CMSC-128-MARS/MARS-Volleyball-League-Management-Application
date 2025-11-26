@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Integer
 from sqlalchemy.orm import relationship, validates
 from sqlalchemy.dialects.postgresql import UUID
 from repository.database import Base
-from model.skill_level.skill_level_enum import SkillLevelEnum
+from model.enums import SkillLevelEnum
 
 
 class SkillLevel(Base):
