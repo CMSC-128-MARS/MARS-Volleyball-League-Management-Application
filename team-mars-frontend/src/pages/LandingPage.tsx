@@ -11,7 +11,7 @@ const LandingPage = () => {
       <div
         className="bg-background-alt text-primary-foreground relative overflow-hidden"
         style={{
-          backgroundImage: `url('/Dust.png')`,
+          backgroundImage: `url('/assets/Dust.png')`,
           backgroundSize: 'auto',
           backgroundRepeat: 'repeat',
         }}
