@@ -17,7 +17,7 @@ export default function Login() {
           Back
         </button>
       )}
-      <img src="./src/assets/bglogo.png" alt="" className="absolute z-0" />
+      <img src="/assets/bglogo.png" alt="" className="absolute z-0" />
       <div>{showContact ? <Contact /> : <LogIn onContactClick={() => setShowContact(true)} />}</div>
     </div>
   );

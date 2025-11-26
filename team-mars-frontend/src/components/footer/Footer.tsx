@@ -8,13 +8,9 @@ const Footer = () => {
         <div className="border-[2px] border-secondary">
           <div className="footer-padding-responsive">
             <div className="footer-logo-responsive">
+              <img src="/logo.png" alt="MARS Logo" className="w-[60px] h-[60px] object-contain" />
               <img
-                src="./src/assets/logo.png"
-                alt="MARS Logo"
-                className="w-[60px] h-[60px] object-contain"
-              />
-              <img
-                src="./src/assets/MARS-logo.png"
+                src="/assets/MARS-logo.png"
                 alt="MARS Logo"
                 className="w-[200px] h-[60px] object-contain"
               />
