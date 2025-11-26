@@ -1,7 +1,8 @@
 from sqlalchemy import Column, String, Integer
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 from sqlalchemy.dialects.postgresql import UUID
 from repository.database import Base
+from model.skill_level.skill_level_enum import SkillLevelEnum
 
 
 class SkillLevel(Base):
@@ -12,3 +13,13 @@ class SkillLevel(Base):
 
     # Relationships
     player_skills = relationship("PlayerSkill", back_populates="skill_level")
+
+    # Validation
+    @validates("level")
+    def validate_level(self, key, level):
+        valid_levels = [enum_item.value for enum_item in SkillLevelEnum]
+        if level not in valid_levels:
+            raise ValueError(
+                f"Invalid skill level: {level}. Must be one of {valid_levels}"
+            )
+        return level

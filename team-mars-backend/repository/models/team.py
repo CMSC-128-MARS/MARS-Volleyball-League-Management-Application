@@ -8,7 +8,6 @@ class Team(Base):
     __tablename__ = "team"
     team_id = Column(UUID(as_uuid=True), primary_key=True)
     team_name = Column(String, nullable=False)
-    team_code = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Foreign Keys
