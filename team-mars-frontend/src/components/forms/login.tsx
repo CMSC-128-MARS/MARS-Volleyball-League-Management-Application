@@ -10,13 +10,31 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
+import { authSignIn } from '@/lib/auth';
 
 interface LoginFormProps {
   onContactClick?: () => void;
 }
 
+interface LoginFormData {
+  username: string;
+  password: string;
+}
+
 export default function Login({ onContactClick }: LoginFormProps) {
-  const form = useForm();
+  const form = useForm<LoginFormData>();
+  const handleSubmit = async (data: LoginFormData) => {
+    const result = await authSignIn({
+      username: data.username,
+      password: data.password,
+    });
+
+    if (result.success) {
+      console.log('Login successful!', result.user);
+    } else {
+      console.error('Login failed:', result.error);
+    }
+  };
   return (
     <Form {...form}>
       <form className="rounded-sm border border-border relative z-10 bg-white flex flex-col justify-center paragraph-s-regular items-center gap-6 p-8">
@@ -52,7 +70,7 @@ export default function Login({ onContactClick }: LoginFormProps) {
             )}
           />
         </div>
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" onClick={form.handleSubmit(handleSubmit)}>
           <LogIn className="h-4 w-4 text-white" />
           <p>Sign In</p>
         </Button>
