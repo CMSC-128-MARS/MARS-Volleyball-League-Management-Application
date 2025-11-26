@@ -70,7 +70,7 @@
   --color-background: var(--background);
   --color-background-alt: var(--background-alt);
   --color-background-alt-2: var(--background-alt-2);
-  
+
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -112,11 +112,8 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
 }
 
-:root { 
-  --white: oklch(0.9851 0 0)
-  --gray: oklch(0.7155 0 0)
-  --black: oklch(0.1448 0 0)
-  --radius: 0.625rem;
+:root {
+  --white: oklch(0.9851 0 0) --gray: oklch(0.7155 0 0) --black: oklch(0.1448 0 0) --radius: 0.625rem;
   --background: oklch(1 0 0);
   --background-alt: oklch(0.3566 0.0454 257.42);
   --background-alt-2: oklch(0.5223 0.0703 256.77);
@@ -160,7 +157,7 @@
     padding: 0;
   }
 
-  h1{
+  h1 {
     font-family: var(--font-heading);
     font-size: var(--h1-size);
     font-weight: var(--h1-weight);
@@ -168,7 +165,7 @@
     letter-spacing: var(--h1-tracking);
   }
 
-  h2{
+  h2 {
     font-family: var(--font-heading);
     font-size: var(--h2-size);
     font-weight: var(--h2-weight);
@@ -176,7 +173,7 @@
     letter-spacing: var(--h2-tracking);
   }
 
-  h3{
+  h3 {
     font-family: var(--font-heading);
     font-size: var(--h3-size);
     font-weight: var(--h3-weight);
@@ -184,7 +181,7 @@
     letter-spacing: var(--h3-tracking);
   }
 
-  h4{
+  h4 {
     font-family: var(--font-heading);
     font-size: var(--h4-size);
     font-weight: var(--h4-weight);
@@ -192,7 +189,7 @@
     letter-spacing: var(--h4-tracking);
   }
 
-  .pg1{
+  .pg1 {
     font-family: var(--font-paragraph);
     font-size: var(--paragraph-n-regular-size);
     font-weight: var(--paragraph-n-regular-weight);
@@ -200,16 +197,15 @@
     letter-spacing: var(--paragraph-n-regular-tracking);
   }
 
-  .pg1-bold{
+  .pg1-bold {
     font-family: var(--font-paragraph);
     font-size: var(--paragraph-n-medium-size);
     font-weight: var(--paragraph-n-medium-weight);
     line-height: var(--paragraph-n-medium-leading);
     letter-spacing: var(--paragraph-n-medium-tracking);
-
   }
 
-  .pg2{
+  .pg2 {
     font-family: var(--font-paragraph);
     font-size: var(--paragraph-s-regular-size);
     font-weight: var(--paragraph-s-regular-weight);
@@ -217,7 +213,7 @@
     letter-spacing: var(--paragraph-s-regular-tracking);
   }
 
-  .pg2-bold{
+  .pg2-bold {
     font-family: var(--font-paragraph);
     font-size: var(--paragraph-s-medium-size);
     font-weight: var(--paragraph-s-medium-weight);
@@ -225,7 +221,7 @@
     letter-spacing: var(--paragraph-s-medium-tracking);
   }
 
-  .pg3{
+  .pg3 {
     font-family: var(--font-paragraph);
     font-size: var(--paragraph-xs-regular-size);
     font-weight: var(--paragraph-xs-regular-weight);
@@ -233,7 +229,7 @@
     letter-spacing: var(--paragraph-xs-regular-tracking);
   }
 
-  .pg3-bold{
+  .pg3-bold {
     font-family: var(--font-paragraph);
     font-size: var(--paragraph-xs-medium-size);
     font-weight: var(--paragraph-xs-medium-weight);
@@ -291,10 +287,10 @@
       display: none;
     }
     .features-content-responsive {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 32px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 32px;
     }
     .features-main-responsive {
       display: flex;
@@ -331,31 +327,31 @@
       letter-spacing: var(--h2-tracking);
       text-align: center;
     }
-    .footer-border{
+    .footer-border {
       padding: 16px 24px 16px 24px;
     }
-    .footer-logo-responsive{
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        align-items: center;
-        gap: 16px;
+    .footer-logo-responsive {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
     }
-    .footer-padding-responsive{
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        align-items: center;
-        gap: 32px;
-        padding: 20px 48px 20px 48px;
+    .footer-padding-responsive {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      padding: 20px 48px 20px 48px;
     }
-      .footer-contact-responsive{
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        align-items: center;
-        gap: 12px;
-        text-align: center;
+    .footer-contact-responsive {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
     }
   }
 
@@ -508,7 +504,7 @@
       font-weight: var(--h1-weight);
       line-height: var(--h1-leading);
       letter-spacing: var(--h1-tracking);
-      text-align: center; 
+      text-align: center;
     }
     .features-paragraph-responsive {
       font-family: var(--font-paragraph);
@@ -520,31 +516,31 @@
       min-width: auto;
       height: auto;
     }
-    .footer-border{
+    .footer-border {
       padding: 16px 24px 16px 24px;
     }
-    .footer-logo-responsive{
-        display: flex;
-        justify-content: center;
-        flex-direction: row;
-        align-items: flex-start;
-        gap: 0px;
+    .footer-logo-responsive {
+      display: flex;
+      justify-content: center;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 0px;
     }
-    .footer-padding-responsive{
-        display: flex;
-        justify-content: space-between;
-        flex-direction: row;
-        align-items: center;
-        gap: 32px;
-        padding: 20px 48px 20px 48px;
+    .footer-padding-responsive {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: row;
+      align-items: center;
+      gap: 32px;
+      padding: 20px 48px 20px 48px;
     }
-    .footer-contact-responsive{
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 12px;
-        text-align: right;
+    .footer-contact-responsive {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
+      text-align: right;
     }
   }
 
