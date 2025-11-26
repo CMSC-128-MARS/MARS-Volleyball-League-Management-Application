@@ -1,7 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from './components/navigation/LoginNavbar';
 
-
 function App() {
   return (
 
