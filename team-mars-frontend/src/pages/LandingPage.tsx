@@ -11,19 +11,19 @@ const LandingPage = () => {
       <div
         className="bg-background-alt text-primary-foreground relative overflow-hidden"
         style={{
-          backgroundImage: `url('./src/assets/Dust.png')`,
+          backgroundImage: `url('/Dust.png')`,
           backgroundSize: 'auto',
           backgroundRepeat: 'repeat',
         }}
       >
         {/* Bg Elements*/}
         <img
-          src="./src/assets/hero-element1.png"
+          src="/assets/hero-element1.png"
           alt="Hero Element 1"
           className="hero-bg-element-base hero-bg-element-bottom-right absolute"
         />
         <img
-          src="./src/assets/hero-element2.png"
+          src="/assets/hero-element2.png"
           alt="Hero Element 2"
           className="hero-bg-element-base hero-bg-element-bottom-left absolute"
         />
@@ -32,7 +32,7 @@ const LandingPage = () => {
           {/* Logo and subheading */}
           <div className="flex flex-col items-center gap-[8px]">
             <img
-              src="./src/assets/MARS-logo.png"
+              src="/assets/MARS-logo.png"
               alt="MARS Logo"
               className="w-auto h-auto object-contain"
             />
@@ -52,7 +52,7 @@ const LandingPage = () => {
       <div
         className="bg-background-alt-2 relative"
         style={{
-          backgroundImage: `url('./src/assets/Grunge.png')`,
+          backgroundImage: `url('/Grunge.png')`,
           backgroundSize: 'auto',
           backgroundRepeat: 'repeat',
         }}

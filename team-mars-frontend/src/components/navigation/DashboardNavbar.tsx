@@ -20,7 +20,7 @@ const Navbar2 = () => {
             >
               {/* Logo - hidden on sm, shown on md+ */}
               <img
-                src="./src/assets/MARS-logo.png"
+                src="/assets/MARS-logo.png"
                 alt="MARS Logo"
                 className="h-[45px] hidden md:block"
               />
