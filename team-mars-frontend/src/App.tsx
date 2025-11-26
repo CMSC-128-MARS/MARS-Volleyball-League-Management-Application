@@ -1,15 +1,16 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from './components/Navigation/Navbar1';
-import LandingPage from './pages/LandingPage';
-import Footer from './components/footer/Footer';
 
 function App() {
   return (
     <>
+    <div className='flex flex-col h-screen'>
       <Navbar />
-      <LandingPage />
-      <Outlet />
-      <Footer />
+      <div className='flex-1 overflow-auto'>
+        <Outlet />
+      </div>
+    </div>
+      
     </>
   );
 }

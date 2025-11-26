@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/Buttons"
 import { Users2 } from "lucide-react"
 import { Volleyball } from "lucide-react";
 import { Trophy } from "lucide-react";
-
+import Footer from '@/components/footer/Footer';
 
 const LandingPage = () => {
   return (
@@ -77,6 +77,7 @@ const LandingPage = () => {
         </div>
       </div>
     </div>
+    <Footer />
   </>
   );
 };
