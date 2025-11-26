@@ -1,11 +1,11 @@
-from pydantic import BaseModel, Field, Extra, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 from typing import Optional
 from uuid import UUID
-from player import Player, PlayerSimple
-from skill_level import SkillLevelSimple
-from enum import SkillLevelEnum
-from admin.admin import AdminSimple
+from model.player.player import PlayerSimple
+from model.skill_level.skill_level import SkillLevelSimple
+from model.enums import SkillLevelEnum
+from model.admin.admin import AdminSimple
 
 # Full schema - with relationships (for detailed responses)
 

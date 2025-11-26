@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Optional, List
 from uuid import UUID
 import re
-from player_skill.player_skill import PlayerSkillEvaluated
+from model.player_skill.player_skill import PlayerSkillEvaluated
 
 
 class AdminFull(BaseModel):
@@ -102,6 +102,8 @@ class AdminUpdate(BaseModel):
     def validate_username(cls, v: Optional[str]) -> Optional[str]:
 
         if v is not None:
+            if not v:
+                raise ValueError("Username cannot be empty")
             if v[0].isdigit():
                 raise ValueError("Username cannot start with a number")
             if not re.match(r"^[a-zA-Z][a-zA-Z0-9_]*$", v):
