@@ -1,15 +1,34 @@
-# Description: This file initializes the supabase client using the credentials fetched from the .env file.
+"""
+Supabase client configuration.
+Provides both public and admin clients for different use cases.
+"""
+
 from supabase import create_client, Client
-from . import settings
+from functools import lru_cache
+from config.settings import get_settings
 
-SETTINGS = settings.get_settings()
+SETTINGS = get_settings()
 
-# Initialize supabase client
-supabase: Client = create_client(
-    SETTINGS.SUPABASE_URL, 
-    SETTINGS.SUPABASE_KEY)
 
-# Initialize supabase client with service role
-supabase_admin: Client = create_client(
-    SETTINGS.SUPABASE_URL, 
-    SETTINGS.SUPABASE_SERVICE_ROLE_KEY)
+@lru_cache
+def get_supabase_client() -> Client:
+    """
+    Get Supabase client with anon/public key.
+    Use this for user-facing operations that respect RLS policies.
+    """
+    return create_client(SETTINGS.DATABASE_URL, SETTINGS.SUPABASE_KEY)
+
+
+@lru_cache
+def get_supabase_admin() -> Client:
+    """
+    Get Supabase client with service role key.
+    Use this for admin operations that bypass RLS policies.
+    WARNING: Use with caution - has full access to database.
+    """
+    return create_client(SETTINGS.DATABASE_URL, SETTINGS.SUPABASE_SERVICE_ROLE_KEY)
+
+
+# Create instances for direct import if needed
+supabase: Client = get_supabase_client()
+supabase_admin: Client = get_supabase_admin()
