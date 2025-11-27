@@ -4,6 +4,8 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, JSONResponse
 from dotenv import load_dotenv
 
+from controller.health_check import router as health_router
+
 
 # Load environment variables
 load_dotenv()
@@ -22,7 +24,8 @@ app = FastAPI(
     version="0.1.0",
     contact=PROJECT_CONTACT,
 )
-
+#health check router
+app.include_router(health_router)
 
 @app.get("/", include_in_schema=False)
 def welcome():
