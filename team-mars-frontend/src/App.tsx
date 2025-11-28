@@ -1,18 +1,23 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import LoginNavbar from './components/navigation/LoginNavbar';
 import DashboardNavbar from './components/navigation/DashboardNavbar';
+import Sidebar from './components/navigation/Sidebar';
+import { SidebarProvider } from './components/ui/sidebar';
 
 function App() {
   const location = useLocation();
-  const isHomePage = location.pathname === '/';
+  const isLoginPage = location.pathname === '/' || location.pathname === '/login';
 
   return (
-    <div className="flex flex-col h-screen">
-      {isHomePage ? <LoginNavbar /> : <DashboardNavbar /> }
-      <div className="flex-1 overflow-auto">
-        <Outlet />
+    <SidebarProvider defaultOpen={false}>
+      {!isLoginPage && <Sidebar />}
+      <div className="flex flex-col h-screen w-full">
+        {isLoginPage ? <LoginNavbar /> : <DashboardNavbar />}
+        <div className="flex-1 overflow-auto">
+          <Outlet />
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
 
