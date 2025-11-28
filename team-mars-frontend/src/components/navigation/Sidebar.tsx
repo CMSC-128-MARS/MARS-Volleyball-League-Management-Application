@@ -41,7 +41,7 @@ const items = [
 
 export function AppSidebar() {
   return (
-    <Sidebar collapsible="offcanvas">
+    <Sidebar collapsible="offcanvas" className="!top-[80px] !h-[calc(100vh-80px)] !z-50">
       <SidebarContent className="bg-primary-alt font-paragraph pt-6 pb-6 pr-1 pl-1">
         <SidebarGroup>
           <SidebarGroupLabel className="flex justify-center items-center mb-8">

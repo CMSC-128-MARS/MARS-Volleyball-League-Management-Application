@@ -10,12 +10,12 @@ function App() {
 
   return (
     <SidebarProvider defaultOpen={false}>
-      {!isLoginPage && <Sidebar />}
       <div className="flex flex-col h-screen w-full">
         {isLoginPage ? <LoginNavbar /> : <DashboardNavbar />}
-        <div className="flex-1 overflow-auto">
+        {!isLoginPage && <Sidebar />}
+        <main className="flex-1 overflow-auto">
           <Outlet />
-        </div>
+        </main>
       </div>
     </SidebarProvider>
   );
