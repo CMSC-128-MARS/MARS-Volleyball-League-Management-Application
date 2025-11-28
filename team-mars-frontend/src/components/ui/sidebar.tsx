@@ -174,17 +174,12 @@ function Sidebar({
 
   if (isMobile) {
     return (
-      <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
+      <Sheet open={openMobile} onOpenChange={setOpenMobile} modal={false} {...props}>
         <SheetContent
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
-          style={
-            {
-              '--sidebar-width': SIDEBAR_WIDTH_MOBILE,
-            } as React.CSSProperties
-          }
+          className="bg-sidebar text-sidebar-foreground w-full p-0 [&>button]:hidden top-[80px] h-[calc(100vh-80px)] border-none"
           side={side}
         >
           <SheetHeader className="sr-only">
