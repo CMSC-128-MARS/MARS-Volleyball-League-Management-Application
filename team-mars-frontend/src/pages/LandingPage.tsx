@@ -3,8 +3,11 @@ import { Users2 } from 'lucide-react';
 import { Volleyball } from 'lucide-react';
 import { Trophy } from 'lucide-react';
 import Footer from '@/components/footer/Footer';
+import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       {/* Hero section */}
@@ -42,7 +45,12 @@ const LandingPage = () => {
           </div>
           {/* Buttons */}
           <div className="flex items-center">
-            <Button variant="secondary" size="lg" className="text-primary uppercase ">
+            <Button
+              variant="secondary"
+              size="lg"
+              className="text-primary uppercase "
+              onClick={() => navigate('/login')}
+            >
               Sign In
             </Button>
           </div>
@@ -52,7 +60,7 @@ const LandingPage = () => {
       <div
         className="bg-background-alt-2 relative"
         style={{
-          backgroundImage: `url('/Grunge.png')`,
+          backgroundImage: `url('/assets/Grunge.png')`,
           backgroundSize: 'auto',
           backgroundRepeat: 'repeat',
         }}
