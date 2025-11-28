@@ -8,7 +8,7 @@ import {
 
 export default function AppSidebar() {
   return (
-    <Sidebar>
+    <Sidebar collapsible="offcanvas">
       <SidebarHeader />
       <SidebarContent>
         <SidebarGroup />

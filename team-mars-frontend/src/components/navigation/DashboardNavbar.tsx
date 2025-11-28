@@ -1,8 +1,10 @@
 import { Menu, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSidebar } from '@/components/ui/sidebar';
 
 const Navbar2 = () => {
   const navigate = useNavigate();
+  const { toggleSidebar } = useSidebar();
 
   return (
     <>
@@ -10,8 +12,13 @@ const Navbar2 = () => {
         <div className="flex flex-row items-center justify-between px-[20px] md:px-[80px] py-[12px]">
           {/* Left Section */}
           <div className="flex items-center gap-2">
-            {/* Menu Icon - always visible */}
-            <Menu className="text-white border border-white p-2 w-9 h-9 rounded-sm bg-[rgba(255,255,255,0.10)]" />
+            <button
+              onClick={toggleSidebar}
+              className=" cursor-pointer"
+              aria-label="Toggle sidebar"
+            >
+              <Menu className="text-white border border-white p-2 w-9 h-9 rounded-sm bg-[rgba(255,255,255,0.10)]" />
+            </button>
 
             {/* Logo + Text */}
             <div
