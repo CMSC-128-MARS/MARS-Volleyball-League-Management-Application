@@ -52,7 +52,7 @@ const LandingPage = () => {
       <div
         className="bg-background-alt-2 relative"
         style={{
-          backgroundImage: `url('/Grunge.png')`,
+          backgroundImage: `url('/assets/Grunge.png')`,
           backgroundSize: 'auto',
           backgroundRepeat: 'repeat',
         }}

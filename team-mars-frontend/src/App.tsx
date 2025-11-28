@@ -1,10 +1,14 @@
-import { Outlet } from 'react-router-dom';
-import Navbar from './components/navigation/LoginNavbar';
+import { Outlet, useLocation } from 'react-router-dom';
+import LoginNavbar from './components/navigation/LoginNavbar';
+import DashboardNavbar from './components/navigation/DashboardNavbar';
 
 function App() {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
   return (
     <div className="flex flex-col h-screen">
-      <Navbar />
+      {isHomePage ? <LoginNavbar /> : <DashboardNavbar /> }
       <div className="flex-1 overflow-auto">
         <Outlet />
       </div>
