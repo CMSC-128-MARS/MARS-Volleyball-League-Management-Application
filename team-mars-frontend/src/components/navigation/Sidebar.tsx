@@ -46,8 +46,6 @@ export function AppSidebar() {
   const { open, setOpen, isMobile } = useSidebar();
 
   useEffect(() => {
-    // Only add click outside listener when sidebar is open and not in mobile mode
-    // (mobile mode already has Sheet component with backdrop)
     if (!open || isMobile) return;
 
     const handleClickOutside = (event: MouseEvent) => {
@@ -56,7 +54,6 @@ export function AppSidebar() {
       }
     };
 
-    // Add a small delay to prevent immediate closing when opening
     const timeoutId = setTimeout(() => {
       document.addEventListener('mousedown', handleClickOutside);
     }, 100);
