@@ -61,7 +61,7 @@ export default function Login() {
             )}
           />
         </div>
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full cursor-pointer">
           <p>Done</p>
         </Button>
       </form>

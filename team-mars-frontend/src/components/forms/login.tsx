@@ -70,14 +70,22 @@ export default function Login({ onContactClick }: LoginFormProps) {
             )}
           />
         </div>
-        <Button type="submit" className="w-full" onClick={form.handleSubmit(handleSubmit)}>
+        <Button
+          type="submit"
+          className="w-full cursor-pointer"
+          onClick={form.handleSubmit(handleSubmit)}
+        >
           <LogIn className="h-4 w-4 text-white" />
           <p>Sign In</p>
         </Button>
 
         <p className="text-muted-foreground">
           Having trouble signing in?{' '}
-          <button type="button" onClick={onContactClick} className="text-secondary-alt underline">
+          <button
+            type="button"
+            onClick={onContactClick}
+            className="text-secondary-alt underline cursor-pointer"
+          >
             Contact Support
           </button>
         </p>

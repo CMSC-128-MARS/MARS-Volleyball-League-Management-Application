@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/Buttons';
 import { Headset } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -8,16 +9,20 @@ const Footer = () => {
         <div className="border-[2px] border-secondary">
           <div className="footer-padding-responsive">
             <div className="footer-logo-responsive">
-              <img
-                src="/assets/logo.png"
-                alt="MARS Logo"
-                className="w-[60px] h-[60px] object-contain"
-              />
-              <img
-                src="/assets/MARS-logo.png"
-                alt="MARS Logo"
-                className="w-[200px] h-[60px] object-contain"
-              />
+              <Link to="/">
+                <img
+                  src="/assets/logo.png"
+                  alt="MARS Logo"
+                  className="w-[60px] h-[60px] object-contain"
+                />
+              </Link>
+              <Link to="/">
+                <img
+                  src="/assets/MARS-logo.png"
+                  alt="MARS Logo"
+                  className="w-[200px] h-[60px] object-contain"
+                />
+              </Link>
             </div>
             <div className="footer-contact-responsive">
               <Button variant="outline" size="sm" className="color-white">
