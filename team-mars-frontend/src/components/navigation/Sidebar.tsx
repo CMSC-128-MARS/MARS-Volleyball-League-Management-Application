@@ -43,13 +43,20 @@ const items = [
 
 export function AppSidebar() {
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const { open, setOpen, isMobile } = useSidebar();
+  const { open, setOpen } = useSidebar();
 
   useEffect(() => {
-    if (!open || isMobile) return;
+    if (!open) return;
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+
+      // Check if click is outside sidebar and not on the menu button
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(target) &&
+        !(target as Element).closest('[aria-label="Toggle sidebar"]')
+      ) {
         setOpen(false);
       }
     };
@@ -62,7 +69,7 @@ export function AppSidebar() {
       clearTimeout(timeoutId);
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [open, isMobile, setOpen]);
+  }, [open, setOpen]);
 
   return (
     <div ref={sidebarRef}>
