@@ -1,13 +1,5 @@
-import Sidebar from '@/components/navigation/Sidebar';
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+const Contact = () => {
+  return <h1>Contact Us</h1>;
+};
 
-export default function Contact({ children }: { children: React.ReactNode }) {
-  return (
-    <SidebarProvider>
-      <Sidebar />
-      <main>
-        <SidebarTrigger />
-      </main>
-    </SidebarProvider>
-  )
-}
+export default Contact;
