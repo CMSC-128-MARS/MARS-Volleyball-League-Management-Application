@@ -12,11 +12,7 @@ const Navbar2 = () => {
         <div className="flex flex-row items-center justify-between px-[20px] md:px-[80px] py-[12px]">
           {/* Left Section */}
           <div className="flex items-center gap-2">
-            <button
-              onClick={toggleSidebar}
-              className=" cursor-pointer"
-              aria-label="Toggle sidebar"
-            >
+            <button onClick={toggleSidebar} className=" cursor-pointer" aria-label="Toggle sidebar">
               <Menu className="text-white border border-white p-2 w-9 h-9 rounded-sm bg-[rgba(255,255,255,0.10)]" />
             </button>
 
