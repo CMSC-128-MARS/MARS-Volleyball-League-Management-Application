@@ -48,8 +48,10 @@ export function AppSidebar() {
             <img src="/assets/logo.png" alt="MARS Logo" className="w-12 h-12" />
           </SidebarGroupLabel>
           <SidebarGroupContent>
+            <SidebarGroupLabel className="text-left text-white ml-2 text-[12px]">
+              Navigation
+            </SidebarGroupLabel>
             <SidebarMenu>
-              <p className="text-left text-white ml-2 text-[12px]">Navigation</p>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild className="hover:bg-accent rounded-[6px] text-[14px]">
