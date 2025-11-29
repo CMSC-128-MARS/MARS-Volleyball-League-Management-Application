@@ -85,7 +85,7 @@ export default function Login() {
           />
         </div>
         <Button type="submit" className="w-full">
-          <Headset className="w-4 text-white" />
+          <Headset className="w-4 h-4 text-white" />
           <p>Done</p>
         </Button>
       </form>
