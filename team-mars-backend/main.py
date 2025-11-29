@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, JSONResponse
 
 from fastapi.middleware.cors import CORSMiddleware
-from config.settings import get_settings
+from constants.settings import get_settings
 
 # Import all routers
 from controller.health_check import router as health_router

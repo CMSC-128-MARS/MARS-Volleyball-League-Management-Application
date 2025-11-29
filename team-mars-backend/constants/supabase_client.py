@@ -5,7 +5,7 @@ Provides both public and admin clients for different use cases.
 
 from supabase import create_client, Client
 from functools import lru_cache
-from config.settings import get_settings
+from constants.settings import get_settings
 
 SETTINGS = get_settings()
 
