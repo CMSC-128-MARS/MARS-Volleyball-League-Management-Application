@@ -1,5 +1,6 @@
 // ============================================================================
 // Utility Types
+
 // ============================================================================
 
 export type UUID = string;
@@ -16,17 +17,57 @@ export interface PaginatedResponse<T> {
   limit: number;
 }
 
-export interface ApiResponse<T = any> {
+/**
+ * Generic API response wrapper
+ * @template T - The type of data returned in the response
+ */
+export interface ApiResponse<T = unknown> {
   status: 'ok' | 'error';
   data?: T;
   error?: string;
   message?: string;
 }
 
+/**
+ * API Error response
+ */
+export interface ApiErrorResponse {
+  status: 'error';
+  error: string;
+  message?: string;
+  detail?: string;
+}
+
+/**
+ * API Success response
+
+ */
+export interface ApiSuccessResponse<T> {
+  status: 'ok';
+  data: T;
+  message?: string;
+}
+
+/**
+ * Health check response from /health endpoint
+ */
 export interface HealthCheckResponse {
   status: 'ok' | 'unhealthy';
   service: string;
   environment: string;
   database?: 'connected' | 'disconnected';
   database_time?: string;
+}
+
+/**
+ * Database health check response from /health/db endpoint
+ */
+export interface DatabaseHealthResponse {
+  status: 'healthy' | 'unhealthy';
+  database: 'connected' | 'disconnected';
+  database_name?: string;
+  database_time?: string;
+  database_version?: string;
+  message: string;
+  error?: string;
 }
