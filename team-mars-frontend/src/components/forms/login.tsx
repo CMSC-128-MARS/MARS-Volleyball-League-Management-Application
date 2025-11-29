@@ -37,12 +37,12 @@ export default function Login({ onContactClick }: LoginFormProps) {
   };
   return (
     <Form {...form}>
-      <form className="rounded-[2px] border border-border relative z-10 bg-white flex flex-col justify-center paragraph-s-regular items-center gap-6 p-8">
-        <div className="flex flex-col gap-2 md:w-lg w-full">
+      <form className="rounded-[2px] border border-border relative z-10 bg-white flex flex-col justify-center paragraph-s-regular items-center gap-6 p-8 w-full md:w-md lg:w-lg max-w-lg">
+        <div className="flex flex-col gap-2 w-full">
           <h4>Log in</h4>
           <p className="text-muted-foreground">Enter your username and password to proceed.</p>
         </div>
-        <div className="flex flex-col gap-7 w-full md:w-lg">
+        <div className="flex flex-col gap-7 w-full">
           <FormField
             control={form.control}
             name="username"
