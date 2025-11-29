@@ -7,11 +7,11 @@ export default function Login() {
   const [showContact, setShowContact] = useState(false);
 
   return (
-    <div className="relative h-full w-full bg-primary flex flex-col justify-center items-center px-4 md:px-0">
+    <div className="relative h-full w-full bg-primary flex flex-col justify-center items-center px-4 lg:px-0">
       {showContact && (
         <button
           onClick={() => setShowContact(false)}
-          className="text-secondary hover:cursor-pointer z-10 flex flex-row items-center justify-start gap-2 min-h-9 px-4 py-[7.5px] rounded-[2px] border-2 border-secondary bg-transparent mb-4 self-start lg:mb-0 lg:self-auto lg:absolute lg:top-[41px] lg:left-[81px]"
+          className="text-secondary hover:cursor-pointer z-10 flex flex-row items-center justify-start gap-2 min-h-9 px-4 py-[7.5px] rounded-[2px] border-2 border-secondary bg-transparent mb-4 self-start md:mb-0 md:self-auto md:absolute sm:top-4 sm:left-20 lg:top-4 xl:top-10"
         >
           <ArrowLeft className="w-4 h-4" />
           Back
