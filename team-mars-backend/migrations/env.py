@@ -6,7 +6,6 @@ from repository.models.skill_level import SkillLevel
 from repository.models.player import Player
 from repository.models.team import Team
 from repository.models.league import League
-from repository.models.admin import Admin
 from repository.database import Base
 from constants.settings import get_settings
 from logging.config import fileConfig
