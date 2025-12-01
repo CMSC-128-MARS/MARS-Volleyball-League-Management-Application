@@ -1,11 +1,13 @@
+from __future__ import annotations
 from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from uuid import UUID
-from model.player.player import PlayerSimple
-from model.skill_level.skill_level import SkillLevelSimple
 from model.enums import SkillLevelEnum
-from model.admin.admin import AdminSimple
+
+if TYPE_CHECKING:
+    from model.player.player import PlayerSimple
+    from model.skill_level.skill_level import SkillLevelSimple
 
 # Full schema - with relationships (for detailed responses)
 
@@ -16,14 +18,12 @@ class PlayerSkillFull(BaseModel):
     player_skill_id: UUID = Field(..., title="Player Skill ID")
     player_id: UUID = Field(..., title="Player ID")
     skill_level_id: UUID = Field(..., title="Skill Level ID")
-    evaluated_by: UUID = Field(..., title="Evaluator ID")
     date_assigned: datetime = Field(..., title="Date Assigned")
     notes: Optional[str] = Field(None, title="Notes")
 
     # Relationships
-    player: Optional[PlayerSimple] = Field(None, title="Player Details")
-    skill_level: Optional[SkillLevelSimple] = Field(None, title="Skill Level Details")
-    evaluator: Optional[AdminSimple] = Field(None, title="Evaluator Details")
+    skill_level: Optional["SkillLevelSimple"] = Field(None, title="Skill Level Details")
+    player: Optional["PlayerSimple"] = None
 
     @property
     def skill_level_display(self) -> Optional[str]:
@@ -58,9 +58,6 @@ class PlayerSkillCreate(BaseModel):
     skill_level_id: UUID = Field(
         ..., title="Skill Level ID", description="ID of the skill level"
     )
-    evaluated_by: UUID = Field(
-        ..., title="Evaluator Admin ID", description="ID of admin who evaluated"
-    )
     date_assigned: Optional[datetime] = Field(None, title="Date assigned skill level")
     notes: Optional[str] = Field(None, title="Notes", max_length=500)
 
@@ -72,7 +69,6 @@ class PlayerSkillUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     skill_level_id: Optional[UUID] = Field(None, title="Skill Level ID")
-    evaluated_by: Optional[UUID] = Field(None, title="Evaluator Admin ID")
     notes: Optional[str] = Field(None, title="Notes", max_length=500)
 
 
@@ -85,8 +81,8 @@ class PlayerSkillNested(BaseModel):
     player_skill_id: UUID = Field(..., title="Player Skill ID")
     date_assigned: datetime = Field(..., title="Date Assigned")
     notes: Optional[str] = Field(None, title="Notes")
-    skill_level: Optional[SkillLevelSimple] = Field(None, title="Skill Level")
-    evaluator: Optional[AdminSimple] = Field(None, title="Evaluator")
+    skill_level: Optional["SkillLevelSimple"] = Field(None, title="Skill Level")
+    player: Optional["PlayerSimple"] = Field(None, title="Player")
 
 
 # Nested schemas for relationships

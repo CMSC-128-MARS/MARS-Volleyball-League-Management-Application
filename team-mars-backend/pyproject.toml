@@ -16,6 +16,9 @@ dependencies = [
     "black",
     "ruff",
     "commitizen",
+    "asyncpg",
+    "email-validator",
+    "greenlet",
 ]
 
 [tool.mypy]

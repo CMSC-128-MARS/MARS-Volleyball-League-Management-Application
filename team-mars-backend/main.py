@@ -6,13 +6,17 @@ from constants.settings import get_settings
 
 # Import all routers
 from controller.health_check import router as health_router
+
+"""
 from controller.player_controller import router as player_router
 from controller.team_controller import router as team_router
-
-from controller.league_controller import router as league_router
 from controller.match_controller import router as match_router
+"""
+from controller.league_controller import router as league_router
 
-from controller.admin_controller import router as admin_router
+from model import rebuild_models
+
+rebuild_models()
 
 # Get settings
 SETTINGS = get_settings()
@@ -40,11 +44,12 @@ app.add_middleware(
 
 # Include all routers
 app.include_router(health_router)
+"""
 app.include_router(player_router)
 app.include_router(team_router)
-app.include_router(league_router)
 app.include_router(match_router)
-app.include_router(admin_router)
+"""
+app.include_router(league_router)
 
 
 @app.get("/", include_in_schema=False)

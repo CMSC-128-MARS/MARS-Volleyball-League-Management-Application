@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-from repository.db import get_db
+from utils.db import get_session
 from constants.settings import get_settings
 
 router = APIRouter(prefix="/health", tags=["Health"])
@@ -22,7 +22,7 @@ def health_check():
 
 
 @router.get("/db")
-def database_health_check(db: Session = Depends(get_db)):
+def database_health_check(db: Session = Depends(get_session)):
     """
     Check database connection and return connection info
 
@@ -58,7 +58,7 @@ def database_health_check(db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail={
+            detailget_session={
                 "status": "unhealthy",
                 "database": "disconnected",
                 "error": str(e),
@@ -68,7 +68,7 @@ def database_health_check(db: Session = Depends(get_db)):
 
 
 @router.get("/db/tables")
-def check_database_tables(db: Session = Depends(get_db)):
+def check_database_tables(db: Session = Depends(get_session)):
     """
     List all tables in the database to verify migrations
     """

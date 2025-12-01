@@ -17,11 +17,7 @@ class PlayerSkill(Base):
     skill_level_id = Column(
         UUID(as_uuid=True), ForeignKey("skill_level.skill_level_id"), nullable=False
     )
-    evaluated_by = Column(
-        UUID(as_uuid=True), ForeignKey("admin.admin_id"), nullable=False
-    )
 
     # Relationships
     player = relationship("Player", back_populates="skills")
     skill_level = relationship("SkillLevel", back_populates="player_skills")
-    evaluator = relationship("Admin", back_populates="evaluated_skills")

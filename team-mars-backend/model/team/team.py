@@ -1,10 +1,16 @@
+from __future__ import annotations
 from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 from typing import Optional, List
 from uuid import UUID
-from model.team_player.team_player import TeamPlayerNested
-from model.league.league import LeagueSimple
-from model.match.match import MatchSimple
+from typing import TYPE_CHECKING
+
+# Use TYPE_CHECKING to avoid circular imports
+if TYPE_CHECKING:
+    from model.team_player.team_player import TeamPlayerNested
+    from model.league.league import LeagueSimple
+    from model.match.match import MatchSimple
+
 
 # Full schema - with relationships (for detailed responses)
 
@@ -18,17 +24,17 @@ class TeamFull(BaseModel):
     created_at: datetime = Field(..., title="Date Created")
 
     # Relationships
-    league: Optional[LeagueSimple] = Field(None, title="League")
-    team_players: Optional[List[TeamPlayerNested]] = Field(None, title="Team Players")
-    matches_as_team1: Optional[List[MatchSimple]] = Field(
+    league: Optional["LeagueSimple"] = Field(None, title="League")
+    team_players: Optional[List["TeamPlayerNested"]] = Field(None, title="Team Players")
+    matches_as_team1: Optional[List["MatchSimple"]] = Field(
         None, title="Matches as Team 1"
     )
-    matches_as_team2: Optional[List[MatchSimple]] = Field(
+    matches_as_team2: Optional[List["MatchSimple"]] = Field(
         None, title="Matches as Team 2"
     )
 
     @property
-    def active_players(self) -> List[TeamPlayerNested]:
+    def active_players(self) -> List["TeamPlayerNested"]:
         """Get only active players (no leave_date)"""
         if self.team_players:
             return [tp for tp in self.team_players if tp.leave_date is None]
