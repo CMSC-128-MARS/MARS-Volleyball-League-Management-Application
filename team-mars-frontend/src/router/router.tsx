@@ -3,6 +3,7 @@ import App from '@/App.tsx';
 import LandingPage from '@/pages/LandingPage';
 import Contact from '@/pages/Contact';
 import Login from '@/pages/Login';
+import Dashboard from '@/pages/Dashboard';
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,14 @@ export const router = createBrowserRouter([
       {
         path: 'login',
         element: <Login />,
+      },
+      {
+        path: 'login',
+        element: <Login />,
+      },
+      {
+        path: 'dashboard',
+        element: <Dashboard />,
       },
     ],
   },
