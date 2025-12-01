@@ -30,19 +30,19 @@ const Dashboard = () => {
                         <StatsCard 
                             icon={Users2} 
                             value={stats.teams} 
-                            label="Teams formed" 
+                            label="Teams registered" 
                             isLoading={isLoading}
                         />
                         <StatsCard 
                             icon={Calendar} 
                             value={stats.events} 
-                            label="Events scheduled" 
+                            label="Matches recorded" 
                             isLoading={isLoading}
                         />
                         <StatsCard 
                             icon={Trophy} 
                             value={stats.trophies} 
-                            label="Trophies won" 
+                            label="Leagues created" 
                             isLoading={isLoading}
                         />
                     </div>
