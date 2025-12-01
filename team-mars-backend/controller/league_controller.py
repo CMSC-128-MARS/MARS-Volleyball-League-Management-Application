@@ -10,7 +10,7 @@ from model.league.league import (
 )
 from usecase.league_usecase import LeagueUseCase
 from repository.league_repository import LeagueRepository
-from core.dependencies import get_session
+from utils.db import get_session
 
 
 router = APIRouter(prefix="/league", tags=["League"])
@@ -100,4 +100,4 @@ async def delete_league(
     use_case: LeagueUseCase = Depends(get_league_use_case),
 ):
     await use_case.delete_league(session, league_id)
-    return None
+    return

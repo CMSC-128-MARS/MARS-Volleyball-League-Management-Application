@@ -39,14 +39,12 @@ class LeagueUseCase:
     # ---------------------------------------------
     async def list_leagues(self, session: AsyncSession) -> List[LeagueSimple]:
         leagues = await self.repo.list(session)
-        return [LeagueSimple.model_validate(l) for l in leagues]
+        return [LeagueSimple.model_validate(league) for league in leagues]
 
     # ---------------------------------------------
     # READ — Get by ID
     # ---------------------------------------------
-    async def get_league(
-        self, session: AsyncSession, league_id: UUID
-    ) -> LeagueFull:
+    async def get_league(self, session: AsyncSession, league_id: UUID) -> LeagueFull:
         league = await self.repo.get_by_id(session, league_id)
         if not league:
             raise NotFoundException("League not found.")

@@ -19,9 +19,8 @@ SessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
     bind=engine,
-    echo=True,
-    future=True,
-    connect_args={"statement_cache_size": 0},
+    #   echo=True,
+    # connect_args={"statement_cache_size": 0},
 )
 Base = declarative_base()
 
@@ -31,7 +30,7 @@ Base = declarative_base()
 ASYNC_DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
 async_engine = create_async_engine(
     ASYNC_DATABASE_URL,
-    echo=True,
+    # echo=True,
     connect_args={"statement_cache_size": 0},
 )
 async_session_maker = sessionmaker(

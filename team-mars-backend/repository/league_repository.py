@@ -24,7 +24,7 @@ class LeagueRepository:
         return league
 
     # -------------------------------------------
-    # GET BY NAME 
+    # GET BY NAME
     # -------------------------------------------
     async def get_by_name(self, db: AsyncSession, name: str) -> Optional[League]:
         result = await db.execute(select(League).where(League.league_name == name))
@@ -43,17 +43,17 @@ class LeagueRepository:
     async def get_by_id(self, db: AsyncSession, league_id: UUID) -> Optional[League]:
         result = await db.execute(
             select(League)
-            .options(
-                selectinload(League.matches),
-                selectinload(League.teams)  # only if you actually have teams relationship
-            )
+            .options(selectinload(League.matches), selectinload(League.teams))
             .where(League.league_id == league_id)
         )
         return result.scalars().first()
+
     # -------------------------------------------
     # UPDATE
     # -------------------------------------------
-    async def update(self, db: AsyncSession, league_id: UUID, data: LeagueUpdate) -> Optional[League]:
+    async def update(
+        self, db: AsyncSession, league_id: UUID, data: LeagueUpdate
+    ) -> Optional[League]:
         league = await self.get_by_id(db, league_id)
         if not league:
             return None
@@ -77,4 +77,3 @@ class LeagueRepository:
         await db.delete(league)
         await db.commit()
         return True
-

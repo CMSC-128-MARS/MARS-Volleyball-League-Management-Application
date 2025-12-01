@@ -7,7 +7,6 @@ from model.enums import SkillLevelEnum
 
 if TYPE_CHECKING:
     from model.player.player import PlayerSimple
-    from model.player_skill.player_skill import PlayerSkillSimple
     from model.skill_level.skill_level import SkillLevelSimple
 
 # Full schema - with relationships (for detailed responses)

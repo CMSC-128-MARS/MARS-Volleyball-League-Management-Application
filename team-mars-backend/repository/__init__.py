@@ -1,4 +1,4 @@
-# repository/models/__init__.py
+# repository/__init__.py
 
 # Import all models so SQLAlchemy sees them when initializing mappers
 from .models.league import League
