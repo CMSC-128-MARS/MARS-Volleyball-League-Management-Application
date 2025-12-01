@@ -1,9 +1,12 @@
+from __future__ import annotations
 from pydantic import BaseModel, Field, ConfigDict, field_validator
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, TYPE_CHECKING
 from uuid import UUID
-from model.team.team import TeamNested
-from model.match.match import MatchNested
+
+if TYPE_CHECKING:
+    from model.team.team import TeamNested
+    from model.match.match import MatchNested
 
 
 # Base class with all common fields and properties
@@ -45,8 +48,8 @@ class LeagueFull(LeagueBase):
     """League with relationships"""
 
     # Relationships
-    teams: Optional[List[TeamNested]] = Field(None, title="Teams")
-    matches: Optional[List[MatchNested]] = Field(None, title="Matches")
+    teams: Optional[List["TeamNested"]] = Field(None, title="Teams")
+    matches: Optional[List["MatchNested"]] = Field(None, title="Matches")
 
     @property
     def team_count(self) -> int:

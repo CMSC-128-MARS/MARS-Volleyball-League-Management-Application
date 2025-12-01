@@ -24,3 +24,4 @@ class Team(Base):
         "Match", foreign_keys="Match.team2_id", back_populates="team2"
     )
     team_players = relationship("TeamPlayer", back_populates="team")
+    match_stats = relationship("MatchTeamStats", back_populates="team")

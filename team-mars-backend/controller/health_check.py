@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-from repository.db import get_db
+from utils.db import get_db
 from constants.settings import get_settings
 
 router = APIRouter(prefix="/health", tags=["Health"])

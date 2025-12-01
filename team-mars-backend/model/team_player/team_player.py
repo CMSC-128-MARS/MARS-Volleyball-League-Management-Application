@@ -1,8 +1,11 @@
 from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from uuid import UUID
-from model.player.player import PlayerSimple
+
+if TYPE_CHECKING:
+    from model.player.player import PlayerSimple
+    from model.team.team import TeamSimple
 
 
 class TeamPlayerNested(BaseModel):
@@ -12,7 +15,8 @@ class TeamPlayerNested(BaseModel):
     join_date: datetime = Field(..., title="Join Date")
     leave_date: Optional[datetime] = Field(None, title="Leave Date")
     position: Optional[str] = Field(None, title="Position")
-    player: Optional[PlayerSimple] = Field(None, title="Player")
+    player: Optional["PlayerSimple"] = Field(None, title="Player")
+    team: Optional["TeamSimple"] = Field(None, title="Team")
 
     @property
     def is_active(self) -> bool:

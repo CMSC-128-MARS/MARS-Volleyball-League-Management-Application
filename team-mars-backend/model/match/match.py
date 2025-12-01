@@ -1,10 +1,15 @@
+from __future__ import annotations
 from pydantic import BaseModel, Field, ConfigDict, field_validator
 from datetime import datetime
 from typing import Optional, List
 from uuid import UUID
-from model.league.league import LeagueSimple
-from model.team.team import TeamSimple
-from model.match_team_stats.match_team_stats import MatchTeamStatsNested
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from model.team.team import TeamSimple
+    from model.match_team_stats.match_team_stats import MatchTeamStatsNested
+    from model.league.league import LeagueSimple
+
 
 # Full schema - with all relationships (for detailed responses)
 
@@ -21,10 +26,10 @@ class MatchFull(BaseModel):
     created_at: datetime = Field(..., title="Created At")
 
     # Relationships
-    league: Optional[LeagueSimple] = Field(None, title="League")
-    team1: Optional[TeamSimple] = Field(None, title="Team 1")
-    team2: Optional[TeamSimple] = Field(None, title="Team 2")
-    team_stats: Optional[List[MatchTeamStatsNested]] = Field(
+    league: Optional["LeagueSimple"] = Field(None, title="League")
+    team1: Optional["TeamSimple"] = Field(None, title="Team 1")
+    team2: Optional["TeamSimple"] = Field(None, title="Team 2")
+    team_stats: Optional[List["MatchTeamStatsNested"]] = Field(
         None, title="Team Statistics"
     )
 

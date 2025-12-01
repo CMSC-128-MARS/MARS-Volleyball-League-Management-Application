@@ -27,4 +27,3 @@ class Match(Base):
         "Team", foreign_keys=[team2_id], back_populates="matches_as_team2"
     )
     team_stats = relationship("MatchTeamStats", back_populates="match")
-    match_stats = relationship("MatchTeamStats", back_populates="team")
