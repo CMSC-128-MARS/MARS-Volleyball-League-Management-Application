@@ -60,11 +60,6 @@
   --paragraph-xs-medium-weight: 500;
   --paragraph-xs-medium-leading: 150%;
   --paragraph-xs-medium-tracking: 0.2px;
-  /* border radius */
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
   /* colors */
   --white: var(--white);
   --gray: var(--gray);
@@ -118,7 +113,9 @@
 }
 
 :root {
-  --white: oklch(0.9851 0 0) --gray: oklch(0.7155 0 0) --black: oklch(0.1448 0 0) --radius: 0.625rem;
+  --white: oklch(0.9851 0 0);
+  --gray: oklch(0.7155 0 0);
+  --black: oklch(0.1448 0 0);
   --background: oklch(1 0 0);
   --background-alt: oklch(0.3566 0.0454 257.42);
   --background-alt-2: oklch(0.5223 0.0703 256.77);
