@@ -2,6 +2,7 @@ import { StatsCard } from "@/components/common/stats-card"
 import { User2, Users2, Calendar, Trophy} from "lucide-react"
 import { useDashboardStats } from "@/hooks/use-dashboardStats"
 import { RecentMatchesCard } from "@/components/common/recent-matches-card"
+import { TeamsOverviewCard } from "@/components/common/teams-overview-card"
 
 const Dashboard = () => {
     const { stats, isLoading, error } = useDashboardStats()
@@ -51,12 +52,13 @@ const Dashboard = () => {
                 {/* Main Content Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-[16px]">
                     {/* Recent Matches */}
-                    <section>
+                    <section className="h-[500px]">
                         <RecentMatchesCard />
                     </section>
                     
                     {/* Teams Overview */}
-                    <section>
+                    <section className="h-[500px]">
+                        <TeamsOverviewCard />
                     </section>
                 </div>
             </main>
