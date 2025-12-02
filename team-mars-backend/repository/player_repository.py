@@ -10,25 +10,43 @@ from uuid import UUID, uuid4
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import SQLAlchemyError
 from repository.models.player import Player
+from model.player.player import PlayerCreate, PlayerUpdate
+
 
 class PlayerRepository:
+    """
+    Repository for Player database operations.
+
+    Handles all CRUD operations for Player entities following
+    clean architecture principles.
+    """
+
     def __init__(self, db: Session):
+        """
+        Initialize the Player repository.
+
+        :param db: SQLAlchemy database session
+        :type db: Session
+        """
         self.db = db
 
-    def create_player(
-        self,
-        first_name: str,
-        last_name: Optional[str] = None,
-        jersey_number: Optional[int] = None,
-        default_position: Optional[str] = None,
-    ) -> Player:
+    def create_player(self, data: PlayerCreate) -> Player:
+        """
+        Create a new player in the database.
+
+        :param data: Player creation data
+        :type data: PlayerCreate
+        :return: Created player instance
+        :rtype: Player
+        :raises SQLAlchemyError: If database operation fails
+        """
         try:
             player = Player(
                 player_id=uuid4(),
-                first_name=first_name,
-                last_name=last_name,
-                jersey_number=jersey_number,
-                default_position=default_position,
+                first_name=data.first_name,
+                last_name=data.last_name,
+                jersey_number=data.jersey_number,
+                default_position=data.default_position,
             )
             self.db.add(player)
             self.db.commit()
@@ -38,19 +56,41 @@ class PlayerRepository:
             self.db.rollback()
             raise e
 
-    def get_player_by_id(
-        self, player_id: UUID, load_relationships: bool = False
-    ) -> Optional[Player]:
-        try:
-            query = self.db.query(Player)
+    def get_player(self, player_id: UUID) -> Optional[Player]:
+        """
+        Retrieve a player by their ID without relationships.
 
-            if load_relationships:
-                query = query.options(
+        :param player_id: Unique identifier of the player
+        :type player_id: UUID
+        :return: Player instance if found, None otherwise
+        :rtype: Optional[Player]
+        :raises SQLAlchemyError: If database operation fails
+        """
+        try:
+            return self.db.query(Player).filter(Player.player_id == player_id).first()
+        except SQLAlchemyError as e:
+            raise e
+
+    def get_player_with_relationships(self, player_id: UUID) -> Optional[Player]:
+        """
+        Retrieve a player by their ID with relationships eagerly loaded.
+
+        :param player_id: Unique identifier of the player
+        :type player_id: UUID
+        :return: Player instance with relationships if found, None otherwise
+        :rtype: Optional[Player]
+        :raises SQLAlchemyError: If database operation fails
+        """
+        try:
+            return (
+                self.db.query(Player)
+                .options(
                     joinedload(Player.skills),
                     joinedload(Player.team_memberships),
                 )
-
-            return query.filter(Player.player_id == player_id).first()
+                .filter(Player.player_id == player_id)
+                .first()
+            )
         except SQLAlchemyError as e:
             raise e
 
@@ -58,44 +98,45 @@ class PlayerRepository:
         self,
         skip: int = 0,
         limit: int = 100,
-        load_relationships: bool = False,
     ) -> List[Player]:
+        """
+        Retrieve a list of players with pagination.
+
+        :param skip: Number of records to skip (offset)
+        :type skip: int
+        :param limit: Maximum number of records to return
+        :type limit: int
+        :return: List of player instances
+        :rtype: List[Player]
+        :raises SQLAlchemyError: If database operation fails
+        """
         try:
-            query = self.db.query(Player)
-
-            if load_relationships:
-                query = query.options(
-                    joinedload(Player.skills),
-                    joinedload(Player.team_memberships),
-                )
-
-            return query.offset(skip).limit(limit).all()
+            return self.db.query(Player).offset(skip).limit(limit).all()
         except SQLAlchemyError as e:
             raise e
 
-    def update_player(
-        self,
-        player_id: UUID,
-        first_name: Optional[str] = None,
-        last_name: Optional[str] = None,
-        jersey_number: Optional[int] = None,
-        default_position: Optional[str] = None,
-    ) -> Optional[Player]:
+    def update_player(self, player_id: UUID, data: PlayerUpdate) -> Optional[Player]:
+        """
+        Update an existing player's information.
+
+        :param player_id: Unique identifier of the player
+        :type player_id: UUID
+        :param data: Player update data
+        :type data: PlayerUpdate
+        :return: Updated player instance if found, None otherwise
+        :rtype: Optional[Player]
+        :raises SQLAlchemyError: If database operation fails
+        """
         try:
-            player = self.get_player_by_id(player_id)
+            player = self.get_player(player_id)
 
             if not player:
                 return None
 
             # Update only provided fields
-            if first_name is not None:
-                player.first_name = first_name
-            if last_name is not None:
-                player.last_name = last_name
-            if jersey_number is not None:
-                player.jersey_number = jersey_number
-            if default_position is not None:
-                player.default_position = default_position
+            update_data = data.model_dump(exclude_unset=True)
+            for field, value in update_data.items():
+                setattr(player, field, value)
 
             self.db.commit()
             self.db.refresh(player)
@@ -105,8 +146,17 @@ class PlayerRepository:
             raise e
 
     def delete_player(self, player_id: UUID) -> bool:
+        """
+        Delete a player from the database.
+
+        :param player_id: Unique identifier of the player
+        :type player_id: UUID
+        :return: True if player was deleted, False if not found
+        :rtype: bool
+        :raises SQLAlchemyError: If database operation fails
+        """
         try:
-            player = self.get_player_by_id(player_id)
+            player = self.get_player(player_id)
 
             if not player:
                 return False
