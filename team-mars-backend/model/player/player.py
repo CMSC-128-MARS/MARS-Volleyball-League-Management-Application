@@ -1,12 +1,8 @@
 from __future__ import annotations
 from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
-from typing import Optional, List, TYPE_CHECKING
+from typing import Optional, List, Any
 from uuid import UUID
-
-if TYPE_CHECKING:
-    from model.team_player.team_player import TeamPlayerNested
-    from model.player_skill.player_skill import PlayerSkillNested
 
 # Full schema - with relationships (for detailed responses)
 
@@ -22,11 +18,9 @@ class PlayerFull(BaseModel):
     default_position: Optional[str] = Field(None, title="Default Position")
     created_at: datetime = Field(..., title="Date Created")
 
-    # Relationships
-    skills: Optional[List["PlayerSkillNested"]] = Field(None, title="Player Skills")
-    team_memberships: Optional[List["TeamPlayerNested"]] = Field(
-        None, title="Team Memberships"
-    )
+    # Relationships - using Any to avoid circular imports, will be resolved at runtime
+    skills: Optional[List[Any]] = Field(None, title="Player Skills")
+    team_memberships: Optional[List[Any]] = Field(None, title="Team Memberships")
 
 
 # Base Schema - for basic responses

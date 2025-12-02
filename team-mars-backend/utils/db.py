@@ -7,3 +7,26 @@ def get_session():
         yield db
     finally:
         db.close()
+
+
+# Alias for backward compatibility
+get_db = get_session
+
+
+def get_player_use_case(db=None):
+    """
+    Dependency provider for PlayerUseCase.
+
+    :param db: Database session (optional, for testing)
+    :type db: Session
+    :return: PlayerUseCase instance
+    :rtype: PlayerUseCase
+    """
+    # Import here to avoid circular dependency
+    from repository.player_repository import PlayerRepository
+    from usecase.player_use_case import PlayerUseCase
+
+    if db is None:
+        db = next(get_session())
+    player_repo = PlayerRepository(db)
+    return PlayerUseCase(player_repo)
