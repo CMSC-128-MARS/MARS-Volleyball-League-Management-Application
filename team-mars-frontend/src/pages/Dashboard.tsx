@@ -52,12 +52,12 @@ const Dashboard = () => {
                 {/* Main Content Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-[16px]">
                     {/* Recent Matches */}
-                    <section className="h-[500px]">
+                    <section>
                         <RecentMatchesCard />
                     </section>
                     
                     {/* Teams Overview */}
-                    <section className="h-[500px]">
+                    <section>
                         <TeamsOverviewCard />
                     </section>
                 </div>
