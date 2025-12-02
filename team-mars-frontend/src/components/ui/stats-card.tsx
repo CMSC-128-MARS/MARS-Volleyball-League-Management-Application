@@ -19,12 +19,12 @@ export const StatsCard = ({
   isLoading = false  // Loading state
 }: StatsCardProps) => {
   return (
-    <Card className="w-full border border-border shadow-md rounded-[2px]">
+    <Card className="w-full border border-border shadow-md">
       <CardContent>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
           {/* Icon Container */}
           <div className="w-[40px] h-[40px] bg-primary rounded-[2px] flex items-center justify-center">
-            <Icon className="w-[20px] h-[20px] text-primary-foreground" />
+            <Icon className="w-[20px] h-[20px] text-secondary" />
           </div>
           {/* Stats Text */}
           <div className="flex items-center text-left gap-[12px]">
