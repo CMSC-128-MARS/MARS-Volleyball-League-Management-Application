@@ -13,12 +13,14 @@ export const RecentMatchesCard = () => {
 
     if (isLoading) {
         return (
-            <Card className="w-full border border-border shadow-md">
-                <CardContent className="p-6">
+            <Card className="w-full h-[500px] border border-border shadow-md">
+                <CardContent className="space-y-[24px] h-full flex flex-col">
                     <div className="space-y-4">
                         <Skeleton className="h-6 w-1/3" />
                         <Skeleton className="h-4 w-1/4" />
-                        <Skeleton className="h-32 w-full" />
+                    </div>
+                    <div className="flex-1">
+                        <Skeleton className="h-full w-full" />
                     </div>
                 </CardContent>
             </Card>
@@ -27,8 +29,8 @@ export const RecentMatchesCard = () => {
 
     if (!currentMatch) {
         return (
-            <Card className="w-full border border-border shadow-md">
-                <CardContent className="p-6 text-center">
+            <Card className="w-full h-[500px] border border-border shadow-md">
+                <CardContent className="h-full flex items-center justify-center">
                     <p className="paragraph-n-regular text-gray-600">No recent matches available</p>
                 </CardContent>
             </Card>
