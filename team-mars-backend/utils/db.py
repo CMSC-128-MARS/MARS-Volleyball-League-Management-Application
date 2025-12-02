@@ -9,6 +9,10 @@ def get_session():
         db.close()
 
 
+# Alias for backward compatibility
+get_db = get_session
+
+
 def get_player_use_case(db=None):
     """
     Dependency provider for PlayerUseCase.
@@ -23,6 +27,6 @@ def get_player_use_case(db=None):
     from usecase.player_use_case import PlayerUseCase
 
     if db is None:
-        db = next(get_db())
+        db = next(get_session())
     player_repo = PlayerRepository(db)
     return PlayerUseCase(player_repo)

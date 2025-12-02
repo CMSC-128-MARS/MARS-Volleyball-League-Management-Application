@@ -4,10 +4,6 @@ from datetime import datetime
 from typing import Optional, List, Any
 from uuid import UUID
 
-if TYPE_CHECKING:
-    from model.team_player.team_player import TeamPlayerNested
-    from model.player_skill.player_skill import PlayerSkillNested
-
 # Full schema - with relationships (for detailed responses)
 
 
