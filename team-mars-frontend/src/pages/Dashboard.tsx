@@ -11,7 +11,7 @@ const Dashboard = () => {
     }
 
     return (
-        <div className="bg-background text-primary-foreground relative overflow-hidden h-full"
+        <div className="bg-background text-primary-foreground relative overflow-auto h-full"
         style={{
           backgroundImage: `url('/assets/Grunge.png')`,
           backgroundSize: 'auto',

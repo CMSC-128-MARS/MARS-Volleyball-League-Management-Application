@@ -137,30 +137,33 @@ export const RecentMatchesCard = () => {
                         variant="nav-primary" 
                         disabled={activeTab === "1"}
                         onClick={() => setActiveTab((parseInt(activeTab) - 1).toString())}
-                        className={activeTab === "1" ? "opacity-50 cursor-not-allowed" : ""}
+                        className={`w-[100px] ${activeTab === "1" ? "opacity-50 cursor-not-allowed" : ""}`}
+                        size="sm"
                     >
                         <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1" />
-                        <span className="paragraph-s-regular">Previous</span>
+                        <span className="pg2-bold">Previous</span>
                     </Button>
                     
                     <Button 
                         variant="default" 
                         className="flex-1 mx-4 cursor-pointer"
+                        size="sm"
                         onClick={() => {
                             // Reminder: Replace with actual navigation logic
                             alert(`Navigate to match details for Match ${activeTab}`)
                         }}
                     >
-                        <span className="paragraph-s-medium">View Details</span>
+                        <span className="pg2-bold">View Details</span>
                     </Button>
                     
                     <Button 
                         variant="nav-primary"
                         disabled={activeTab === "5"}
                         onClick={() => setActiveTab((parseInt(activeTab) + 1).toString())}
-                        className={activeTab === "5" ? "opacity-50 cursor-not-allowed" : ""}
+                        className={`w-[100px] ${activeTab === "5" ? "opacity-50 cursor-not-allowed" : ""}`}
+                        size="sm"
                     >
-                        <span className="paragraph-s-regular">Next</span>
+                        <span className="pg2-bold">Next</span>
                         <ChevronRight className="w-4 h-4 group-hover:translate-x-1" />
                     </Button>
                 </div>
