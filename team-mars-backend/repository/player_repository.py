@@ -12,6 +12,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from repository.models.player import Player
 from model.player.player import PlayerCreate, PlayerUpdate
 
+
 class PlayerRepository:
     def __init__(self, db: Session):
         self.db = db
