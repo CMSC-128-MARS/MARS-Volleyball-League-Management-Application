@@ -1,7 +1,7 @@
-import { StatsCard } from "@/components/ui/stats-card"
+import { StatsCard } from "@/components/common/stats-card"
 import { User2, Users2, Calendar, Trophy} from "lucide-react"
 import { useDashboardStats } from "@/hooks/use-dashboardStats"
-import { RecentMatchesCard } from "@/components/ui/recent-matches-card"
+import { RecentMatchesCard } from "@/components/common/recent-matches-card"
 
 const Dashboard = () => {
     const { stats, isLoading, error } = useDashboardStats()
