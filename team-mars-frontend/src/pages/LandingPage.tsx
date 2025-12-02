@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/Buttons';
+import { Button } from '@/components/ui/button';
 import { Users2 } from 'lucide-react';
 import { Volleyball } from 'lucide-react';
 import { Trophy } from 'lucide-react';
@@ -48,7 +48,7 @@ const LandingPage = () => {
             <Button
               variant="secondary"
               size="lg"
-              className="text-primary uppercase "
+              className="text-primary uppercase"
               onClick={() => navigate('/login')}
             >
               Sign In
