@@ -100,8 +100,9 @@ export const useRecentMatches = () => {
                     }
                 ]
 
-                // Simulate API delay
-                await new Promise(resolve => setTimeout(resolve, 1000))
+                // Simulate API delay (configurable via REACT_APP_API_DELAY_MS, defaults to 400ms)
+                const apiDelay = Number(process.env.REACT_APP_API_DELAY_MS) || 400
+                await new Promise(resolve => setTimeout(resolve, apiDelay))
                 
                 setMatches(mockMatches)
                 
