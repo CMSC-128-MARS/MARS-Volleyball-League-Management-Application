@@ -1,6 +1,7 @@
 import { StatsCard } from "@/components/ui/stats-card"
 import { User2, Users2, Calendar, Trophy} from "lucide-react"
 import { useDashboardStats } from "@/hooks/use-dashboardStats"
+import { RecentMatchesCard } from "@/components/ui/recent-matches-card"
 
 const Dashboard = () => {
     const { stats, isLoading, error } = useDashboardStats()
@@ -11,13 +12,13 @@ const Dashboard = () => {
     }
 
     return (
-        <div className="bg-background text-primary-foreground relative overflow-hidden min-h-screen"
+        <div className="bg-background text-primary-foreground relative overflow-hidden h-full"
         style={{
           backgroundImage: `url('/assets/Grunge.png')`,
           backgroundSize: 'auto',
           backgroundRepeat: 'repeat',
         }}>
-            <main className="px-0 md:px-[40px] xl:px-[80px] py-[32px] bg-transparent">
+            <main className="px-0 md:px-[40px] xl:px-[80px] py-[32px] bg-transparent space-y-[24px]">
                 {/* Stats Cards Section */}
                 <section>
                     <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-[12px] md:gap-[16px]">
@@ -49,12 +50,14 @@ const Dashboard = () => {
                 </section>
 
                 {/* Main Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <section className="space-y-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-[16px]">
+                    {/* Recent Matches */}
+                    <section>
+                        <RecentMatchesCard />
                     </section>
                     
                     {/* Teams Overview */}
-                    <section className="space-y-4">
+                    <section>
                     </section>
                 </div>
             </main>
