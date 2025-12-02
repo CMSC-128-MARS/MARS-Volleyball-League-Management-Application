@@ -8,8 +8,8 @@ import { useState } from "react"
 
 export const RecentMatchesCard = () => {
     const { matches, isLoading, error } = useRecentMatches()
-    const currentMatch = matches[0]
     const [activeTab, setActiveTab] = useState("1")
+    const currentMatch = matches[parseInt(activeTab, 10) - 1]
 
     if (isLoading) {
         return (
