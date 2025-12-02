@@ -36,13 +36,13 @@ export const RecentMatchesCard = () => {
     }
 
     return (
-        <Card className="w-full border border-border shadow-md">
-            <CardContent className="space-y-[24px]">
+        <Card className="w-full h-full border border-border shadow-md">
+            <CardContent className="space-y-[24px] h-full flex flex-col">
                 {/* Header */}
                 <div className="flex justify-between items-end">
                     <div>
                         <h4 className="text-foreground">Recent Matches</h4>
-                        <p className="paragraph-s-regular text-muted-foreground">
+                        <p className="pg2 text-muted-foreground">
                             {currentMatch.formattedDate} | {currentMatch.time}
                         </p>
                     </div>
@@ -58,7 +58,7 @@ export const RecentMatchesCard = () => {
                 </div>
 
                 {/* Match Details */}
-                <div className="bg-gray-100 rounded-[2px] p-[24px] border border-border shadow-sm space-y-[32px]">
+                <div className="bg-gray-100 rounded-[2px] p-[24px] border border-border shadow-sm space-y-[32px] flex-1 flex flex-col justify-center">
                     <div className="text-center">
                         <p className="paragraph-n-medium text-foreground">{currentMatch.league}</p>
                         <p className="paragraph-s-regular text-gray-600">{currentMatch.status}</p>

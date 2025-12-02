@@ -22,7 +22,7 @@ interface Match {
         team1Score: number
         team2Score: number
     }>
-    status: 'Final' | 'Live' | 'Upcoming'
+    status: 'Final' 
 }
 
 export const useRecentMatches = () => {
@@ -37,21 +37,64 @@ export const useRecentMatches = () => {
                 const mockMatches = [
                     {
                         id: 1,
-                        date: "2025-11-01T21:00:00Z",
-                        time: "21:00",
-                        league: "XYZ League",
+                        date: "2025-12-01T19:00:00Z",
+                        time: "19:00",
+                        league: "Premier League",
                         team1: {
-                            name: "Team 1 Full Name",
-                            score: 2
+                            name: "Thunder Bolts",
+                            score: 3
                         },
                         team2: {
-                            name: "Team 2 Full Name", 
+                            name: "Fire Dragons", 
                             score: 1
                         },
                         sets: [
+                            { team1Score: 25, team2Score: 22 },
+                            { team1Score: 23, team2Score: 25 },
+                            { team1Score: 25, team2Score: 18 },
+                            { team1Score: 25, team2Score: 20 },
+                        ],
+                        status: 'Final' as const
+                    },
+                    {
+                        id: 2,
+                        date: "2025-11-30T20:30:00Z",
+                        time: "20:30",
+                        league: "Championship League",
+                        team1: {
+                            name: "Golden Hawks",
+                            score: 2
+                        },
+                        team2: {
+                            name: "Storm Riders", 
+                            score: 3
+                        },
+                        sets: [
                             { team1Score: 25, team2Score: 23 },
-                            { team1Score: 8, team2Score: 25 },
+                            { team1Score: 22, team2Score: 25 },
                             { team1Score: 25, team2Score: 19 },
+                            { team1Score: 18, team2Score: 25 },
+                            { team1Score: 13, team2Score: 15 },
+                        ],
+                        status: 'Final' as const
+                    },
+                    {
+                        id: 3,
+                        date: "2025-11-29T18:00:00Z",
+                        time: "18:00",
+                        league: "Premier League",
+                        team1: {
+                            name: "Ice Eagles",
+                            score: 3
+                        },
+                        team2: {
+                            name: "Jaepril's Warriors", 
+                            score: 0
+                        },
+                        sets: [
+                            { team1Score: 25, team2Score: 16 },
+                            { team1Score: 25, team2Score: 20 },
+                            { team1Score: 25, team2Score: 18 },
                         ],
                         status: 'Final' as const
                     }
@@ -78,20 +121,21 @@ export const useRecentMatches = () => {
         fetchMatches()
     }, [])
 
-    // Format date to MM-DD-YYYY
-    const formatMatchDate = (dateString: string) => {
+    // Format date to readable format
+    const formatDate = (dateString: string) => {
         const date = new Date(dateString)
-        const month = String(date.getMonth() + 1).padStart(2, '0')
-        const day = String(date.getDate()).padStart(2, '0')
-        const year = date.getFullYear()
-        return `${month}-${day}-${year}`
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        })
     }
 
     // Format matches for display
     const formattedMatches = matches.map(match => ({
         ...match,
-        formattedDate: formatMatchDate(match.date),
-        displayText: `${formatMatchDate(match.date)} | ${match.time}`
+        formattedDate: formatDate(match.date),
+        displayText: `${formatDate(match.date)} | ${match.time}`
     }))
 
     return { matches: formattedMatches, isLoading, error }
