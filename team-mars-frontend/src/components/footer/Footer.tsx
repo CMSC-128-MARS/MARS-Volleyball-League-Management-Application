@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/Buttons';
+import { Button } from '@/components/ui/button';
 import { Headset } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -25,8 +25,8 @@ const Footer = () => {
               </Link>
             </div>
             <div className="footer-contact-responsive">
-              <Button variant="outline" size="sm" className="color-white">
-                <Headset className="w-[16px] h-[16px]" />
+              <Button variant="icon-slate" size="xs" className="color-white cursor-pointer">
+                <Headset className="w-[16px] h-[16px]"/>
               </Button>
               <p className="pg3">© 2025 MARS Volleyball League Management.</p>
             </div>

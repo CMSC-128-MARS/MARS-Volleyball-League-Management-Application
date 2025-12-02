@@ -6,7 +6,6 @@ import { RecentMatchesCard } from "@/components/ui/recent-matches-card"
 const Dashboard = () => {
     const { stats, isLoading, error } = useDashboardStats()
 
-    // Handle error state
     if (error) {
         console.error('Dashboard error:', error)
     }
