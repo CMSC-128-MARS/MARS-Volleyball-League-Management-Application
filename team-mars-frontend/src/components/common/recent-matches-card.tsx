@@ -111,9 +111,7 @@ export const RecentMatchesCard = () => {
                                     <span className={
                                         set.team1Score > set.team2Score 
                                             ? "text-secondary-alt font-medium" 
-                                            : set.team1Score === set.team2Score 
-                                                ? "text-secondary-alt font-medium" 
-                                                : ""
+                                            : ""
                                     }>
                                         {set.team1Score}
                                     </span>
@@ -121,9 +119,7 @@ export const RecentMatchesCard = () => {
                                     <span className={
                                         set.team2Score > set.team1Score 
                                             ? "text-secondary-alt font-medium" 
-                                            : set.team1Score === set.team2Score 
-                                                ? "text-secondary-alt font-medium" 
-                                                : ""
+                                            : ""
                                     }>
                                         {set.team2Score}
                                     </span>
