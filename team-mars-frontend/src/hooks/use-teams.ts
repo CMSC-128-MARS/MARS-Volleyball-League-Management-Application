@@ -25,7 +25,8 @@ export const useTeams = () => {
                 ]
                 
                 // Simulate API delay
-                await new Promise(resolve => setTimeout(resolve, 1000))
+                const mockApiDelay = Number(import.meta.env.VITE_MOCK_API_DELAY_MS) || 400
+                await new Promise(resolve => setTimeout(resolve, mockApiDelay))
                 
                 // Sort by most recent (created_at) and limit to 6 teams
                 const sortedTeams = mockTeams
