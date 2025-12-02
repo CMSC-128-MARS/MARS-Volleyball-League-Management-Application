@@ -15,6 +15,7 @@ from model.player.player import (
     PlayerFull,
 )
 
+
 class PlayerUseCase:
     def __init__(self, player_repo: PlayerRepository):
         self.player_repo = player_repo
