@@ -11,7 +11,7 @@ export default function Team() {
         backgroundRepeat: 'repeat',
       }}
     >
-      <div className="w-full max-w-4xl mx-auto px-4 md:px-8">
+      <div className="w-full max-w-4xl xl:max-w-5xl mx-auto px-4 md:px-8">
         <Tabs defaultValue="view" className="w-full">
           <div className="justify-center items-center pt-8 px-8 pb-4 flex flex-col gap-5">
             <p className="font-heading font-semibold text-2xl text-center ">TEAM MANAGEMENT</p>
@@ -42,12 +42,14 @@ export default function Team() {
       <div className="w-full px-4 md:px-10 my-4">
         <hr className="border-t border-[#A3A3A3]" />
       </div>
-      <div className="w-full max-w-6xl mx-auto px-6 md:px-12 lg:px-16">
+      <div className="w-full mx-auto px-6 md:px-12 lg:px-16 lg:max-w-6xl xl:max-w-7xl 2xl:max-w-400">
         <Tabs defaultValue="view" className="w-full">
           <TabsContent
             value="view"
-            className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  gap-4 xl:gap-8"
           >
+            <TeamManagementCard />
+            <TeamManagementCard />
             <TeamManagementCard />
             <TeamManagementCard />
             <TeamManagementCard />
