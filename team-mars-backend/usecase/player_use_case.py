@@ -8,7 +8,7 @@ from uuid import UUID
 from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
 from repository.player_repository import PlayerRepository
-from core.exceptions import NotFoundException, ConflictException
+from core.exceptions import NotFoundException
 from model.player.player import (
     PlayerCreate,
     PlayerUpdate,

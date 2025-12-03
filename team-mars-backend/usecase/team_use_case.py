@@ -1,5 +1,5 @@
 from uuid import UUID
-from typing import List, Optional
+from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from repository.team_repository import TeamRepository
 from core.exceptions import NotFoundException, ConflictException
@@ -33,8 +33,6 @@ class TeamUseCase:
     # READ - GET ALL TEAMS
     async def list_teams(self, session: AsyncSession) -> TeamNested:
         teams = await self.repo.get_teams(session)
-        if not teams:
-            raise NotFoundException("Team not found.")
         return [TeamNested.model_validate(team) for team in teams]
 
     # GET TEAM BY ID
