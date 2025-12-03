@@ -13,8 +13,8 @@ export default function TeamManagementCard() {
   return (
     <div>
       <Dialog>
-        <DialogTrigger className="w-full max-w-sm rounded-xs border border-border bg-white shadow-lg">
-          <Card>
+        <DialogTrigger className="block w-full h-full rounded-xs border border-border bg-white shadow-lg">
+          <Card className="h-full">
             <CardContent className="flex flex-row p-0">
               <div className="flex justify-center items-center bg-primary w-1/4 p-4 border-r-2 border-secondary">
                 <Volleyball className="text-secondary h-10 w-10" strokeWidth={1} />
