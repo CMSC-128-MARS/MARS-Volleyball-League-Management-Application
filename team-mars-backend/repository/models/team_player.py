@@ -2,11 +2,12 @@ from sqlalchemy import Column, String, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from repository.database import Base
+import uuid
 
 
 class TeamPlayer(Base):
     __tablename__ = "team_player"
-    team_player_id = Column(UUID(as_uuid=True), primary_key=True)
+    team_player_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     join_date = Column(DateTime(timezone=True), server_default=func.now())
     leave_date = Column(
         DateTime(timezone=True), server_default=func.now(), nullable=True

@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 # Use TYPE_CHECKING to avoid circular imports
 if TYPE_CHECKING:
     from model.team_player.team_player import TeamPlayerNested
-    from model.league.league import LeagueSimple
+    from model.league.league import LeagueNested
     from model.match.match import MatchSimple
 
 
@@ -24,14 +24,9 @@ class TeamFull(BaseModel):
     created_at: datetime = Field(..., title="Date Created")
 
     # Relationships
-    league: Optional["LeagueSimple"] = Field(None, title="League")
+    league: Optional["LeagueNested"] = Field(None, title="League")
     team_players: Optional[List["TeamPlayerNested"]] = Field(None, title="Team Players")
-    matches_as_team1: Optional[List["MatchSimple"]] = Field(
-        None, title="Matches as Team 1"
-    )
-    matches_as_team2: Optional[List["MatchSimple"]] = Field(
-        None, title="Matches as Team 2"
-    )
+    matches: Optional[List["MatchSimple"]] = Field(None, title="Matches")
 
     @property
     def active_players(self) -> List["TeamPlayerNested"]:
@@ -95,7 +90,6 @@ class TeamNested(BaseModel):
 
     team_id: UUID = Field(..., title="Team ID")
     team_name: str = Field(..., title="Team Name")
-    created_at: datetime = Field(..., title="Date Created")
 
 
 # Schema with stats - for team overview

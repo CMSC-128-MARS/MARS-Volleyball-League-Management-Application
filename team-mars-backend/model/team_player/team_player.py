@@ -5,7 +5,6 @@ from uuid import UUID
 
 if TYPE_CHECKING:
     from model.player.player import PlayerSimple
-    from model.team.team import TeamSimple
 
 
 class TeamPlayerNested(BaseModel):
@@ -16,7 +15,6 @@ class TeamPlayerNested(BaseModel):
     leave_date: Optional[datetime] = Field(None, title="Leave Date")
     position: Optional[str] = Field(None, title="Position")
     player: Optional["PlayerSimple"] = Field(None, title="Player")
-    team: Optional["TeamSimple"] = Field(None, title="Team")
 
     @property
     def is_active(self) -> bool:

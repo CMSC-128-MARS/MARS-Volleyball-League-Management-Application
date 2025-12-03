@@ -14,8 +14,6 @@ from model.player.player import PlayerCreate, PlayerUpdate
 
 
 class PlayerRepository:
-    def __init__(self, db: Session):
-        self.db = db
 
     def create_player(self, data: PlayerCreate) -> Player:
         try:
