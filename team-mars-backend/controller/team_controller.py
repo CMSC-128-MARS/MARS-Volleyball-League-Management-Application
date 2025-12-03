@@ -10,11 +10,11 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from model.team.team import (
-    TeamSimple,
     TeamFull,
     TeamCreate,
     TeamUpdate,
     TeamNested,
+    TeamSimple,
 )
 from usecase.team_use_case import TeamUseCase
 from repository.team_repository import TeamRepository
@@ -39,7 +39,7 @@ CREATE
 
 @router.post(
     "",
-    response_model=TeamFull,
+    response_model=TeamSimple,
     status_code=status.HTTP_201_CREATED,
 )
 async def create_team(
@@ -92,7 +92,7 @@ UPDATE
 
 @router.put(
     "/{team_id}",
-    response_model=TeamFull,
+    response_model=TeamSimple,
     status_code=status.HTTP_200_OK,
 )
 async def update_team(
@@ -118,4 +118,4 @@ async def delete_team(
     session: AsyncSession = Depends(get_async_session),
     use_case: TeamUseCase = Depends(get_team_use_case),
 ):
-    return await use_case.delete_team
+    return await use_case.delete_team(session, team_id)

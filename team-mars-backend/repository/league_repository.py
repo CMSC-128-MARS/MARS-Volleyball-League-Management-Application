@@ -53,7 +53,7 @@ class LeagueRepository:
     async def update_league(
         self, db: AsyncSession, league_id: UUID, data: LeagueUpdate
     ) -> Optional[League]:
-        league = await self.get_by_id(db, league_id)
+        league = await self.get_league_by_id(db, league_id)
         if not league:
             return None
 
@@ -69,7 +69,7 @@ class LeagueRepository:
     # DELETE
     # -------------------------------------------
     async def delete_league(self, db: AsyncSession, league_id: UUID) -> bool:
-        league = await self.get_by_id(db, league_id)
+        league = await self.get_league_by_id(db, league_id)
         if not league:
             return False
 
