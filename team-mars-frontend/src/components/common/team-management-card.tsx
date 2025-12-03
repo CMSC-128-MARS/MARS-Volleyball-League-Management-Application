@@ -11,10 +11,10 @@ import { Volleyball } from 'lucide-react';
 
 export default function TeamManagementCard() {
   return (
-    <div>
+    <div className="w-full h-full">
       <Dialog>
-        <DialogTrigger className="block w-full h-full rounded-xs border border-border bg-white shadow-lg">
-          <Card className="h-full">
+        <DialogTrigger className="block w-full h-full rounded-xs border border-border bg-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:border-neutral-400">
+          <Card className="h-full transition-all duration-200">
             <CardContent className="flex flex-row p-0">
               <div className="flex justify-center items-center bg-primary w-1/4 p-4 border-r-2 border-secondary">
                 <Volleyball className="text-secondary h-10 w-10" strokeWidth={1} />
