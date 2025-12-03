@@ -91,9 +91,9 @@ const Players = () => {
                   </thead>
 
                   <tbody>
-                    {playerList.map((player, index) => (
+                    {playerList.map((player) => (
                       <tr
-                        key={index}
+                        key={player.id}
                         className="border-b border-border/60 paragraph-s-regular text-foreground transition-colors odd: bg-muted/100 even:bg-muted/0 group"
                       >
                         <td className="px-2 py-3 text-center">{player.id}</td>
