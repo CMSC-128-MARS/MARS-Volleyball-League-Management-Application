@@ -2,11 +2,12 @@ from sqlalchemy import Column, String, Integer, DateTime, func
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from repository.database import Base
+import uuid
 
 
 class Player(Base):
     __tablename__ = "player"
-    player_id = Column(UUID(as_uuid=True), primary_key=True)
+    player_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=True)
     jersey_number = Column(Integer, nullable=True)

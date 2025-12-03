@@ -2,11 +2,12 @@ from sqlalchemy import Column, String, DateTime, ForeignKey, func
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from repository.database import Base
+import uuid
 
 
 class PlayerSkill(Base):
     __tablename__ = "player_skill"
-    player_skill_id = Column(UUID(as_uuid=True), primary_key=True)
+    player_skill_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     date_assigned = Column(DateTime(timezone=True), server_default=func.now())
     notes = Column(String, nullable=True)
 

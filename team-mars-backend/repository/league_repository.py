@@ -10,13 +10,10 @@ from sqlalchemy.orm import selectinload
 class LeagueRepository:
     """Async repository layer for League model."""
 
-    def __init__(self):
-        pass  # AsyncSession will always be passed to methods
-
     # -------------------------------------------
     # CREATE
     # -------------------------------------------
-    async def create(self, db: AsyncSession, data: LeagueCreate) -> League:
+    async def create_league(self, db: AsyncSession, data: LeagueCreate) -> League:
         league = League(**data.model_dump())
         db.add(league)
         await db.commit()
@@ -26,21 +23,23 @@ class LeagueRepository:
     # -------------------------------------------
     # GET BY NAME
     # -------------------------------------------
-    async def get_by_name(self, db: AsyncSession, name: str) -> Optional[League]:
+    async def get_league_by_name(self, db: AsyncSession, name: str) -> Optional[League]:
         result = await db.execute(select(League).where(League.league_name == name))
         return result.scalars().first()
 
     # -------------------------------------------
     # LIST
     # -------------------------------------------
-    async def list(self, db: AsyncSession) -> List[League]:
+    async def list_leagues(self, db: AsyncSession) -> List[League]:
         result = await db.execute(select(League))
         return result.scalars().all()
 
     # -------------------------------------------
     # READ BY ID
     # -------------------------------------------
-    async def get_by_id(self, db: AsyncSession, league_id: UUID) -> Optional[League]:
+    async def get_league_by_id(
+        self, db: AsyncSession, league_id: UUID
+    ) -> Optional[League]:
         result = await db.execute(
             select(League)
             .options(selectinload(League.matches), selectinload(League.teams))
@@ -51,7 +50,7 @@ class LeagueRepository:
     # -------------------------------------------
     # UPDATE
     # -------------------------------------------
-    async def update(
+    async def update_league(
         self, db: AsyncSession, league_id: UUID, data: LeagueUpdate
     ) -> Optional[League]:
         league = await self.get_by_id(db, league_id)
@@ -69,7 +68,7 @@ class LeagueRepository:
     # -------------------------------------------
     # DELETE
     # -------------------------------------------
-    async def delete(self, db: AsyncSession, league_id: UUID) -> bool:
+    async def delete_league(self, db: AsyncSession, league_id: UUID) -> bool:
         league = await self.get_by_id(db, league_id)
         if not league:
             return False

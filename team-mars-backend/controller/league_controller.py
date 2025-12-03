@@ -8,9 +8,9 @@ from model.league.league import (
     LeagueCreate,
     LeagueUpdate,
 )
-from usecase.league_usecase import LeagueUseCase
+from usecase.league_use_case import LeagueUseCase
 from repository.league_repository import LeagueRepository
-from utils.db import get_session
+from repository.database import get_async_session
 
 
 router = APIRouter(prefix="/league", tags=["League"])
@@ -33,7 +33,7 @@ def get_league_use_case() -> LeagueUseCase:
 )
 async def create_league(
     payload: LeagueCreate,
-    session: AsyncSession = Depends(get_session),
+    session: AsyncSession = Depends(get_async_session),
     use_case: LeagueUseCase = Depends(get_league_use_case),
 ):
     return await use_case.create_league(session, payload)
@@ -48,7 +48,7 @@ async def create_league(
     status_code=status.HTTP_200_OK,
 )
 async def list_leagues(
-    session: AsyncSession = Depends(get_session),
+    session: AsyncSession = Depends(get_async_session),
     use_case: LeagueUseCase = Depends(get_league_use_case),
 ):
     return await use_case.list_leagues(session)
@@ -64,7 +64,7 @@ async def list_leagues(
 )
 async def get_league(
     league_id: UUID,
-    session: AsyncSession = Depends(get_session),
+    session: AsyncSession = Depends(get_async_session),
     use_case: LeagueUseCase = Depends(get_league_use_case),
 ):
     return await use_case.get_league(session, league_id)
@@ -81,7 +81,7 @@ async def get_league(
 async def update_league(
     league_id: UUID,
     payload: LeagueUpdate,
-    session: AsyncSession = Depends(get_session),
+    session: AsyncSession = Depends(get_async_session),
     use_case: LeagueUseCase = Depends(get_league_use_case),
 ):
     return await use_case.update_league(session, league_id, payload)
@@ -96,7 +96,7 @@ async def update_league(
 )
 async def delete_league(
     league_id: UUID,
-    session: AsyncSession = Depends(get_session),
+    session: AsyncSession = Depends(get_async_session),
     use_case: LeagueUseCase = Depends(get_league_use_case),
 ):
     await use_case.delete_league(session, league_id)
