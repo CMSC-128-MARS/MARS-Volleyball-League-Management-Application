@@ -4,6 +4,7 @@ import LandingPage from '@/pages/LandingPage';
 import Contact from '@/pages/Contact';
 import Login from '@/pages/Login';
 import Dashboard from '@/pages/Dashboard';
+import Players from '@/pages/Players';
 
 export const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ export const router = createBrowserRouter([
       {
         path: 'dashboard',
         element: <Dashboard />,
+      },
+      {
+        path: 'players',
+        element: <Players />,
       },
     ],
   },

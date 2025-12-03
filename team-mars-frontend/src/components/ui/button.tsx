@@ -23,7 +23,8 @@ const buttonVariants = cva(
         'nav-primary':
           'border-2 border-primary text-gray-600 bg-transparent hover:bg-transparent hover:text-foreground shadow-xs group cursor-pointer [&_svg]:transition-transform',
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 cursor-pointer',
-        'icon-slate': 'bg-slate-600 border-2 border-white text-white hover:bg-white hover:text-primary rounded-[2px] shadow-sm',
+        'icon-slate':
+          'bg-slate-600 border-2 border-white text-white hover:bg-white hover:text-primary rounded-[2px] shadow-sm',
         ghost: 'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
         link: 'text-primary underline-offset-4 hover:underline',
       },

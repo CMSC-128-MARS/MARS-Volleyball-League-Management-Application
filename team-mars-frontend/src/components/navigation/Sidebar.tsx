@@ -1,4 +1,5 @@
 import { LayoutDashboard, UsersRound, Volleyball, Trophy, Headset } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 import {
   Sidebar,
@@ -16,27 +17,27 @@ import { useEffect, useRef } from 'react';
 const items = [
   {
     title: 'Dashboard',
-    url: '#',
+    url: 'dashboard',
     icon: LayoutDashboard,
   },
   {
     title: 'Players',
-    url: '#',
+    url: 'players',
     icon: UsersRound,
   },
   {
     title: 'Teams',
-    url: '#',
+    url: 'teams',
     icon: Volleyball,
   },
   {
     title: 'Leagues',
-    url: '#',
+    url: 'leagues',
     icon: Trophy,
   },
   {
     title: 'Contact Support',
-    url: '#',
+    url: 'contact-support',
     icon: Headset,
   },
 ];
@@ -90,10 +91,10 @@ export function AppSidebar() {
                       asChild
                       className="hover:bg-accent rounded-[6px] text-[14px]"
                     >
-                      <a href={item.url}>
+                      <Link to={item.url}>
                         <item.icon />
                         <span>{item.title}</span>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
