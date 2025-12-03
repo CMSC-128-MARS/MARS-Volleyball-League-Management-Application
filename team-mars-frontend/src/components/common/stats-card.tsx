@@ -1,22 +1,19 @@
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card"
-import type { LucideIcon } from "lucide-react"
+import { Card, CardContent } from '@/components/ui/card';
+import type { LucideIcon } from 'lucide-react';
 
 // StatsCard Component Props
 interface StatsCardProps {
-  icon: LucideIcon
-  value?: string | number | null
-  label: string
-  isLoading?: boolean
+  icon: LucideIcon;
+  value?: string | number | null;
+  label: string;
+  isLoading?: boolean;
 }
 
-export const StatsCard = ({ 
-  icon: Icon,        // Display icon
-  value,             // Stat value or default
-  label,             // Stat description
-  isLoading = false  // Loading state
+export const StatsCard = ({
+  icon: Icon, // Display icon
+  value, // Stat value or default
+  label, // Stat description
+  isLoading = false, // Loading state
 }: StatsCardProps) => {
   return (
     <Card className="w-full border border-border shadow-md">
@@ -32,7 +29,7 @@ export const StatsCard = ({
               {isLoading ? (
                 <div className="w-6 h-6 border-2 border-foreground border-t-transparent rounded-full animate-spin"></div>
               ) : (
-                value ?? "-" // Show if value is null/undefined
+                (value ?? '-') // Show if value is null/undefined
               )}
             </span>
             <span className="paragraph-n-regular text-gray-600">{label}</span>
@@ -40,5 +37,5 @@ export const StatsCard = ({
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};

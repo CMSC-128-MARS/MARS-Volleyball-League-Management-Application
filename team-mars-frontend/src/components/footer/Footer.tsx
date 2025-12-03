@@ -26,7 +26,7 @@ const Footer = () => {
             </div>
             <div className="footer-contact-responsive">
               <Button variant="icon-slate" size="xs" className="color-white cursor-pointer">
-                <Headset className="w-[16px] h-[16px]"/>
+                <Headset className="w-[16px] h-[16px]" />
               </Button>
               <p className="pg3">© 2025 MARS Volleyball League Management.</p>
             </div>
