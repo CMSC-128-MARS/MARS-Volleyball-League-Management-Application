@@ -76,7 +76,7 @@ export default function Team() {
           </div>
         </div>
         <div className="w-full px-4 md:px-10 my-4">
-          <hr className="border-t border-[#A3A3A3]" />
+          <hr className="border-t border-[#A3A3A3]" role="separator" aria-label="Section divider" />
         </div>
         <div className="w-full px-6 md:px-12 lg:px-16 xl:px-20">
           <TabsContent
