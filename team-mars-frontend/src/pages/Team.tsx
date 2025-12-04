@@ -1,7 +1,43 @@
+import { useMemo } from 'react';
 import TeamManagementCard from '@/components/common/team-management-card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTeams } from '@/hooks/use-teams';
+import type { ApiTeam } from '@/lib/api';
+
+type TeamSummary = {
+  id: string;
+  name: string;
+  playerCount: number;
+};
+
+const derivePlayerCount = (team: ApiTeam): number => {
+  const candidates = [team.active_player_count, team.total_player_count, team.player_count];
+  for (const candidate of candidates) {
+    if (typeof candidate === 'number' && !Number.isNaN(candidate)) {
+      return candidate;
+    }
+  }
+
+  if (Array.isArray(team.team_players)) {
+    return team.team_players.filter((player) => player?.leave_date == null).length;
+  }
+
+  return 0;
+};
 
 export default function Team() {
+  const { teams, isLoading, error, refetch } = useTeams({ limit: 50 });
+
+  const normalizedTeams = useMemo<TeamSummary[]>(
+    () =>
+      teams.map((team, index) => ({
+        id: team.team_id || `${team.team_name || 'team'}-${index}`,
+        name: team.team_name || 'Unnamed Team',
+        playerCount: derivePlayerCount(team),
+      })),
+    [teams],
+  );
+
   return (
     <div
       className="w-full min-h-screen"
@@ -46,15 +82,74 @@ export default function Team() {
             value="view"
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6"
           >
-            <TeamManagementCard />
-            <TeamManagementCard />
-            <TeamManagementCard />
-            <TeamManagementCard />
-            <TeamManagementCard />
-            <TeamManagementCard />
+            {isLoading && (
+              <p className="col-span-full text-center text-muted-foreground">Loading teams…</p>
+            )}
+
+            {!isLoading && error && (
+              <div className="col-span-full text-center text-red-600">
+                <p>{error}</p>
+                <button type="button" className="mt-2 text-primary underline" onClick={refetch}>
+                  Try again
+                </button>
+              </div>
+            )}
+
+            {!isLoading && !error && normalizedTeams.length === 0 && (
+              <p className="col-span-full text-center text-muted-foreground">No teams found.</p>
+            )}
+
+            {normalizedTeams.map((team) => (
+              <TeamManagementCard key={team.id} name={team.name} playerCount={team.playerCount} />
+            ))}
           </TabsContent>
-          <TabsContent value="add">Add content here.</TabsContent>
-          <TabsContent value="remove">Remove content here.</TabsContent>
+          <TabsContent
+            value="add"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6"
+          >
+            {' '}
+            {isLoading && (
+              <p className="col-span-full text-center text-muted-foreground">Loading teams…</p>
+            )}
+            {!isLoading && error && (
+              <div className="col-span-full text-center text-red-600">
+                <p>{error}</p>
+                <button type="button" className="mt-2 text-primary underline" onClick={refetch}>
+                  Try again
+                </button>
+              </div>
+            )}
+            {!isLoading && !error && normalizedTeams.length === 0 && (
+              <p className="col-span-full text-center text-muted-foreground">No teams found.</p>
+            )}
+            {normalizedTeams.map((team) => (
+              <TeamManagementCard key={team.id} name={team.name} playerCount={team.playerCount} />
+            ))}
+            .
+          </TabsContent>
+          <TabsContent
+            value="remove"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6"
+          >
+            {' '}
+            {isLoading && (
+              <p className="col-span-full text-center text-muted-foreground">Loading teams…</p>
+            )}
+            {!isLoading && error && (
+              <div className="col-span-full text-center text-red-600">
+                <p>{error}</p>
+                <button type="button" className="mt-2 text-primary underline" onClick={refetch}>
+                  Try again
+                </button>
+              </div>
+            )}
+            {!isLoading && !error && normalizedTeams.length === 0 && (
+              <p className="col-span-full text-center text-muted-foreground">No teams found.</p>
+            )}
+            {normalizedTeams.map((team) => (
+              <TeamManagementCard key={team.id} name={team.name} playerCount={team.playerCount} />
+            ))}
+          </TabsContent>
         </div>
       </Tabs>
     </div>

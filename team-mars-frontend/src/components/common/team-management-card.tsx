@@ -9,7 +9,12 @@ import {
 } from '@/components/ui/dialog';
 import { Volleyball } from 'lucide-react';
 
-export default function TeamManagementCard() {
+type TeamManagementCardProps = {
+  name: string;
+  playerCount: number;
+};
+
+export default function TeamManagementCard({ name, playerCount }: TeamManagementCardProps) {
   return (
     <div className="w-full h-full">
       <Dialog>
@@ -20,9 +25,9 @@ export default function TeamManagementCard() {
                 <Volleyball className="text-secondary h-10 w-10" strokeWidth={1} />
               </div>
               <div className="flex flex-col justify-start text-left pl-2 py-4 gap-1">
-                <div className="font-heading font-semibold">Jaepril's Warriors</div>
+                <div className="font-heading font-semibold">{name}</div>
                 <p className="text-xs bg-secondary-alt text-white border rounded-xs px-2 py-1 w-fit">
-                  Players: 6
+                  Players: {playerCount}
                 </p>
               </div>
             </CardContent>
