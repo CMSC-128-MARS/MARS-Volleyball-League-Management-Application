@@ -1,105 +1,73 @@
-import { useState, useEffect } from 'react';
-import type { Team } from '@/types/base_types';
+import { useState, useEffect, useCallback } from 'react';
+import { fetchTeams, type ApiTeam } from '@/lib/api';
+
+type UseTeamsOptions = {
+  limit?: number;
+  leagueId?: string;
+};
 
 /**
- * Fetches teams data from the API
- * @returns {teams, isLoading, error}
+ * Fetches teams data from the backend API.
+ * @returns {teams, isLoading, error, formatDate, refetch}
  */
 
-export const useTeams = () => {
-  const [teams, setTeams] = useState<Team[]>([]);
+export const useTeams = ({ limit = 6, leagueId }: UseTeamsOptions = {}) => {
+  const [teams, setTeams] = useState<ApiTeam[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const loadTeams = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const apiTeams = await fetchTeams({ limit, league_id: leagueId });
+      const getTimestamp = (value?: string) => {
+        if (!value) return 0;
+        const timestamp = Date.parse(value);
+        return Number.isNaN(timestamp) ? 0 : timestamp;
+      };
+
+      const sortedTeams = apiTeams
+        .slice()
+        .sort((a, b) => getTimestamp(b.created_at) - getTimestamp(a.created_at))
+        .slice(0, limit);
+      setTeams(sortedTeams);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      setError(message);
+      console.error('Teams fetch error:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [limit, leagueId]);
+
   useEffect(() => {
-    const fetchTeams = async () => {
-      try {
-        // Mock data for development purposes
-        const mockTeams: Team[] = [
-          {
-            team_id: '123',
-            team_name: "Jaepril's Warriors",
-            created_at: '2025-11-30',
-            league_id: 'xyz-league-1',
-          },
-          {
-            team_id: '123',
-            team_name: 'Thunder Bolts',
-            created_at: '2025-11-29',
-            league_id: 'xyz-league-1',
-          },
-          {
-            team_id: '123',
-            team_name: 'Fire Dragons',
-            created_at: '2025-11-28',
-            league_id: 'xyz-league-2',
-          },
-          {
-            team_id: '123',
-            team_name: 'Ice Eagles',
-            created_at: '2025-11-27',
-            league_id: 'xyz-league-1',
-          },
-          {
-            team_id: '123',
-            team_name: 'Storm Riders',
-            created_at: '2025-11-26',
-            league_id: 'xyz-league-3',
-          },
-          {
-            team_id: '123',
-            team_name: 'Golden Hawks',
-            created_at: '2025-11-25',
-            league_id: 'xyz-league-2',
-          },
-        ];
-
-        // Simulate API delay
-        const mockApiDelay = Number(import.meta.env.VITE_MOCK_API_DELAY_MS) || 400;
-        await new Promise((resolve) => setTimeout(resolve, mockApiDelay));
-
-        // Sort by most recent (created_at) and limit to 6 teams
-        const sortedTeams = mockTeams
-          .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-          .slice(0, 6);
-
-        setTeams(sortedTeams);
-
-        // Uncomment below when your backend is ready:
-        // const response = await fetch('/api/teams')
-        // if (!response.ok) throw new Error('Failed to fetch teams')
-        // const data = await response.json()
-        // const apiTeams = data.teams || []
-        // // Sort by most recent and limit to 6 teams
-        // const sortedApiTeams = apiTeams
-        //     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        //     .slice(0, 6)
-        // setTeams(sortedApiTeams)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
-        console.error('Teams fetch error:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchTeams();
-  }, []);
+    loadTeams();
+  }, [loadTeams]);
 
   // Format date to readable format
-  const formatDate = (dateString: string) => {
+  const formatDate = useCallback((dateString?: string) => {
+    if (!dateString) {
+      return '—';
+    }
+
     const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) {
+      return '—';
+    }
+
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     });
-  };
+  }, []);
 
   return {
     teams,
     isLoading,
     error,
     formatDate,
+    refetch: loadTeams,
   };
 };
