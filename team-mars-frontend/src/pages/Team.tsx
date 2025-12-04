@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import TeamManagementCard from '@/components/common/team-management-card';
-import AddTeamCard from '@/components/common/add-team';
+import AddTeamCard from '@/components/common/add-team-card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTeams } from '@/hooks/use-teams';
 import type { ApiTeam } from '@/lib/api';
