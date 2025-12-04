@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import TeamManagementCard from '@/components/common/team-management-card';
+import AddTeamCard from '@/components/common/add-team';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTeams } from '@/hooks/use-teams';
 import type { ApiTeam } from '@/lib/api';
@@ -108,6 +109,7 @@ export default function Team() {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6"
           >
             {' '}
+            <AddTeamCard />
             {isLoading && (
               <p className="col-span-full text-center text-muted-foreground">Loading teams…</p>
             )}
@@ -147,7 +149,12 @@ export default function Team() {
               <p className="col-span-full text-center text-muted-foreground">No teams found.</p>
             )}
             {normalizedTeams.map((team) => (
-              <TeamManagementCard key={team.id} name={team.name} playerCount={team.playerCount} />
+              <TeamManagementCard
+                key={team.id}
+                name={team.name}
+                playerCount={team.playerCount}
+                showRemoveIcon={true}
+              />
             ))}
           </TabsContent>
         </div>
