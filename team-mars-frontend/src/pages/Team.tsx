@@ -108,7 +108,6 @@ export default function Team() {
             value="add"
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6"
           >
-            {' '}
             <AddTeamCard />
             {isLoading && (
               <p className="col-span-full text-center text-muted-foreground">Loading teams…</p>
