@@ -7,14 +7,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Volleyball } from 'lucide-react';
+import { Trash, Volleyball } from 'lucide-react';
 
 type TeamManagementCardProps = {
   name: string;
   playerCount: number;
+  showRemoveIcon?: boolean;
 };
 
-export default function TeamManagementCard({ name, playerCount }: TeamManagementCardProps) {
+export default function TeamManagementCard({
+  name,
+  playerCount,
+  showRemoveIcon,
+}: TeamManagementCardProps) {
   return (
     <div className="w-full h-full">
       <Dialog>
@@ -24,8 +29,19 @@ export default function TeamManagementCard({ name, playerCount }: TeamManagement
               <div className="flex justify-center items-center bg-primary w-1/4 p-4 border-r-2 border-secondary">
                 <Volleyball className="text-secondary h-10 w-10" strokeWidth={1} />
               </div>
-              <div className="flex flex-col justify-start text-left pl-2 py-4 gap-1">
-                <div className="font-heading font-semibold">{name}</div>
+              <div className="flex flex-col justify-start text-left pl-2 py-4 gap-2 w-3/4">
+                <div className="flex items-start justify-between gap-2">
+                  <p className="font-heading font-semibold leading-tight">{name}</p>
+                  {showRemoveIcon && (
+                    <button
+                      type="button"
+                      aria-label={`Remove ${name}`}
+                      className="text-white hover:text-destructive transition-colors mr-4"
+                    >
+                      <Trash className="w-6 h-6 bg-red-600 p-1 rounded-sm" />
+                    </button>
+                  )}
+                </div>
                 <p className="text-xs bg-secondary-alt text-white border rounded-xs px-2 py-1 w-fit">
                   Players: {playerCount}
                 </p>
