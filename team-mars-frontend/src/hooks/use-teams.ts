@@ -29,8 +29,7 @@ export const useTeams = ({ limit = 6, leagueId }: UseTeamsOptions = {}) => {
 
       const sortedTeams = apiTeams
         .slice()
-        .sort((a, b) => getTimestamp(b.created_at) - getTimestamp(a.created_at))
-        .slice(0, limit);
+        .sort((a, b) => getTimestamp(b.created_at) - getTimestamp(a.created_at));
       setTeams(sortedTeams);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error';
