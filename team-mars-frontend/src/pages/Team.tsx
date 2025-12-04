@@ -51,9 +51,9 @@ export default function Team() {
       <Tabs defaultValue="view" className="w-full">
         <div className="w-full max-w-4xl xl:max-w-5xl mx-auto px-4 md:px-8">
           <div className="justify-center items-center pt-8 px-8 pb-4 flex flex-col gap-5">
-            <h2>Team Management</h2>
+            <h2 className="text-center">Team Management</h2>
 
-            <TabsList>
+            <TabsList className="shadow-md">
               <TabsTrigger
                 value="view"
                 className="data-[state=active]:bg-primary data-[state=active]:text-white"
