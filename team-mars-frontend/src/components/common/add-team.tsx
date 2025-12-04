@@ -49,7 +49,11 @@ export default function AddTeamCard() {
               <div>
                 <p>League Joined</p>
                 <DropdownMenu>
-                  <DropdownMenuTrigger><Button variant="outline" className="w-full">Choose League</Button></DropdownMenuTrigger>
+                  <DropdownMenuTrigger>
+                    <Button variant="outline" className="w-full">
+                      Choose League
+                    </Button>
+                  </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-full">
                     <DropdownMenuItem>Errol League</DropdownMenuItem>
                     <DropdownMenuItem>Chicken League</DropdownMenuItem>
