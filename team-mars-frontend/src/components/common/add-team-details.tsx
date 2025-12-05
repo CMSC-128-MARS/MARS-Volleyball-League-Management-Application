@@ -12,7 +12,19 @@ import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { useLeagues } from '@/hooks/use-leagues';
 
-export default function AddTeamDetails() {
+type AddTeamDetailsProps = {
+  teamName: string;
+  onTeamNameChange: (name: string) => void;
+  leagueId: string;
+  onLeagueChange: (leagueId: string) => void;
+};
+
+export default function AddTeamDetails({
+  teamName,
+  onTeamNameChange,
+  leagueId,
+  onLeagueChange,
+}: AddTeamDetailsProps) {
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const { leagues, isLoading, error } = useLeagues();
 
@@ -31,13 +43,19 @@ export default function AddTeamDetails() {
             <p>
               Team Name <span className="text-secondary-alt">*</span>
             </p>
-            <Input type="text" placeholder="Enter a unique team name" className="rounded-sm" />
+            <Input
+              type="text"
+              placeholder="Enter a unique team name"
+              className="rounded-sm"
+              value={teamName}
+              onChange={(e) => onTeamNameChange(e.target.value)}
+            />
           </div>
           <div>
             <p>
               League Selection <span className="text-secondary-alt">*</span>
             </p>
-            <Select onOpenChange={setIsSelectOpen}>
+            <Select onOpenChange={setIsSelectOpen} value={leagueId} onValueChange={onLeagueChange}>
               <SelectTrigger className="w-full rounded-sm border border-[#E5E5E5] bg-white shadow-[0_1px_2px_0_rgba(0,0,0,0.05)]">
                 <SelectValue placeholder={isLoading ? 'Loading leagues...' : '--'} />
               </SelectTrigger>

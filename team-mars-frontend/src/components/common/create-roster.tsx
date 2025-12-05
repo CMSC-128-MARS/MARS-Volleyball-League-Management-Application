@@ -14,15 +14,20 @@ import { Input } from '@/components/ui/input';
 import { SquarePen, Cog, Search, UserRoundPlus } from 'lucide-react';
 import { useState } from 'react';
 import { usePlayers } from '@/hooks/use-players';
+import type { ApiPlayer } from '@/lib/api';
 
 export default function AddTeamDetails({
   onRosterMethodSelected,
   selectedMethod,
   onMethodChange,
+  onPlayerAdd,
+  selectedPlayerIds = [],
 }: {
   onRosterMethodSelected?: () => void;
   selectedMethod?: 'manual' | 'automatic' | null;
   onMethodChange?: (method: 'manual' | 'automatic' | null) => void;
+  onPlayerAdd?: (player: ApiPlayer) => void;
+  selectedPlayerIds?: string[];
 }) {
   const { players, isLoading, error } = usePlayers();
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
@@ -41,6 +46,14 @@ export default function AddTeamDetails({
   const handlePlayerSelect = (playerId: string) => {
     setSelectedPlayer(playerId);
     setIsDialogOpen(true);
+  };
+
+  const handleAddPlayer = () => {
+    if (currentPlayer) {
+      onPlayerAdd?.(currentPlayer);
+      setIsDialogOpen(false);
+      setSelectedPlayer(null);
+    }
   };
 
   const currentPlayer = players.find((p) => p.player_id === selectedPlayer);
@@ -97,7 +110,11 @@ export default function AddTeamDetails({
                       </div>
                     )}
                     {players.map((player) => (
-                      <SelectItem key={player.player_id} value={player.player_id}>
+                      <SelectItem
+                        key={player.player_id}
+                        value={player.player_id}
+                        disabled={selectedPlayerIds.includes(player.player_id)}
+                      >
                         {player.first_name} {player.last_name || ''}
                         {player.jersey_number ? ` #${player.jersey_number}` : ''}
                       </SelectItem>
@@ -217,7 +234,7 @@ export default function AddTeamDetails({
                   </div>
                   <hr className="w-[calc(100%+3rem)] -ml-6 border-t border-[#A3A3A3] mt-6 flex-shrink-0" />
                   <div className="w-full mt-4 flex-shrink-0">
-                    <Button className="w-full">
+                    <Button className="w-full" onClick={handleAddPlayer}>
                       <UserRoundPlus className="mr-2 h-4 w-4" strokeWidth={2.5} />
                       <p className="font-extralight">Add Player</p>
                     </Button>
