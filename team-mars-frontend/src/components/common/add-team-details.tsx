@@ -10,13 +10,15 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
+import { useLeagues } from '@/hooks/use-leagues';
 
 export default function AddTeamDetails() {
   const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const { leagues, isLoading, error } = useLeagues();
 
   return (
     <div className="w-full h-full shadow-md ">
-      <Card className={`gap-2 transition-all duration-200 ${isSelectOpen ? 'pb-35' : ''}`}>
+      <Card className={`gap-2 transition-all duration-200 ${isSelectOpen ? 'pb-35 lg:pb-0' : ''}`}>
         <CardHeader className="items-center px-6 pt-4">
           <CardTitle className="flex flex-row justify-between items-center w-full">
             <h4>Add Details</h4>
@@ -37,14 +39,24 @@ export default function AddTeamDetails() {
             </p>
             <Select onOpenChange={setIsSelectOpen}>
               <SelectTrigger className="w-full rounded-sm border border-[#E5E5E5] bg-white shadow-[0_1px_2px_0_rgba(0,0,0,0.05)]">
-                <SelectValue placeholder="--" />
+                <SelectValue placeholder={isLoading ? 'Loading leagues...' : '--'} />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Select a league</SelectLabel>
-                  <SelectItem value="Errol League">Errol League</SelectItem>
-                  <SelectItem value="Chicken League">Chicken League</SelectItem>
-                  <SelectItem value="League of Legends">League of Legends</SelectItem>
+                  {error && (
+                    <div className="px-2 py-1.5 text-sm text-red-600">Error loading leagues</div>
+                  )}
+                  {!isLoading && !error && leagues.length === 0 && (
+                    <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                      No leagues available
+                    </div>
+                  )}
+                  {leagues.map((league) => (
+                    <SelectItem key={league.league_id} value={league.league_id}>
+                      {league.league_name}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>

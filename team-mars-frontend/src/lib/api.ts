@@ -147,3 +147,121 @@ export const fetchTeams = async (params: FetchTeamsParams = {}): Promise<ApiTeam
   const response = await apiClient.get<ApiTeam[] | TeamsEnvelope>(endpoint);
   return normalizeTeamResponse(response);
 };
+
+export type ApiLeague = {
+  league_id: string;
+  league_name: string;
+  start_date?: string;
+  end_date?: string | null;
+  location?: string;
+  description?: string | null;
+};
+
+export interface FetchLeaguesParams {
+  limit?: number;
+  skip?: number;
+}
+
+type LeaguesEnvelope = {
+  leagues?: ApiLeague[];
+  data?: ApiLeague[];
+  results?: ApiLeague[];
+};
+
+const normalizeLeagueResponse = (payload: ApiLeague[] | LeaguesEnvelope): ApiLeague[] => {
+  if (Array.isArray(payload)) {
+    return payload;
+  }
+
+  if (Array.isArray(payload.leagues)) {
+    return payload.leagues;
+  }
+
+  if (Array.isArray(payload.data)) {
+    return payload.data;
+  }
+
+  if (Array.isArray(payload.results)) {
+    return payload.results;
+  }
+
+  return [];
+};
+
+export const fetchLeagues = async (params: FetchLeaguesParams = {}): Promise<ApiLeague[]> => {
+  const searchParams = new URLSearchParams();
+
+  if (typeof params.limit === 'number') {
+    searchParams.set('limit', params.limit.toString());
+  }
+
+  if (typeof params.skip === 'number') {
+    searchParams.set('skip', params.skip.toString());
+  }
+
+  const query = searchParams.toString();
+  const endpoint = `/league${query ? `?${query}` : ''}`;
+  const response = await apiClient.get<ApiLeague[] | LeaguesEnvelope>(endpoint);
+  return normalizeLeagueResponse(response);
+};
+
+export type ApiPlayer = {
+  player_id: string;
+  first_name: string;
+  last_name?: string | null;
+  jersey_number?: number | null;
+  default_position?: string | null;
+  created_at?: string;
+  skill_level?: number | null;
+  skill_level_description?: string | null;
+  date_evaluated?: string | null;
+  notes?: string | null;
+};
+
+export interface FetchPlayersParams {
+  limit?: number;
+  skip?: number;
+}
+
+type PlayersEnvelope = {
+  players?: ApiPlayer[];
+  data?: ApiPlayer[];
+  results?: ApiPlayer[];
+};
+
+const normalizePlayerResponse = (payload: ApiPlayer[] | PlayersEnvelope): ApiPlayer[] => {
+  if (Array.isArray(payload)) {
+    return payload;
+  }
+
+  if (Array.isArray(payload.players)) {
+    return payload.players;
+  }
+
+  if (Array.isArray(payload.data)) {
+    return payload.data;
+  }
+
+  if (Array.isArray(payload.results)) {
+    return payload.results;
+  }
+
+  return [];
+};
+
+export const fetchPlayers = async (params: FetchPlayersParams = {}): Promise<ApiPlayer[]> => {
+  const searchParams = new URLSearchParams();
+
+  if (typeof params.limit === 'number') {
+    searchParams.set('limit', params.limit.toString());
+  }
+
+  if (typeof params.skip === 'number') {
+    searchParams.set('skip', params.skip.toString());
+  }
+
+  const query = searchParams.toString();
+  const endpoint = `/players${query ? `?${query}` : ''}`;
+  const response = await apiClient.get<ApiPlayer[] | PlayersEnvelope>(endpoint);
+  return normalizePlayerResponse(response);
+};
