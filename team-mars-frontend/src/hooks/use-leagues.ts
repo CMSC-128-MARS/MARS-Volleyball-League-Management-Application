@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { fetchLeagues, type ApiLeague } from '@/lib/api';
 
 interface UseLeaguesOptions {
@@ -10,7 +10,7 @@ export const useLeagues = ({ limit = 100 }: UseLeaguesOptions = {}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadLeagues = async () => {
+  const loadLeagues = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -24,11 +24,11 @@ export const useLeagues = ({ limit = 100 }: UseLeaguesOptions = {}) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [limit]); 
 
   useEffect(() => {
     loadLeagues();
-  }, [limit]);
+  }, [loadLeagues]); 
 
   return {
     leagues,
