@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { fetchPlayers, type ApiPlayer } from '@/lib/api';
 
 interface UsePlayersOptions {
@@ -10,7 +10,7 @@ export const usePlayers = ({ limit = 100 }: UsePlayersOptions = {}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadPlayers = async () => {
+  const loadPlayers = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -24,11 +24,11 @@ export const usePlayers = ({ limit = 100 }: UsePlayersOptions = {}) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [limit]);
 
   useEffect(() => {
     loadPlayers();
-  }, [limit]);
+  }, [loadPlayers]);
 
   return {
     players,

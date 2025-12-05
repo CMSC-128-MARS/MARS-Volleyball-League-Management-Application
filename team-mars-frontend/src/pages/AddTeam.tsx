@@ -14,7 +14,7 @@ export default function AddTeamCard() {
   const [teamName, setTeamName] = useState('');
   const [leagueId, setLeagueId] = useState('');
   const [isSaved, setIsSaved] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSaving] = useState(false);
 
   const handleBack = () => {
     navigate('/teams');
