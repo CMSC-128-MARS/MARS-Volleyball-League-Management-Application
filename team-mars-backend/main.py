@@ -8,10 +8,7 @@ from constants.settings import get_settings
 from controller.health_check import router as health_router
 from controller.player_controller import router as player_router
 from controller.team_controller import router as team_router
-
-"""
 from controller.match_controller import router as match_router
-"""
 from controller.league_controller import router as league_router
 
 from model import rebuild_models
@@ -46,9 +43,7 @@ app.add_middleware(
 app.include_router(health_router)
 app.include_router(player_router)
 app.include_router(team_router)
-"""
 app.include_router(match_router)
-"""
 app.include_router(league_router)
 
 
