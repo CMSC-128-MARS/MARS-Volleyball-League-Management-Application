@@ -6,9 +6,9 @@ from uuid import UUID
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from model.team.team import TeamSimple
+    from model.team.team import TeamSimple, TeamNested
     from model.match_team_stats.match_team_stats import MatchTeamStatsNested
-    from model.league.league import LeagueSimple
+    from model.league.league import LeagueSimple, LeagueNested
 
 
 # Full schema - with all relationships (for detailed responses)
@@ -18,17 +18,14 @@ class MatchFull(BaseModel):
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
     match_id: UUID = Field(..., title="Match ID")
-    league_id: UUID = Field(..., title="League ID")
-    team1_id: UUID = Field(..., title="Team 1 ID")
-    team2_id: UUID = Field(..., title="Team 2 ID")
     match_date: datetime = Field(..., title="Match Date")
     location: str = Field(..., title="Location")
     created_at: datetime = Field(..., title="Created At")
 
     # Relationships
-    league: Optional["LeagueSimple"] = Field(None, title="League")
-    team1: Optional["TeamSimple"] = Field(None, title="Team 1")
-    team2: Optional["TeamSimple"] = Field(None, title="Team 2")
+    league: Optional["LeagueNested"] = Field(None, title="League")
+    team1: Optional["TeamNested"] = Field(None, title="Team 1")
+    team2: Optional["TeamNested"] = Field(None, title="Team 2")
     team_stats: Optional[List["MatchTeamStatsNested"]] = Field(
         None, title="Team Statistics"
     )
@@ -135,17 +132,13 @@ class MatchWithTeams(BaseModel):
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
     match_id: UUID = Field(..., title="Match ID")
-    league_id: UUID = Field(..., title="League ID")
-    team1_id: UUID = Field(..., title="Team 1 ID")
-    team2_id: UUID = Field(..., title="Team 2 ID")
     match_date: datetime = Field(..., title="Match Date")
     location: str = Field(..., title="Location")
-    created_at: datetime = Field(..., title="Created At")
 
     # Relationships
-    team1: Optional[TeamSimple] = Field(None, title="Team 1")
-    team2: Optional[TeamSimple] = Field(None, title="Team 2")
-    league: Optional[LeagueSimple] = Field(None, title="League")
+    team1: Optional[TeamNested] = Field(None, title="Team 1")
+    team2: Optional[TeamNested] = Field(None, title="Team 2")
+    league: Optional[LeagueNested] = Field(None, title="League")
 
     @property
     def matchup(self) -> str:
