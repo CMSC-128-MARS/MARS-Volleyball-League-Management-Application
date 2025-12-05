@@ -148,6 +148,16 @@ export const fetchTeams = async (params: FetchTeamsParams = {}): Promise<ApiTeam
   return normalizeTeamResponse(response);
 };
 
+export interface CreateTeamPayload {
+  team_name: string;
+  league_id: string;
+}
+
+export const createTeam = async (payload: CreateTeamPayload): Promise<ApiTeam> => {
+  const response = await apiClient.post<ApiTeam>('/team', payload);
+  return response;
+};
+
 export type ApiLeague = {
   league_id: string;
   league_name: string;
