@@ -15,8 +15,8 @@ export default function AddTeamDetails() {
   const [isSelectOpen, setIsSelectOpen] = useState(false);
 
   return (
-    <div className="w-full h-full">
-      <Card className={`gap-2 transition-all duration-100 ${isSelectOpen ? 'pb-35' : ''}`}>
+    <div className="w-full h-full shadow-md ">
+      <Card className={`gap-2 transition-all duration-200 ${isSelectOpen ? 'pb-35' : ''}`}>
         <CardHeader className="items-center px-6 pt-4">
           <CardTitle className="flex flex-row justify-between items-center w-full">
             <h4>Add Details</h4>

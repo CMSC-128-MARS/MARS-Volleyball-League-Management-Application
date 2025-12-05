@@ -1,53 +1,34 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-  SelectTrigger,
-  SelectLabel,
-  SelectGroup,
-} from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
+import { SquarePen, Cog } from 'lucide-react';
 import { useState } from 'react';
 
 export default function AddTeamDetails() {
-  const [isSelectOpen, setIsSelectOpen] = useState(false);
-
   return (
-    <div className="w-full h-full">
-      <Card className={`gap-2 transition-all duration-100 ${isSelectOpen ? 'pb-35' : ''}`}>
+    <div className="w-full h-full shadow-md">
+      <Card className="gap-2">
         <CardHeader className="items-center px-6 pt-4">
-          <CardTitle className="flex flex-row justify-between items-center w-full">
-            <h4>Add Details</h4>
-            <p className="text-sm text-gray-500 font-paragraph text-4">ID: #12345</p>
+          <CardTitle className="flex flex-col justify-start items-start w-full gap-1">
+            <h4>Create Roster</h4>
+            <p className="text-sm text-gray-500 font-paragraph text-4">
+              Choose manual or automatic roster creation
+            </p>
           </CardTitle>
         </CardHeader>
         <hr className="w-full border-t border-[#A3A3A3]" />
-        <CardContent className="flex flex-col gap-6 px-6 pb-6 pt-2">
-          <div>
-            <p>
-              Team Name <span className="text-secondary-alt">*</span>
+        <CardContent className="flex flex-col md:flex-row gap-6 pb-6 pt-4 items-center justify-center">
+          <div className="w-full hover:cursor-pointer rounded-sm border-[#E5E5E5] hover:border-[#737373] shadow-md flex flex-col gap-2 items-center justify-center border px-6 py-8 h-[178px]">
+            <SquarePen />
+            <h4>Manual Creation</h4>
+            <p className="text-sm text-gray-500 font-paragraph text-center">
+              Choose your players manually to create a roster
             </p>
-            <Input type="text" placeholder="Enter a unique team name" className="rounded-sm" />
           </div>
-          <div>
-            <p>
-              League Selection <span className="text-secondary-alt">*</span>
+          <div className="w-full hover:cursor-pointer rounded-sm border-[#E5E5E5] hover:border-[#737373] shadow-md flex flex-col gap-2 items-center justify-center border px-6 py-8 h-[178px]">
+            <Cog />
+            <h4>Automatic Creation</h4>
+            <p className="text-sm text-gray-500 font-paragraph text-center">
+              Chooses players by skill to form a balanced roster.
             </p>
-            <Select onOpenChange={setIsSelectOpen}>
-              <SelectTrigger className="w-full rounded-sm border border-[#E5E5E5] bg-white shadow-[0_1px_2px_0_rgba(0,0,0,0.05)]">
-                <SelectValue placeholder="--" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Select a league</SelectLabel>
-                  <SelectItem value="Errol League">Errol League</SelectItem>
-                  <SelectItem value="Chicken League">Chicken League</SelectItem>
-                  <SelectItem value="League of Legends">League of Legends</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
           </div>
         </CardContent>
       </Card>
