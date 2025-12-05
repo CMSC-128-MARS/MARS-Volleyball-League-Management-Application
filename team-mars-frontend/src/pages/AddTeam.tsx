@@ -1,13 +1,12 @@
 import AddTeamDetails from '@/components/common/add-team-details';
 import CreateRoster from '@/components/common/create-roster';
 import TeamNavigationButtons from '@/components/common/team-navigation-buttons';
-import SelectedPlayersCard from '@/components/common/selected-players-card';
+import SelectedPlayersCard from '@/components/common/select-players-card';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 export default function AddTeamCard() {
   const navigate = useNavigate();
-  const [rosterCreated, setRosterCreated] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<'manual' | 'automatic' | null>(null);
 
   const handleBack = () => {
@@ -32,16 +31,12 @@ export default function AddTeamCard() {
         <TeamNavigationButtons
           onBack={handleBack}
           onNext={handleNext}
-          isDisabled={!rosterCreated}
+          isDisabled={!selectedMethod}
         />
       </div>
       <div className="flex flex-col lg:flex-row gap-10 items-start justify-center">
         <AddTeamDetails />
-        <CreateRoster
-          onRosterMethodSelected={() => setRosterCreated(true)}
-          selectedMethod={selectedMethod}
-          onMethodChange={setSelectedMethod}
-        />
+        <CreateRoster selectedMethod={selectedMethod} onMethodChange={setSelectedMethod} />
       </div>
       {selectedMethod === 'manual' && (
         <div className="mt-10 flex-1">

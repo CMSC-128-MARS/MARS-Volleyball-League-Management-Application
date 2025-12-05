@@ -212,6 +212,7 @@ export type ApiPlayer = {
   jersey_number?: number | null;
   default_position?: string | null;
   created_at?: string;
+  updated_at?: string;
   skill_level?: number | null;
   skill_level_description?: string | null;
   date_evaluated?: string | null;
