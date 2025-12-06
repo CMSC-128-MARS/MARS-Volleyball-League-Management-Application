@@ -1,3 +1,10 @@
+import { teamApiService } from './team';
+
+// Re-export team types for backward compatibility
+export type { TeamWithCounts as ApiTeam } from './team/team.types';
+export type { TeamCreate as CreateTeamPayload } from '@/types/create_types';
+export type { FetchTeamsParams } from './team/team.types';
+
 const DEFAULT_BASE_URL = '/api';
 const baseUrl = (import.meta.env.VITE_API_BASE_URL || DEFAULT_BASE_URL).replace(/\/$/, '');
 
@@ -83,80 +90,8 @@ export const apiClient = {
     }),
 };
 
-export type ApiTeam = {
-  team_id: string;
-  team_name: string;
-  league_id?: string;
-  created_at?: string;
-  active_player_count?: number;
-  total_player_count?: number;
-  player_count?: number;
-  match_count?: number;
-  team_players?: Array<{ leave_date?: string | null }>;
-};
-
-export interface FetchTeamsParams {
-  limit?: number;
-  skip?: number;
-  league_id?: string;
-}
-
-type TeamsEnvelope = {
-  teams?: ApiTeam[];
-  data?: ApiTeam[];
-  results?: ApiTeam[];
-};
-
-const normalizeTeamResponse = (payload: ApiTeam[] | TeamsEnvelope): ApiTeam[] => {
-  if (Array.isArray(payload)) {
-    return payload;
-  }
-
-  if (Array.isArray(payload.teams)) {
-    return payload.teams;
-  }
-
-  if (Array.isArray(payload.data)) {
-    return payload.data;
-  }
-
-  if (Array.isArray(payload.results)) {
-    return payload.results;
-  }
-
-  return [];
-};
-
-export const fetchTeams = async (params: FetchTeamsParams = {}): Promise<ApiTeam[]> => {
-  const searchParams = new URLSearchParams();
-
-  if (typeof params.limit === 'number') {
-    searchParams.set('limit', params.limit.toString());
-  }
-
-  if (typeof params.skip === 'number') {
-    searchParams.set('skip', params.skip.toString());
-  }
-
-  if (params.league_id) {
-    searchParams.set('league_id', params.league_id);
-  }
-
-  const query = searchParams.toString();
-  const endpoint = `/team${query ? `?${query}` : ''}`;
-  const response = await apiClient.get<ApiTeam[] | TeamsEnvelope>(endpoint);
-  return normalizeTeamResponse(response);
-};
-
-export interface CreateTeamPayload {
-  team_name: string;
-  league_id: string;
-}
-
-export const createTeam = async (payload: CreateTeamPayload): Promise<ApiTeam> => {
-  const response = await apiClient.post<ApiTeam>('/team', payload);
-  return response;
-};
+export const fetchTeams = teamApiService.fetchTeams.bind(teamApiService);
+export const createTeam = teamApiService.createTeam.bind(teamApiService);
 
 export type ApiLeague = {
   league_id: string;

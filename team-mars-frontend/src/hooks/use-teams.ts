@@ -1,18 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
-import { fetchTeams, type ApiTeam } from '@/lib/api';
+import { teamApiService, type TeamWithCounts } from '@/lib/team';
 
 type UseTeamsOptions = {
   limit?: number;
   leagueId?: string;
 };
 
-/**
- * Fetches teams data from the backend API.
- * @returns {teams, isLoading, error, formatDate, refetch}
- */
-
 export const useTeams = ({ limit = 6, leagueId }: UseTeamsOptions = {}) => {
-  const [teams, setTeams] = useState<ApiTeam[]>([]);
+  const [teams, setTeams] = useState<TeamWithCounts[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,7 +15,7 @@ export const useTeams = ({ limit = 6, leagueId }: UseTeamsOptions = {}) => {
     setIsLoading(true);
     setError(null);
     try {
-      const apiTeams = await fetchTeams({ limit, league_id: leagueId });
+      const apiTeams = await teamApiService.fetchTeams({ limit, league_id: leagueId });
       const getTimestamp = (value?: string) => {
         if (!value) return 0;
         const timestamp = Date.parse(value);

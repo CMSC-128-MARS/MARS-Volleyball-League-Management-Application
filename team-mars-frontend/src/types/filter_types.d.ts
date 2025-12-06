@@ -2,6 +2,9 @@
 // Filter/Query Types
 // ============================================================================
 
+import type { PaginationParams } from './utils';
+import type { LeagueStatus } from './enums';
+
 export interface PlayerFilters extends PaginationParams {
   search?: string;
   skill_level?: number;
