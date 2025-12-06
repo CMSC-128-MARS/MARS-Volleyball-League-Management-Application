@@ -1,4 +1,3 @@
-import TeamManagementCard from '@/components/common/team-management-card';
 import TeamViewButtons from '@/components/navigation/team-view-buttons';
 import TeamDetailsComponent from '@/components/common/team-details';
 
@@ -21,7 +20,6 @@ export default function TeamDetails() {
       }}
     >
       <TeamViewButtons onBack={handleBack} onNext={handleNext} />
-      <TeamManagementCard />
       <TeamDetailsComponent teamName="Team A" leagueName="League 1" teamId="123" />
     </div>
   );

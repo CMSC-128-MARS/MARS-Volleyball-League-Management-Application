@@ -7,7 +7,7 @@ type TeamDetailsProps = {
   teamId: string;
 };
 
-export default function TeamDetails({ teamName, leagueName, teamId }: TeamDetailsProps) {
+export default function TeamDetails({ teamName, leagueName }: TeamDetailsProps) {
   return (
     <div className="w-full h-full shadow-md ">
       <Card className="gap-2 transition-all duration-200">

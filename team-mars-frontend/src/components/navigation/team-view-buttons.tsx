@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Undo2, SquarePlus, Trash, Pencil, Pen } from 'lucide-react';
+import { Undo2, Trash, Pencil } from 'lucide-react';
 
 export default function TeamViewButtons({
   onBack,
