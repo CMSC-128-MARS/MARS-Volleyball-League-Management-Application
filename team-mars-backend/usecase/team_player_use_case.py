@@ -62,7 +62,7 @@ class TeamPlayerUseCase:
 
         # Business Rule: Set default join_date to now if not provided
         if payload.join_date is None:
-            payload.join_date = datetime.now()
+            payload.join_date = datetime.utcnow()
 
         # TODO: Add business rule - Validate roster size limits per team
         # TODO: Add business rule - Validate position against allowed positions
@@ -206,6 +206,6 @@ class TeamPlayerUseCase:
             raise BadRequestException("Player has already left this team.")
 
         # Set leave_date to now
-        payload = TeamPlayerUpdate(leave_date=datetime.now())
+        payload = TeamPlayerUpdate(leave_date=datetime.utcnow())
         updated = await self.repo.update_team_player(session, team_player_id, payload)
         return TeamPlayerSimple.model_validate(updated)
