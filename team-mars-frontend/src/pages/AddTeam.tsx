@@ -21,7 +21,7 @@ export default function AddTeamCard() {
   };
 
   const handleNext = async () => {
-    if (!isSaved) {
+    if (!isSaved || selectedPlayers.length === 0) {
       return;
     }
 
