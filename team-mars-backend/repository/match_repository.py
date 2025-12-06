@@ -2,7 +2,7 @@ from repository.models.match import Match
 from model.match.match import MatchCreate, MatchUpdate
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from uuid import UUID
 from sqlalchemy.orm import selectinload
 
@@ -72,6 +72,23 @@ class MatchRepository:
             .where(Match.match_id == match_id)
         )
         return result.scalars().first()
+
+    """
+    get all matches by team
+    return data: array of matches where team is either team1 or team2
+    """
+
+    async def get_matches_by_team(self, db: AsyncSession, team_id: UUID) -> List[Match]:
+        result = await db.execute(
+            select(Match)
+            .options(
+                selectinload(Match.league),
+                selectinload(Match.team1),
+                selectinload(Match.team2),
+            )
+            .where(or_(Match.team1_id == team_id, Match.team2_id == team_id))
+        )
+        return result.scalars().unique().all()
 
     """
     get match by id in a specific league 
