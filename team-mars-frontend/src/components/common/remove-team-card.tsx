@@ -9,16 +9,43 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Trash, Volleyball } from 'lucide-react';
+import { useState } from 'react';
+import { teamApiService } from '@/lib/team';
 
 type RemoveTeamCardProps = {
   name: string;
   playerCount: number;
+  teamId: string;
+  onRemoveSuccess?: () => void;
 };
 
-export default function RemoveTeamCard({ name, playerCount }: RemoveTeamCardProps) {
-  const handleRemove = () => {
-    console.log('Remove team:', name);
-    // TODO: Implement actual remove logic
+export default function RemoveTeamCard({
+  name,
+  playerCount,
+  teamId,
+  onRemoveSuccess,
+}: RemoveTeamCardProps) {
+  const [open, setOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleRemove = async () => {
+    try {
+      setIsDeleting(true);
+      await teamApiService.deleteTeam(teamId);
+      setOpen(false);
+      if (onRemoveSuccess) {
+        onRemoveSuccess();
+      }
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to delete team:', error);
+      // TODO: Show error toast/notification
+      setIsDeleting(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
   };
 
   return (
@@ -32,7 +59,7 @@ export default function RemoveTeamCard({ name, playerCount }: RemoveTeamCardProp
             <div className="flex flex-col justify-center text-left pl-2 py-4 gap-2 w-3/4 pr-2">
               <div className="flex items-start gap-2">
                 <p className="font-heading font-semibold leading-tight flex-1">{name}</p>
-                <Dialog>
+                <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild>
                     <button
                       type="button"
@@ -54,11 +81,17 @@ export default function RemoveTeamCard({ name, playerCount }: RemoveTeamCardProp
                           <Button
                             variant={'outline'}
                             className="hover:cursor-pointer h-10 border-muted-foreground"
+                            onClick={handleCancel}
+                            disabled={isDeleting}
                           >
                             Cancel
                           </Button>
-                          <Button className="bg-[#D52020] h-10 hover:bg-[#D52020] hover:opacity-80 hover:cursor-pointer">
-                            <Trash /> Delete
+                          <Button
+                            className="bg-[#D52020] h-10 hover:bg-[#D52020] hover:opacity-80 hover:cursor-pointer"
+                            onClick={handleRemove}
+                            disabled={isDeleting}
+                          >
+                            <Trash /> {isDeleting ? 'Deleting...' : 'Delete'}
                           </Button>
                         </div>
                       </DialogDescription>

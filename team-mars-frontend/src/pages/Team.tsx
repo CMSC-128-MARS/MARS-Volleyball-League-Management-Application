@@ -152,7 +152,7 @@ export default function Team() {
                 key={team.id}
                 name={team.name}
                 playerCount={team.playerCount}
-                showRemoveIcon={true}
+                teamId={team.id}
               />
             ))}
           </TabsContent>
