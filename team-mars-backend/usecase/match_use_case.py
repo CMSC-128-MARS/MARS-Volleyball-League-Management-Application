@@ -64,9 +64,7 @@ class MatchUseCase:
         self, session: AsyncSession, team_id: UUID
     ) -> MatchNested:
         matches = await self.repo.get_matches_by_team(session, team_id)
-        if not matches:
-            raise NotFoundException("Match not found.")
-        return MatchNested.model_validate(matches)
+        return [MatchNested.model_validate(m) for m in matches]
 
     # UPDATE
 
