@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Trash, Volleyball } from 'lucide-react';
+import { Volleyball } from 'lucide-react';
 
 type TeamManagementCardProps = {
   name: string;
@@ -15,17 +15,7 @@ type TeamManagementCardProps = {
   showRemoveIcon?: boolean;
 };
 
-export default function TeamManagementCard({
-  name,
-  playerCount,
-  showRemoveIcon,
-}: TeamManagementCardProps) {
-  const handleRemove = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    // TODO: Implement remove functionality
-    console.log('Remove team:', name);
-  };
-
+export default function TeamManagementCard({ name, playerCount }: TeamManagementCardProps) {
   return (
     <div className="w-full h-full">
       <Dialog>
@@ -39,16 +29,6 @@ export default function TeamManagementCard({
                 <div className="flex flex-col justify-center text-left pl-2 py-4 gap-2 w-3/4 pr-2">
                   <div className="flex items-start gap-2">
                     <p className="font-heading font-semibold leading-tight flex-1">{name}</p>
-                    {showRemoveIcon && (
-                      <button
-                        type="button"
-                        aria-label={`Remove ${name}`}
-                        className="text-white hover:opacity-80 hover:cursor-pointer transition-opacity flex-shrink-0"
-                        onClick={handleRemove}
-                      >
-                        <Trash className="w-6 h-6 bg-red-600 p-1 rounded-sm mr-2" />
-                      </button>
-                    )}
                   </div>
                   <p className="text-xs bg-secondary-alt text-white border rounded-xs px-2 py-1 w-fit">
                     Players: {playerCount}
