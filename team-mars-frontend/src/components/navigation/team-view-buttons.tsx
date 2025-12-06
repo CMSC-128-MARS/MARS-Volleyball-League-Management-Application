@@ -1,0 +1,47 @@
+import { Button } from '@/components/ui/button';
+import { Undo2, SquarePlus, Trash, Pencil, Pen } from 'lucide-react';
+
+export default function TeamViewButtons({
+  onBack,
+  onNext,
+  isDisabled = false,
+}: {
+  onBack: () => void;
+  onNext: () => void;
+  isDisabled?: boolean;
+}) {
+  return (
+    <div className="flex flex-row justify-between w-full mt-4">
+      <div>
+        <Button
+          variant="outline"
+          onClick={onBack}
+          className="px-6 py-[9.5px] border-primary font-semibold w-[98.25px] h-10"
+        >
+          <Undo2 strokeWidth={2.5} />
+          Back
+        </Button>
+      </div>
+      <div className="flex flex-row gap-2">
+        <Button
+          type="button"
+          aria-label="Remove player"
+          className="bg-red-600 text-white p-1 rounded-sm hover:bg-red-700 transition-colors h-10 w-10"
+        >
+          <Trash className="w-5 h-5" />
+        </Button>
+        <Button onClick={onNext} disabled={isDisabled} className="rounded-sm h-10 w-10">
+          <Pencil className="text-white w-5 h-5 m-auto" />
+        </Button>
+      </div>
+      <div className="flex flex-row gap-2">
+        <Button variant={'outline'} className="hover:cursor-pointer h-10 border-muted-foreground">
+          Cancel
+        </Button>
+        <Button className="px-6! py-[9.5px]!">
+          <p className="text-sm font-light">Save</p>
+        </Button>
+      </div>
+    </div>
+  );
+}
