@@ -23,7 +23,7 @@ export interface TeamWithCounts extends Team {
   team_players?: Array<{ leave_date?: string | null }>;
 }
 
-export interface FetchTeamsParams extends TeamFilters {}
+export type FetchTeamsParams = TeamFilters;
 
 export type TeamsEnvelope = {
   teams?: TeamWithCounts[];

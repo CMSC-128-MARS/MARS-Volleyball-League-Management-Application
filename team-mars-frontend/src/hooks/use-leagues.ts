@@ -24,11 +24,11 @@ export const useLeagues = ({ limit = 100 }: UseLeaguesOptions = {}) => {
     } finally {
       setIsLoading(false);
     }
-  }, [limit]); 
+  }, [limit]);
 
   useEffect(() => {
     loadLeagues();
-  }, [loadLeagues]); 
+  }, [loadLeagues]);
 
   return {
     leagues,
