@@ -2,6 +2,7 @@ from uuid import UUID
 from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from repository.team_repository import TeamRepository
+from repository.match_repository import MatchRepository
 from core.exceptions import NotFoundException, ConflictException
 from model.team.team import TeamCreate, TeamFull, TeamSimple, TeamUpdate, TeamNested
 
@@ -12,8 +13,9 @@ class TeamUseCase:
     Acts as the intermediary between API controllers and team repository layer.
     """
 
-    def __init__(self, repo: TeamRepository):
+    def __init__(self, repo: TeamRepository, match_repo: MatchRepository):
         self.repo = repo
+        self.match_repo = match_repo
 
     # CREATE A TEAM
     async def create_team(
@@ -58,5 +60,12 @@ class TeamUseCase:
         team = await self.repo.get_team_by_id(session, team_id)
         if not team:
             raise NotFoundException("Team not found.")
+
+        # NEW: check if team is referenced
+        matches = await self.match_repo.get_matches_by_team(session, team_id)
+        if matches:
+            raise ConflictException(
+                "Cannot delete team because there are matches associated with it."
+            )
 
         await self.repo.delete_team(session, team_id)

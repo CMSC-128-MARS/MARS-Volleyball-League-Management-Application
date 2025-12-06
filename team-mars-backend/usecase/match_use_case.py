@@ -1,5 +1,5 @@
 from uuid import UUID
-from typing import List, Optional
+from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
 
 # import models
@@ -58,6 +58,15 @@ class MatchUseCase:
         if not match:
             raise NotFoundException("Match not found.")
         return MatchFull.model_validate(match)
+
+    # READ - GET ALL MATCHES BY TEAM
+    async def get_matches_by_team(
+        self, session: AsyncSession, team_id: UUID
+    ) -> MatchNested:
+        matches = await self.repo.get_matches_by_team(session, team_id)
+        if not matches:
+            raise NotFoundException("Match not found.")
+        return MatchNested.model_validate(matches)
 
     # UPDATE
 
