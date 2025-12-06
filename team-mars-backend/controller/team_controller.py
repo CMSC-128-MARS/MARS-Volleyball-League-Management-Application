@@ -18,6 +18,7 @@ from model.team.team import (
 )
 from usecase.team_use_case import TeamUseCase
 from repository.team_repository import TeamRepository
+from repository.match_repository import MatchRepository
 from repository.database import get_async_session
 
 router = APIRouter(prefix="/team", tags=["Team"])
@@ -27,9 +28,22 @@ Inject Repo + Use Case
 """
 
 
-def get_team_use_case() -> TeamUseCase:
-    repo = TeamRepository()
-    return TeamUseCase(repo=repo)
+# Dependency to get TeamRepository
+def get_team_repo() -> TeamRepository:
+    return TeamRepository()
+
+
+# Dependency to get MatchRepository
+def get_match_repo() -> MatchRepository:
+    return MatchRepository()
+
+
+# Dependency to get TeamUseCase with both repositories
+def get_team_use_case(
+    team_repo: TeamRepository = Depends(get_team_repo),
+    match_repo: MatchRepository = Depends(get_match_repo),
+) -> TeamUseCase:
+    return TeamUseCase(team_repo, match_repo)
 
 
 """
