@@ -7,11 +7,13 @@ type ViewTeamPlayersCardProps = {
   onRemovePlayer?: (playerId: string) => void;
   onSave?: () => void;
   isSaving?: boolean;
+  isEditing?: boolean;
 };
 
 export default function ViewTeamPlayersCard({
   players = [],
-  onRemovePlayer
+  onRemovePlayer,
+  isEditing = false,
 }: ViewTeamPlayersCardProps) {
   return (
     <div className="w-full h-full min-h-[300px] shadow-md bg-white">
@@ -38,6 +40,7 @@ export default function ViewTeamPlayersCard({
                   jerseyNumber={player.jersey_number?.toString() ?? 'N/A'}
                   position={player.default_position ?? 'N/A'}
                   onRemove={() => onRemovePlayer?.(player.player_id)}
+                  showRemove={isEditing}
                 />
               ))
             )}

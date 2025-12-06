@@ -102,7 +102,12 @@ export default function Team() {
             )}
 
             {normalizedTeams.map((team) => (
-              <TeamManagementCard key={team.id} name={team.name} playerCount={team.playerCount} />
+              <TeamManagementCard
+                key={team.id}
+                name={team.name}
+                playerCount={team.playerCount}
+                teamId={team.id}
+              />
             ))}
           </TabsContent>
           <TabsContent
@@ -125,7 +130,12 @@ export default function Team() {
               <p className="col-span-full text-center text-muted-foreground">No teams found.</p>
             )}
             {normalizedTeams.map((team) => (
-              <TeamManagementCard key={team.id} name={team.name} playerCount={team.playerCount} />
+              <TeamManagementCard
+                key={team.id}
+                name={team.name}
+                playerCount={team.playerCount}
+                teamId={team.id}
+              />
             ))}
             .
           </TabsContent>

@@ -42,6 +42,7 @@ export default function SelectPlayersCard({
                   jerseyNumber={player.jersey_number?.toString() ?? 'N/A'}
                   position={player.default_position ?? 'N/A'}
                   onRemove={() => onRemovePlayer?.(player.player_id)}
+                  showRemove={true}
                 />
               ))
             )}
