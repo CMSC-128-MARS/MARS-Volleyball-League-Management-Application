@@ -5,7 +5,7 @@ import SelectedPlayersCard from '@/components/common/select-players-card';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import type { ApiPlayer } from '@/lib/api';
-import { createTeam } from '@/lib/api';
+import { teamApiService } from '@/lib/team';
 
 export default function AddTeamCard() {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ export default function AddTeamCard() {
     }
 
     try {
-      await createTeam({
+      await teamApiService.createTeam({
         team_name: teamName,
         league_id: leagueId,
       });

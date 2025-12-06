@@ -3,7 +3,7 @@ import TeamManagementCard from '@/components/common/team-management-card';
 import AddTeamCard from '@/components/common/add-team-card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTeams } from '@/hooks/use-teams';
-import type { ApiTeam } from '@/lib/api';
+import type { TeamWithCounts } from '@/lib/team';
 
 type TeamSummary = {
   id: string;
@@ -11,7 +11,7 @@ type TeamSummary = {
   playerCount: number;
 };
 
-const derivePlayerCount = (team: ApiTeam): number => {
+const derivePlayerCount = (team: TeamWithCounts): number => {
   const candidates = [team.active_player_count, team.total_player_count, team.player_count];
   for (const candidate of candidates) {
     if (typeof candidate === 'number' && !Number.isNaN(candidate)) {
