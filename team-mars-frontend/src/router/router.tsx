@@ -8,6 +8,7 @@ import Players from '@/pages/Players';
 import Team from '@/pages/Team';
 import AddTeam from '@/pages/AddTeam';
 import TeamDetails from '@/pages/TeamDetails';
+import LeagueDashboard from '@/pages/Leagues';
 
 export const router = createBrowserRouter([
   {
@@ -49,6 +50,10 @@ export const router = createBrowserRouter([
       {
         path: 'teams/:teamId',
         element: <TeamDetails />,
+      },
+      {
+        path: 'leagues',
+        element: <LeagueDashboard />,
       },
     ],
   },
