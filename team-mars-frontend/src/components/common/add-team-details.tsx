@@ -57,7 +57,7 @@ export default function AddTeamDetails({
               League Selection <span className="text-secondary-alt">*</span>
             </p>
             <Select onOpenChange={setIsSelectOpen} value={leagueId} onValueChange={onLeagueChange}>
-              <SelectTrigger className="w-full rounded-sm border border-[#E5E5E5] bg-white shadow-[0_1px_2px_0_rgba(0,0,0,0.05)]">
+              <SelectTrigger className="w-full rounded-sm border border-[#E5E5E5] bg-white shadow-[0_1px_2px_0_rgba(0,0,0,0.05)] cursor-pointer">
                 <SelectValue placeholder={isLoading ? 'Loading leagues...' : '--'} />
               </SelectTrigger>
               <SelectContent>

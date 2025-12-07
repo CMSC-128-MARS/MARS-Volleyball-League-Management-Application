@@ -43,7 +43,7 @@ export default function SelectedPlayersCard({
                   type="button"
                   aria-label="Remove player"
                   onClick={handleRemove}
-                  className="bg-red-600 text-white p-1 rounded-sm hover:bg-red-700 transition-colors"
+                  className="bg-red-600 text-white p-1 rounded-sm hover:bg-red-700 transition-colors cursor-pointer"
                 >
                   <Trash className="w-4 h-4" />
                 </button>

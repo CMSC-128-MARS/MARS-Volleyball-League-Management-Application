@@ -7,6 +7,7 @@ type SelectPlayersCardProps = {
   players?: ApiPlayer[];
   onRemovePlayer?: (playerId: string) => void;
   onSave?: () => void;
+  onReset?: () => void;
   isSaving?: boolean;
   showButtons?: boolean;
 };
@@ -15,6 +16,7 @@ export default function SelectPlayersCard({
   players = [],
   onRemovePlayer,
   onSave,
+  onReset,
   isSaving = false,
   showButtons = true,
 }: SelectPlayersCardProps) {
@@ -30,7 +32,11 @@ export default function SelectPlayersCard({
         <hr className="w-full border-t border-[#A3A3A3]" />
         <CardContent className="flex flex-col gap-2">
           {showButtons && (
-            <SelectedTeamButtons onBack={() => {}} onNext={onSave} isNextDisabled={isSaving} />
+            <SelectedTeamButtons
+              onBack={onReset || (() => {})}
+              onNext={onSave}
+              isNextDisabled={isSaving || players.length === 0}
+            />
           )}
           <div className="pt-2 pb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6">
             {players.length === 0 ? (

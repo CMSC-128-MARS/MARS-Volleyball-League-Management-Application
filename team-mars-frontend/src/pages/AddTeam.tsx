@@ -57,6 +57,11 @@ export default function AddTeamCard() {
       return;
     }
 
+    if (selectedPlayers.length === 0) {
+      alert('Please select at least one player');
+      return;
+    }
+
     setIsSaved(true);
   };
 
@@ -68,6 +73,15 @@ export default function AddTeamCard() {
 
   const handleRemovePlayer = (playerId: string) => {
     setSelectedPlayers(selectedPlayers.filter((p) => p.player_id !== playerId));
+    // Reset saved state if removing players
+    if (selectedPlayers.length <= 1) {
+      setIsSaved(false);
+    }
+  };
+
+  const handleResetPlayers = () => {
+    setSelectedPlayers([]);
+    setIsSaved(false);
   };
 
   return (
@@ -101,6 +115,7 @@ export default function AddTeamCard() {
           <SelectedPlayersCard
             players={selectedPlayers}
             onRemovePlayer={handleRemovePlayer}
+            onReset={handleResetPlayers}
             onSave={handleSave}
             isSaving={isSaving}
           />

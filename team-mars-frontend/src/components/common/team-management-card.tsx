@@ -16,13 +16,13 @@ export default function TeamManagementCard({ name, playerCount, teamId }: TeamMa
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full h-full">
       <div
         onClick={handleClick}
-        className="block w-full rounded-xs border border-border bg-white shadow-lg transition-all duration-200 hover:cursor-pointer hover:-translate-y-0.5 hover:shadow-xl hover:border-neutral-400"
+        className="block w-full h-full rounded-xs border border-border bg-white shadow-lg transition-all duration-200 hover:cursor-pointer hover:-translate-y-0.5 hover:shadow-xl hover:border-neutral-400"
       >
-        <Card className="transition-all duration-200">
-          <CardContent className="flex flex-row p-0 items-center">
+        <Card className="transition-all duration-200 h-full">
+          <CardContent className="flex flex-row p-0 items-center h-full">
             <div className="flex justify-center items-center bg-primary w-1/4 p-4 border-r-2 border-secondary self-stretch">
               <Volleyball className="text-secondary h-10 w-10" strokeWidth={1} />
             </div>
