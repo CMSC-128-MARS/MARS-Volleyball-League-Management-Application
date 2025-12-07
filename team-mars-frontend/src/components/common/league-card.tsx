@@ -1,15 +1,48 @@
 import {Card, CardTitle, CardContent, CardFooter} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MapPin } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { MapPin, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { leagueApiService } from '@/lib/league';
 
 type LeagueCardProps = {
   leagueId: string;
   name: string;
   location: string;
   description?: string | null;
+  mode?: 'view' | 'remove';
+  onRemoveSuccess?: () => void;
 };
 
-export const LeagueCard = ({ leagueId, name, location, description }: LeagueCardProps) => {
+export const LeagueCard = ({ leagueId, name, location, description, mode = 'view', onRemoveSuccess }: LeagueCardProps) => {
+    const [open, setOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const handleRemove = async () => {
+        try {
+            setIsDeleting(true);
+            await leagueApiService.deleteLeague(leagueId);
+            setOpen(false);
+            if (onRemoveSuccess) {
+                onRemoveSuccess();
+            }
+            window.location.reload();
+        } catch (error) {
+            console.error('Failed to delete league:', error);
+            setIsDeleting(false);
+        }
+    };
+
+    const handleCancel = () => {
+        setOpen(false);
+    };
     return (
         <Card className="w-full border border-border shadow-md bg-card">
             {/* Card Header */}
@@ -39,17 +72,59 @@ export const LeagueCard = ({ leagueId, name, location, description }: LeagueCard
                 </div>
             </CardContent>
             <CardFooter className="px-[24px] mb-[12px]">
-                <Button
-                    variant="default"
-                    size="default"
-                    className="text-primary-foreground w-full cursor-pointer"
-                    onClick={() => {
-                        // Navigate to league details page
-                        window.location.href = `/leagues/${leagueId}`;
-                    }}
-                >
-                View Details
-                </Button>
+                {mode === 'remove' ? (
+                    <Dialog open={open} onOpenChange={setOpen}>
+                        <DialogTrigger asChild>
+                            <Button
+                                variant="destructive"
+                                size="icon"
+                                className="w-full cursor-pointer"
+                            >
+                                <Trash2 />
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle className="text-left">Delete League?</DialogTitle>
+                                <DialogDescription>
+                                    <p className="font-paragraph text-left">
+                                        Are you sure you want to delete the league{' '}
+                                        <span className="text-red-600">{name}</span>?
+                                    </p>
+                                    <div className="flex gap-2 mt-4 justify-end items-end">
+                                        <Button
+                                            variant="outline"
+                                            className="hover:cursor-pointer h-10 border-muted-foreground"
+                                            onClick={handleCancel}
+                                            disabled={isDeleting}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            className="bg-[#D52020] h-10 hover:bg-[#D52020] hover:opacity-80 hover:cursor-pointer"
+                                            onClick={handleRemove}
+                                            disabled={isDeleting}
+                                        >
+                                            <Trash2 /> {isDeleting ? 'Deleting...' : 'Delete'}
+                                        </Button>
+                                    </div>
+                                </DialogDescription>
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
+                ) : (
+                    <Button
+                        variant="default"
+                        size="default"
+                        className="text-primary-foreground w-full cursor-pointer"
+                        onClick={() => {
+                            // Navigate to league details page
+                            window.location.href = `/leagues/${leagueId}`;
+                        }}
+                    >
+                        View Details
+                    </Button>
+                )}
             </CardFooter>
         </Card>
     );
