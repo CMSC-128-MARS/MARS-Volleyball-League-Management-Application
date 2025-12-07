@@ -1,4 +1,5 @@
 import { Tabs, /*TabsContent*/ TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { LeagueCard } from '@/components/common/league-card';
 
 const LeagueDashboard = () => {
     return (
@@ -42,6 +43,7 @@ const LeagueDashboard = () => {
                         {/* Tabs Content */}
                         <div className="flex-grow">
                             {/* View Tab Content */}
+                            <LeagueCard />
                             {/* Add Tab Content */}
                             {/* Remove Tab Content */}
                         </div>
