@@ -26,10 +26,23 @@ export default function AddTeamCard() {
     }
 
     try {
-      await teamApiService.createTeam({
+      const createdTeam = await teamApiService.createTeam({
         team_name: teamName,
         league_id: leagueId,
       });
+
+      // Add players to the team after creation
+      if (selectedPlayers.length > 0) {
+        await Promise.all(
+          selectedPlayers.map((player) =>
+            teamApiService.addPlayerToTeam(
+              createdTeam.team_id,
+              player.player_id,
+              player.default_position || undefined,
+            ),
+          ),
+        );
+      }
 
       navigate('/teams');
     } catch (error) {

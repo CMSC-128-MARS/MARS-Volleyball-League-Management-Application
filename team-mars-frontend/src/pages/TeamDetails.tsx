@@ -23,134 +23,17 @@ export default function TeamDetails() {
   const [isSaving] = useState(false);
 
   const players = useMemo(() => {
-    // Always show mock data for now
-    const mockPlayers = [
-      {
-        player_id: 'mock-1',
-        first_name: 'John',
-        last_name: 'Doe',
-        jersey_number: 77,
-        default_position: 'Middle Blocker',
-        created_at: new Date().toISOString(),
-        skill_level: 7,
-        position: 'Middle Blocker',
-      },
-      {
-        player_id: 'mock-2',
-        first_name: 'Jane',
-        last_name: 'Smith',
-        jersey_number: 12,
-        default_position: 'Outside Hitter',
-        created_at: new Date().toISOString(),
-        skill_level: 8,
-        position: 'Outside Hitter',
-      },
-      {
-        player_id: 'mock-3',
-        first_name: 'Mike',
-        last_name: 'Johnson',
-        jersey_number: 5,
-        default_position: 'Setter',
-        created_at: new Date().toISOString(),
-        skill_level: 9,
-        position: 'Setter',
-      },
-      {
-        player_id: 'mock-4',
-        first_name: 'Sarah',
-        last_name: 'Williams',
-        jersey_number: 23,
-        default_position: 'Libero',
-        created_at: new Date().toISOString(),
-        skill_level: 6,
-        position: 'Libero',
-      },
-      {
-        player_id: 'mock-5',
-        first_name: 'Alex',
-        last_name: 'Brown',
-        jersey_number: 8,
-        default_position: 'Opposite Hitter',
-        created_at: new Date().toISOString(),
-        skill_level: 7,
-        position: 'Opposite Hitter',
-      },
-      {
-        player_id: 'mock-6',
-        first_name: 'Emily',
-        last_name: 'Davis',
-        jersey_number: 15,
-        default_position: 'Middle Blocker',
-        created_at: new Date().toISOString(),
-        skill_level: 8,
-        position: 'Middle Blocker',
-      },
-      {
-        player_id: 'mock-1',
-        first_name: 'John',
-        last_name: 'Doe',
-        jersey_number: 77,
-        default_position: 'Middle Blocker',
-        created_at: new Date().toISOString(),
-        skill_level: 7,
-        position: 'Middle Blocker',
-      },
-      {
-        player_id: 'mock-1',
-        first_name: 'John',
-        last_name: 'Doe',
-        jersey_number: 77,
-        default_position: 'Middle Blocker',
-        created_at: new Date().toISOString(),
-        skill_level: 7,
-        position: 'Middle Blocker',
-      },
-      {
-        player_id: 'mock-1',
-        first_name: 'John',
-        last_name: 'Doe',
-        jersey_number: 77,
-        default_position: 'Middle Blocker',
-        created_at: new Date().toISOString(),
-        skill_level: 7,
-        position: 'Middle Blocker',
-      },
-      {
-        player_id: 'mock-1',
-        first_name: 'John',
-        last_name: 'Doe',
-        jersey_number: 77,
-        default_position: 'Middle Blocker',
-        created_at: new Date().toISOString(),
-        skill_level: 7,
-        position: 'Middle Blocker',
-      },
-      {
-        player_id: 'mock-1',
-        first_name: 'John',
-        last_name: 'Doe',
-        jersey_number: 77,
-        default_position: 'Middle Blocker',
-        created_at: new Date().toISOString(),
-        skill_level: 7,
-        position: 'Middle Blocker',
-      },
-    ];
-
     if (!team?.team_players || team.team_players.length === 0) {
-      return mockPlayers;
+      return [];
     }
 
-    const realPlayers = team.team_players
+    return team.team_players
       .filter((tp) => tp.leave_date === null && tp.player)
       .map((tp) => ({
         ...tp.player!,
         skill_level: 0,
         position: tp.position || tp.player!.default_position,
       }));
-
-    // Return real players if available, otherwise mock data
-    return realPlayers.length > 0 ? realPlayers : mockPlayers;
   }, [team]);
 
   const handleBack = () => {
@@ -201,9 +84,33 @@ export default function TeamDetails() {
         league_id: editLeagueId,
       });
 
-      // TODO: Update team players
-      // This would require a separate API endpoint to manage team players
-      // For now, we'll just update the basic team info
+      // Update team players
+      const originalPlayerIds = players.map((p) => p.player_id);
+      const newPlayerIds = selectedPlayers.map((p) => p.player_id);
+
+      // Find players to add (in selectedPlayers but not in original)
+      const playersToAdd = selectedPlayers.filter((p) => !originalPlayerIds.includes(p.player_id));
+
+      // Find players to remove (in original but not in selectedPlayers)
+      const playersToRemove = players.filter((p) => !newPlayerIds.includes(p.player_id));
+
+      // Add new players
+      await Promise.all(
+        playersToAdd.map((player) =>
+          teamApiService.addPlayerToTeam(
+            teamId,
+            player.player_id,
+            player.default_position || undefined,
+          ),
+        ),
+      );
+
+      // Remove players (set leave_date)
+      await Promise.all(
+        playersToRemove.map((player) =>
+          teamApiService.removePlayerFromTeam(teamId, player.player_id),
+        ),
+      );
 
       // Exit edit mode and reload the team data
       setIsEditing(false);
