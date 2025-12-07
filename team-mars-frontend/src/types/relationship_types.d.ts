@@ -2,6 +2,17 @@
 // Nested/Relationship Types (for GET requests with relationships)
 // ============================================================================
 
+import type {
+  Player,
+  PlayerSkill,
+  TeamPlayer,
+  Team,
+  League,
+  Match,
+  Admin,
+  SkillLevel,
+} from './base_types';
+
 export interface PlayerWithSkills extends Player {
   skills?: PlayerSkillWithDetails[];
   team_memberships?: TeamPlayerWithTeam[];

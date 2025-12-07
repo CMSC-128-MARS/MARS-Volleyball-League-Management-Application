@@ -7,6 +7,7 @@ import Dashboard from '@/pages/Dashboard';
 import Players from '@/pages/Players';
 import Team from '@/pages/Team';
 import AddTeam from '@/pages/AddTeam';
+import TeamDetails from '@/pages/TeamDetails';
 
 export const router = createBrowserRouter([
   {
@@ -44,6 +45,10 @@ export const router = createBrowserRouter([
       {
         path: 'addteam',
         element: <AddTeam />,
+      },
+      {
+        path: 'teams/:teamId',
+        element: <TeamDetails />,
       },
     ],
   },

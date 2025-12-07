@@ -33,6 +33,24 @@ export class TeamApiService {
   deleteTeam(teamId: string): Promise<void> {
     return httpClient.delete<void>(`${this.baseUrl}/${teamId}`);
   }
+
+  async addPlayerToTeam(teamId: string, playerId: string, position?: string): Promise<void> {
+    return httpClient.post<void>('/team-player', {
+      team_id: teamId,
+      player_id: playerId,
+      position: position || null,
+      join_date: new Date().toISOString(),
+    });
+  }
+
+  async removePlayerFromTeam(teamId: string, playerId: string): Promise<void> {
+    // This sets the leave_date for the team-player relationship
+    return httpClient.patch<void>('/team-player', {
+      team_id: teamId,
+      player_id: playerId,
+      leave_date: new Date().toISOString(),
+    });
+  }
 }
 
 export const teamApiService = new TeamApiService();
