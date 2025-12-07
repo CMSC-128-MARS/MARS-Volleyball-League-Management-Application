@@ -81,6 +81,10 @@ export const router = createBrowserRouter([
         path: 'leagues/:leagueId',
         element: <LeagueDetails />,
       },
+      {
+        path: 'leagues',
+        element: <LeagueDashboard />,
+      },
     ],
   },
 ]);
