@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LeagueCard } from '@/components/common/league-card';
+import AddLeagueCard from '@/components/common/add-league-card';
 import { useLeagues } from '@/hooks/use-leagues';
 
 const LeagueDashboard = () => {
@@ -80,6 +81,7 @@ const LeagueDashboard = () => {
                                 value="add"
                                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch"
                             >
+                                <AddLeagueCard />
                                 {isLoading && (
                                     <p className="col-span-full text-center text-muted-foreground">Loading leagues…</p>
                                 )}
@@ -135,6 +137,7 @@ const LeagueDashboard = () => {
                                         name={league.league_name}
                                         location={league.location}
                                         description={league.description}
+                                        mode="remove"
                                     />
                                 ))}
                             </TabsContent>
