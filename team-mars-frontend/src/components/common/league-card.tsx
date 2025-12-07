@@ -1,4 +1,4 @@
-import {Card, CardFooter, CardTitle, CardAction, CardDescription, CardContent} from '@/components/ui/card';
+import {Card,  CardTitle} from '@/components/ui/card';
 
 type LeagueCardProps = {
   name?: string;
