@@ -8,6 +8,7 @@ import Players from '@/pages/Players';
 import Team from '@/pages/Team';
 import AddTeam from '@/pages/AddTeam';
 import TeamDetails from '@/pages/TeamDetails';
+import ContactSupport from '@/pages/ContactSupport';
 
 export const router = createBrowserRouter([
   {
@@ -22,6 +23,11 @@ export const router = createBrowserRouter([
         path: 'contact',
         element: <Contact />,
       },
+      {
+        path: 'contact-support',
+        element: <ContactSupport />,
+      },
+
       {
         path: 'login',
         element: <Login />,
