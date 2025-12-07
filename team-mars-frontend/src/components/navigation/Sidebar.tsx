@@ -44,7 +44,15 @@ const items = [
 
 export function AppSidebar() {
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const { open, setOpen } = useSidebar();
+  const { open, setOpen, isMobile, setOpenMobile } = useSidebar();
+
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    } else {
+      setOpen(false);
+    }
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -91,7 +99,7 @@ export function AppSidebar() {
                       asChild
                       className="hover:bg-accent rounded-[6px] text-[14px]"
                     >
-                      <Link to={item.url}>
+                      <Link to={item.url} onClick={handleLinkClick}>
                         <item.icon />
                         <span>{item.title}</span>
                       </Link>

@@ -76,10 +76,10 @@ export default function Team() {
             </TabsList>
           </div>
         </div>
-        <div className="w-full px-4 md:px-10 my-4">
+        <div className="w-full px-4 md:px-10 lg:px-12 xl:px-16 my-4">
           <hr className="border-t border-[#A3A3A3]" role="separator" aria-label="Section divider" />
         </div>
-        <div className="w-full px-6 md:px-12 lg:px-16 xl:px-20">
+        <div className="w-full px-4 md:px-10 lg:px-12 xl:px-16">
           <TabsContent
             value="view"
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6"
@@ -102,12 +102,17 @@ export default function Team() {
             )}
 
             {normalizedTeams.map((team) => (
-              <TeamManagementCard key={team.id} name={team.name} playerCount={team.playerCount} />
+              <TeamManagementCard
+                key={team.id}
+                name={team.name}
+                playerCount={team.playerCount}
+                teamId={team.id}
+              />
             ))}
           </TabsContent>
           <TabsContent
             value="add"
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6 items-stretch"
           >
             <AddTeamCard />
             {isLoading && (
@@ -125,13 +130,18 @@ export default function Team() {
               <p className="col-span-full text-center text-muted-foreground">No teams found.</p>
             )}
             {normalizedTeams.map((team) => (
-              <TeamManagementCard key={team.id} name={team.name} playerCount={team.playerCount} />
+              <TeamManagementCard
+                key={team.id}
+                name={team.name}
+                playerCount={team.playerCount}
+                teamId={team.id}
+              />
             ))}
             .
           </TabsContent>
           <TabsContent
             value="remove"
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6 items-stretch"
           >
             {isLoading && (
               <p className="col-span-full text-center text-muted-foreground">Loading teams…</p>

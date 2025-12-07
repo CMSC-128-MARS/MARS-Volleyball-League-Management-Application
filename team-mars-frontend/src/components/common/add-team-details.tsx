@@ -17,6 +17,7 @@ type AddTeamDetailsProps = {
   onTeamNameChange: (name: string) => void;
   leagueId: string;
   onLeagueChange: (leagueId: string) => void;
+  isEditMode?: boolean;
 };
 
 export default function AddTeamDetails({
@@ -24,6 +25,7 @@ export default function AddTeamDetails({
   onTeamNameChange,
   leagueId,
   onLeagueChange,
+  isEditMode = false,
 }: AddTeamDetailsProps) {
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const { leagues, isLoading, error } = useLeagues();
@@ -33,8 +35,7 @@ export default function AddTeamDetails({
       <Card className={`gap-2 transition-all duration-200 ${isSelectOpen ? 'pb-35 lg:pb-0' : ''}`}>
         <CardHeader className="items-center px-6 pt-4">
           <CardTitle className="flex flex-row justify-between items-center w-full">
-            <h4>Add Details</h4>
-            <p className="text-sm text-gray-500 font-paragraph text-4">ID: #12345</p>
+            <h4>{isEditMode ? 'Edit Details' : 'Add Details'}</h4>
           </CardTitle>
         </CardHeader>
         <hr className="w-full border-t border-[#A3A3A3]" />
@@ -56,7 +57,7 @@ export default function AddTeamDetails({
               League Selection <span className="text-secondary-alt">*</span>
             </p>
             <Select onOpenChange={setIsSelectOpen} value={leagueId} onValueChange={onLeagueChange}>
-              <SelectTrigger className="w-full rounded-sm border border-[#E5E5E5] bg-white shadow-[0_1px_2px_0_rgba(0,0,0,0.05)]">
+              <SelectTrigger className="w-full rounded-sm border border-[#E5E5E5] bg-white shadow-[0_1px_2px_0_rgba(0,0,0,0.05)] cursor-pointer">
                 <SelectValue placeholder={isLoading ? 'Loading leagues...' : '--'} />
               </SelectTrigger>
               <SelectContent>

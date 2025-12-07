@@ -1,4 +1,4 @@
-import type { Team, TeamPlayer } from '@/types/base_types';
+import type { Team, TeamPlayer, League, Player } from '@/types/base_types';
 import type { TeamCreate } from '@/types/create_types';
 import type { TeamFilters } from '@/types/filter_types';
 import type { TeamWithDetails, TeamPlayerWithPlayer } from '@/types/relationship_types';
@@ -13,6 +13,8 @@ export type {
   TeamWithDetails,
   TeamPlayerWithPlayer,
   PaginationParams,
+  League,
+  Player,
 };
 
 export interface TeamWithCounts extends Team {
@@ -20,7 +22,8 @@ export interface TeamWithCounts extends Team {
   total_player_count?: number;
   player_count?: number;
   match_count?: number;
-  team_players?: Array<{ leave_date?: string | null }>;
+  team_players?: TeamPlayerWithPlayer[];
+  league?: League;
 }
 
 export type FetchTeamsParams = TeamFilters;

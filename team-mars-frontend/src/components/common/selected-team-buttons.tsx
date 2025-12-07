@@ -15,11 +15,15 @@ export default function SelectedTeamButtons({
       <Button
         variant="outline"
         onClick={onBack}
-        className="px-6 py-[9.5px] border-primary font-semibold"
+        className="px-6 py-[9.5px] border-primary font-semibold cursor-pointer"
       >
         <RotateCcw strokeWidth={2.5} />
       </Button>
-      <Button onClick={onNext} disabled={isNextDisabled} className="px-6! py-[9.5px]!">
+      <Button
+        onClick={onNext}
+        disabled={isNextDisabled}
+        className="px-6! py-[9.5px]! cursor-pointer"
+      >
         <p className="text-sm font-light">Save</p>
       </Button>
     </div>
