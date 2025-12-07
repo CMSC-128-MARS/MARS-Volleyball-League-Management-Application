@@ -1,12 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
-import { fetchLeagues, type ApiLeague } from '@/lib/api';
+import { leagueApiService, type League } from '@/lib/league';
 
 interface UseLeaguesOptions {
   limit?: number;
 }
 
-export const useLeagues = ({ limit = 100 }: UseLeaguesOptions = {}) => {
-  const [leagues, setLeagues] = useState<ApiLeague[]>([]);
+export const useLeagues = ({ limit }: UseLeaguesOptions = {}) => {
+  const [leagues, setLeagues] = useState<League[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,7 +15,7 @@ export const useLeagues = ({ limit = 100 }: UseLeaguesOptions = {}) => {
     setError(null);
 
     try {
-      const apiLeagues = await fetchLeagues({ limit });
+      const apiLeagues = await leagueApiService.fetchLeagues({ limit });
       setLeagues(apiLeagues);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load leagues';
@@ -30,10 +30,29 @@ export const useLeagues = ({ limit = 100 }: UseLeaguesOptions = {}) => {
     loadLeagues();
   }, [loadLeagues]);
 
+  // Format date to readable format
+  const formatDate = useCallback((dateString?: string | null) => {
+    if (!dateString) {
+      return '—';
+    }
+
+    const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) {
+      return '—';
+    }
+
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  }, []);
+
   return {
     leagues,
     isLoading,
     error,
+    formatDate,
     refetch: loadLeagues,
   };
 };

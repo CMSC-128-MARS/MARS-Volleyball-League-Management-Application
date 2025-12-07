@@ -1,7 +1,10 @@
-import { Tabs, /*TabsContent*/ TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LeagueCard } from '@/components/common/league-card';
+import { useLeagues } from '@/hooks/use-leagues';
 
 const LeagueDashboard = () => {
+    const { leagues, isLoading, error, refetch } = useLeagues({ limit: 50 });
+
     return (
         <>
             <div className="bg-background text-primary-foreground relative overflow-auto h-full"
@@ -26,26 +29,115 @@ const LeagueDashboard = () => {
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="add"
-                                    className="data-[state=active]:bg-[#15803D] data-[state=active]:text-white"
+                                    className="data-[state=active]:bg-success data-[state=active]:text-white"
                                 >
                                     Add
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="remove"
-                                    className="data-[state=active]:bg-[#D52020] data-[state=active]:text-white"
+                                    className="data-[state=active]:bg-destructive data-[state=active]:text-white"
                                 >
                                     Remove
                                 </TabsTrigger>
                             </TabsList>
                         </div>
                          {/* Divider */}
-                        <hr className="w-full border-[#A3A3A3]" role="separator" aria-label="Section divider"></hr>
+                        <hr className="w-full border-gray-400" role="separator" aria-label="Section divider"></hr>
                         {/* Tabs Content */}
                         <div className="flex-grow">
-                            {/* View Tab Content */}
-                            <LeagueCard />
-                            {/* Add Tab Content */}
-                            {/* Remove Tab Content */}
+                            <TabsContent
+                                value="view"
+                                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                            >
+                                {isLoading && (
+                                    <p className="col-span-full text-center text-muted-foreground">Loading leagues…</p>
+                                )}
+
+                                {!isLoading && error && (
+                                    <div className="col-span-full text-center text-red-600">
+                                        <p>{error}</p>
+                                        <button type="button" className="mt-2 text-primary underline" onClick={refetch}>
+                                            Try again
+                                        </button>
+                                    </div>
+                                )}
+
+                                {!isLoading && !error && leagues.length === 0 && (
+                                    <p className="col-span-full text-center text-muted-foreground">No leagues found.</p>
+                                )}
+
+                                {leagues.map((league) => (
+                                    <LeagueCard
+                                        key={league.league_id}
+                                        leagueId={league.league_id}
+                                        name={league.league_name}
+                                        location={league.location}
+                                        description={league.description}
+                                    />
+                                ))}
+                            </TabsContent>
+                            <TabsContent
+                                value="add"
+                                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch"
+                            >
+                                {isLoading && (
+                                    <p className="col-span-full text-center text-muted-foreground">Loading leagues…</p>
+                                )}
+
+                                {!isLoading && error && (
+                                    <div className="col-span-full text-center text-red-600">
+                                        <p>{error}</p>
+                                        <button type="button" className="mt-2 text-primary underline" onClick={refetch}>
+                                            Try again
+                                        </button>
+                                    </div>
+                                )}
+
+                                {!isLoading && !error && leagues.length === 0 && (
+                                    <p className="col-span-full text-center text-muted-foreground">No leagues found.</p>
+                                )}
+
+                                {leagues.map((league) => (
+                                    <LeagueCard
+                                        key={league.league_id}
+                                        leagueId={league.league_id}
+                                        name={league.league_name}
+                                        location={league.location}
+                                        description={league.description}
+                                    />
+                                ))}
+                            </TabsContent>
+                            <TabsContent
+                                value="remove"
+                                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch"
+                            >
+                                {isLoading && (
+                                    <p className="col-span-full text-center text-muted-foreground">Loading leagues…</p>
+                                )}
+
+                                {!isLoading && error && (
+                                    <div className="col-span-full text-center text-red-600">
+                                        <p>{error}</p>
+                                        <button type="button" className="mt-2 text-primary underline" onClick={refetch}>
+                                            Try again
+                                        </button>
+                                    </div>
+                                )}
+
+                                {!isLoading && !error && leagues.length === 0 && (
+                                    <p className="col-span-full text-center text-muted-foreground">No leagues found.</p>
+                                )}
+
+                                {leagues.map((league) => (
+                                    <LeagueCard
+                                        key={league.league_id}
+                                        leagueId={league.league_id}
+                                        name={league.league_name}
+                                        location={league.location}
+                                        description={league.description}
+                                    />
+                                ))}
+                            </TabsContent>
                         </div>
                     </div>
                 </Tabs>
