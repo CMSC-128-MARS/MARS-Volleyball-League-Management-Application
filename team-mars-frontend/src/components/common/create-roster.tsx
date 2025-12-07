@@ -142,15 +142,6 @@ export default function AddTeamDetails({
                   <div className="overflow-y-auto flex-1 scrollbar-hide">
                     {currentPlayer && (
                       <div className="flex flex-col gap-3 mt-6">
-                        <div className="flex flex-col gap-2">
-                          <h4>ID: {currentPlayer?.player_id}</h4>
-                          <p className="text-muted-foreground text-xs">
-                            Last Updated:{' '}
-                            {currentPlayer?.updated_at
-                              ? new Date(currentPlayer.updated_at).toLocaleDateString()
-                              : 'N/A'}
-                          </p>
-                        </div>
                         <div className="flex flex-col md:grid md:grid-cols-3 gap-4">
                           <div>
                             <p className="text-[14px] text-black mb-1">First Name</p>
