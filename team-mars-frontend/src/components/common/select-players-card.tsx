@@ -8,6 +8,7 @@ type SelectPlayersCardProps = {
   onRemovePlayer?: (playerId: string) => void;
   onSave?: () => void;
   isSaving?: boolean;
+  showButtons?: boolean;
 };
 
 export default function SelectPlayersCard({
@@ -15,6 +16,7 @@ export default function SelectPlayersCard({
   onRemovePlayer,
   onSave,
   isSaving = false,
+  showButtons = true,
 }: SelectPlayersCardProps) {
   return (
     <div className="w-full h-full min-h-[300px] shadow-md bg-white">
@@ -27,7 +29,9 @@ export default function SelectPlayersCard({
         </CardHeader>
         <hr className="w-full border-t border-[#A3A3A3]" />
         <CardContent className="flex flex-col gap-2">
-          <SelectedTeamButtons onBack={() => {}} onNext={onSave} isNextDisabled={isSaving} />
+          {showButtons && (
+            <SelectedTeamButtons onBack={() => {}} onNext={onSave} isNextDisabled={isSaving} />
+          )}
           <div className="pt-2 pb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6">
             {players.length === 0 ? (
               <div className="col-span-full text-center text-muted-foreground py-8">

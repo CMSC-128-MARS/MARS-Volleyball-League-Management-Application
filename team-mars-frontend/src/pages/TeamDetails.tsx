@@ -9,6 +9,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTeam } from '@/hooks/use-team';
 import { useMemo, useState } from 'react';
 import type { ApiPlayer } from '@/lib/api';
+import { teamApiService } from '@/lib/team';
 
 export default function TeamDetails() {
   const { teamId } = useParams<{ teamId: string }>();
@@ -190,9 +191,39 @@ export default function TeamDetails() {
     setSelectedPlayers(selectedPlayers.filter((p) => p.player_id !== playerId));
   };
 
-  const handleSave = () => {
-    // TODO: Implement save logic
-    console.log('Saving team changes...');
+  const handleSave = async () => {
+    if (!team || !teamId) return;
+
+    try {
+      // Update team details (name and league)
+      await teamApiService.updateTeam(teamId, {
+        team_name: editTeamName,
+        league_id: editLeagueId,
+      });
+
+      // TODO: Update team players
+      // This would require a separate API endpoint to manage team players
+      // For now, we'll just update the basic team info
+
+      // Exit edit mode and reload the team data
+      setIsEditing(false);
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to save team changes:', error);
+      alert('Failed to save team changes. Please try again.');
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!teamId) return;
+
+    try {
+      await teamApiService.deleteTeam(teamId);
+      navigate('/teams');
+    } catch (error) {
+      console.error('Failed to delete team:', error);
+      alert('Failed to delete team. Please try again.');
+    }
   };
 
   if (isLoading) {
@@ -239,11 +270,14 @@ export default function TeamDetails() {
         onNext={handleNext}
         isEditing={isEditing}
         onEditToggle={handleEditToggle}
+        onSave={handleSave}
+        onDelete={handleDelete}
+        teamName={team.team_name}
       />
       <div className="flex flex-col lg:flex-row gap-6 w-full lg:items-start">
-        <div className="flex flex-col gap-6 lg:w-1/3">
-          {!isEditing ? (
-            <>
+        {!isEditing ? (
+          <>
+            <div className="flex flex-col gap-6 lg:w-1/3">
               <TeamManagementCard
                 name={team.team_name}
                 playerCount={team.active_player_count || 0}
@@ -254,42 +288,46 @@ export default function TeamDetails() {
                 leagueName={team.league?.league_name || 'Unknown League'}
                 teamId={team.team_id}
               />
-            </>
-          ) : (
-            <>
+            </div>
+            <div className="lg:w-2/3">
+              <ViewTeamPlayersCard
+                players={players}
+                onRemovePlayer={() => {}}
+                onSave={() => {}}
+                isSaving={false}
+                isEditing={isEditing}
+              />
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col gap-6 w-full">
+            <div className="flex flex-col lg:flex-row gap-6 w-full">
               <AddTeamDetails
                 teamName={editTeamName}
                 onTeamNameChange={setEditTeamName}
                 leagueId={editLeagueId}
                 onLeagueChange={setEditLeagueId}
+                isEditMode={true}
               />
               <CreateRoster
                 selectedMethod={selectedMethod}
                 onMethodChange={setSelectedMethod}
                 onPlayerAdd={handleAddPlayer}
                 selectedPlayerIds={selectedPlayers.map((p) => p.player_id)}
+                isEditMode={true}
               />
-            </>
-          )}
-        </div>
-        <div className="lg:w-2/3">
-          {!isEditing ? (
-            <ViewTeamPlayersCard
-              players={players}
-              onRemovePlayer={() => {}}
-              onSave={() => {}}
-              isSaving={false}
-              isEditing={isEditing}
-            />
-          ) : (
-            <SelectedPlayersCard
-              players={selectedPlayers}
-              onRemovePlayer={handleRemovePlayer}
-              onSave={handleSave}
-              isSaving={isSaving}
-            />
-          )}
-        </div>
+            </div>
+            <div className="w-full">
+              <SelectedPlayersCard
+                players={selectedPlayers}
+                onRemovePlayer={handleRemovePlayer}
+                onSave={handleSave}
+                isSaving={isSaving}
+                showButtons={false}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

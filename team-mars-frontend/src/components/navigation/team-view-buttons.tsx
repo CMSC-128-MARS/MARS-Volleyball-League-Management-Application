@@ -1,5 +1,14 @@
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Undo2, Trash, Pencil } from 'lucide-react';
+import { useState } from 'react';
 
 export default function TeamViewButtons({
   onBack,
@@ -7,25 +16,47 @@ export default function TeamViewButtons({
   isDisabled = false,
   isEditing = false,
   onEditToggle,
+  onSave,
+  onDelete,
+  teamName,
 }: {
   onBack: () => void;
   onNext: () => void;
   isDisabled?: boolean;
   isEditing?: boolean;
   onEditToggle?: (editing: boolean) => void;
+  onSave?: () => void;
+  onDelete?: () => void;
+  teamName?: string;
 }) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const handleEdit = () => {
     onEditToggle?.(true);
     onNext();
   };
 
-  const handleCancel = () => {
+  const handleCancelEdit = () => {
     onEditToggle?.(false);
   };
 
   const handleSave = () => {
-    onEditToggle?.(false);
-    // TODO: Implement save logic
+    onSave?.();
+  };
+
+  const handleDelete = async () => {
+    try {
+      setIsDeleting(true);
+      await onDelete?.();
+      setIsDialogOpen(false);
+    } catch (error) {
+      console.error('Failed to delete team:', error);
+      setIsDeleting(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setIsDialogOpen(false);
   };
 
   return (
@@ -42,13 +73,45 @@ export default function TeamViewButtons({
       </div>
       {!isEditing ? (
         <div className="flex flex-row gap-2">
-          <Button
-            type="button"
-            aria-label="Remove team"
-            className="bg-red-600 text-white p-1 rounded-sm hover:bg-red-700 transition-colors h-10 w-10"
-          >
-            <Trash className="w-5 h-5" />
-          </Button>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button
+                type="button"
+                aria-label="Remove team"
+                className="bg-red-600 text-white p-1 rounded-sm hover:bg-red-700 transition-colors h-10 w-10"
+              >
+                <Trash className="w-5 h-5" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="text-left">Delete Team?</DialogTitle>
+                <DialogDescription>
+                  <p className="font-paragraph text-left">
+                    Are you sure you want to delete the team{' '}
+                    <span className="text-red-600">{teamName || 'this team'}</span>?
+                  </p>
+                  <div className="flex gap-2 mt-4 justify-end items-end">
+                    <Button
+                      variant={'outline'}
+                      className="hover:cursor-pointer h-10 border-muted-foreground"
+                      onClick={handleCancelDelete}
+                      disabled={isDeleting}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      className="bg-[#D52020] h-10 hover:bg-[#D52020] hover:opacity-80 hover:cursor-pointer"
+                      onClick={handleDelete}
+                      disabled={isDeleting}
+                    >
+                      <Trash /> {isDeleting ? 'Deleting...' : 'Delete'}
+                    </Button>
+                  </div>
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
           <Button onClick={handleEdit} disabled={isDisabled} className="rounded-sm h-10 w-10">
             <Pencil className="text-white w-5 h-5 m-auto" />
           </Button>
@@ -58,7 +121,7 @@ export default function TeamViewButtons({
           <Button
             variant={'outline'}
             className="hover:cursor-pointer h-10 border-muted-foreground"
-            onClick={handleCancel}
+            onClick={handleCancelEdit}
           >
             Cancel
           </Button>

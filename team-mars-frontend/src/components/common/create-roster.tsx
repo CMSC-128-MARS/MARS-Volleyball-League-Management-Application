@@ -22,12 +22,14 @@ export default function AddTeamDetails({
   onMethodChange,
   onPlayerAdd,
   selectedPlayerIds = [],
+  isEditMode = false,
 }: {
   onRosterMethodSelected?: () => void;
   selectedMethod?: 'manual' | 'automatic' | null;
   onMethodChange?: (method: 'manual' | 'automatic' | null) => void;
   onPlayerAdd?: (player: ApiPlayer) => void;
   selectedPlayerIds?: string[];
+  isEditMode?: boolean;
 }) {
   const { players, isLoading, error } = usePlayers();
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
@@ -63,30 +65,36 @@ export default function AddTeamDetails({
       <Card className={`gap-2 transition-all duration-200 ${isSelectOpen ? 'pb-35 lg:pb-0' : ''}`}>
         <CardHeader className="items-center px-6 pt-4">
           <CardTitle className="flex flex-col justify-start items-start w-full gap-1">
-            <h4>Create Roster</h4>
-            <p className="text-sm text-gray-500 font-paragraph text-4">
-              Choose manual or automatic roster creation
-            </p>
+            <h4>{isEditMode ? 'Add Players' : 'Create Roster'}</h4>
+            {!isEditMode && (
+              <p className="text-sm text-gray-500 font-paragraph text-4">
+                Choose manual or automatic roster creation
+              </p>
+            )}
           </CardTitle>
         </CardHeader>
         <hr className="w-full border-t border-[#A3A3A3]" />
         <CardContent className="flex flex-col md:flex-row gap-6 pb-6 pt-4 items-start justify-center">
-          <div
-            onClick={() => handleMethodSelect('manual')}
-            className={`w-full md:w-1/2 hover:cursor-pointer rounded-sm shadow-md flex flex-col gap-2 items-center justify-center border px-6 py-8 h-[178px] transition-colors ${
-              selectedMethod === 'manual'
-                ? 'border-primary bg-primary/5'
-                : 'border-[#E5E5E5] hover:border-[#737373]'
-            }`}
-          >
-            <SquarePen />
-            <h4>Manual Creation</h4>
-            <p className="text-sm text-gray-500 font-paragraph text-center">
-              Choose your players manually to create a roster
-            </p>
-          </div>
-          {selectedMethod === 'manual' ? (
-            <div className="w-full md:w-1/2 flex flex-col gap-2 items-start">
+          {!isEditMode && (
+            <div
+              onClick={() => handleMethodSelect('manual')}
+              className={`w-full md:w-1/2 hover:cursor-pointer rounded-sm shadow-md flex flex-col gap-2 items-center justify-center border px-6 py-8 h-[178px] transition-colors ${
+                selectedMethod === 'manual'
+                  ? 'border-primary bg-primary/5'
+                  : 'border-[#E5E5E5] hover:border-[#737373]'
+              }`}
+            >
+              <SquarePen />
+              <h4>Manual Creation</h4>
+              <p className="text-sm text-gray-500 font-paragraph text-center">
+                Choose your players manually to create a roster
+              </p>
+            </div>
+          )}
+          {selectedMethod === 'manual' || isEditMode ? (
+            <div
+              className={`flex flex-col gap-2 items-start ${isEditMode ? 'w-full' : 'w-full md:w-1/2'}`}
+            >
               <p>
                 Enter Players <span className="text-secondary-alt">*</span>
               </p>
@@ -243,20 +251,22 @@ export default function AddTeamDetails({
               </Dialog>
             </div>
           ) : (
-            <div
-              onClick={() => handleMethodSelect('automatic')}
-              className={`w-full md:w-1/2 hover:cursor-pointer rounded-sm shadow-md flex flex-col gap-2 items-center justify-center border px-6 py-8 h-[178px] transition-colors ${
-                selectedMethod === 'automatic'
-                  ? 'border-primary bg-primary/5'
-                  : 'border-[#E5E5E5] hover:border-[#737373]'
-              }`}
-            >
-              <Cog />
-              <h4>Automatic Creation</h4>
-              <p className="text-sm text-gray-500 font-paragraph text-center">
-                Chooses players by skill to form a balanced roster.
-              </p>
-            </div>
+            !isEditMode && (
+              <div
+                onClick={() => handleMethodSelect('automatic')}
+                className={`w-full md:w-1/2 hover:cursor-pointer rounded-sm shadow-md flex flex-col gap-2 items-center justify-center border px-6 py-8 h-[178px] transition-colors ${
+                  selectedMethod === 'automatic'
+                    ? 'border-primary bg-primary/5'
+                    : 'border-[#E5E5E5] hover:border-[#737373]'
+                }`}
+              >
+                <Cog />
+                <h4>Automatic Creation</h4>
+                <p className="text-sm text-gray-500 font-paragraph text-center">
+                  Chooses players by skill to form a balanced roster.
+                </p>
+              </div>
+            )
           )}
         </CardContent>
       </Card>
