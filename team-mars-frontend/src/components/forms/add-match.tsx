@@ -42,6 +42,7 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
     team2_id: '',
     match_date: '',
     location: '',
+    num_of_sets: '',
   });
   const [completedData, setCompletedData] = useState({
     winner_team_id: '',
@@ -79,7 +80,7 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.team1_id || !formData.team2_id || !formData.match_date || !formData.location) {
+    if (!formData.team1_id || !formData.team2_id || !formData.match_date || !formData.location || !formData.num_of_sets) {
       alert('Please fill in all fields');
       return;
     }
@@ -104,7 +105,6 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
       setCompletedData((prev) => ({ ...prev, winner_team_id }));
 
       if (
-        !completedData.sets_played ||
         !completedData.team1_final_score ||
         !completedData.team2_final_score
       ) {
@@ -130,12 +130,13 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
         team2_id: formData.team2_id,
         match_date: new Date(formData.match_date).toISOString(),
         location: formData.location,
+        num_of_sets: parseInt(formData.num_of_sets),
       };
 
       await matchApiService.createMatch(matchData);
 
       setIsOpen(false);
-      setFormData({ team1_id: '', team2_id: '', match_date: '', location: '' });
+      setFormData({ team1_id: '', team2_id: '', match_date: '', location: '', num_of_sets: '' });
       setCompletedData({
         winner_team_id: '',
         sets_played: '',
@@ -304,6 +305,23 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
               />
             </div>
 
+            {/* Number of Sets */}
+            <div className="space-y-2">
+              <Label htmlFor="num_of_sets">
+                Number of Sets <span className="text-secondary-alt">*</span>
+              </Label>
+              <Input
+                id="num_of_sets"
+                type="number"
+                min="1"
+                max="5"
+                placeholder="Enter number of sets (e.g., 3)"
+                value={formData.num_of_sets}
+                onChange={(e) => setFormData({ ...formData, num_of_sets: e.target.value })}
+                required
+              />
+            </div>
+
             {/* Completed Match Extra Fields */}
             {matchStatus === 'completed' && (
               <>
@@ -353,27 +371,12 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
                 </div>
 
                 {/* Sets Played */}
-                <div className="space-y-2">
-                  <Label htmlFor="sets_played">
-                    Sets Played <span className="text-secondary-alt">*</span>
-                  </Label>
-                  <Input
-                    id="sets_played"
-                    type="number"
-                    min="1"
-                    max="5"
-                    pattern="[1-5]"
-                    placeholder="Enter number of sets"
-                    value={completedData.sets_played}
-                    onChange={(e) => handleSetsPlayedChange(e.target.value)}
-                  />
-                </div>
                 
                 {/* Set Scores */}
-                {completedData.sets_played && parseInt(completedData.sets_played) > 0 && (
+                {formData.num_of_sets && parseInt(formData.num_of_sets) > 0 && (
                   <div className="flex flex-col h-full gap-3 ">
                     
-                    {Array.from({ length: Math.min(parseInt(completedData.sets_played), 5) }, (_, i) => (
+                    {Array.from({ length: Math.min(parseInt(formData.num_of_sets), 5) }, (_, i) => (
                       <>
                       <p className="pg2 text-gray-500">Set {i + 1}</p>
                       <div className="grid grid-cols-2 gap-3">

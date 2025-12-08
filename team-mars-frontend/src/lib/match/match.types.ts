@@ -29,6 +29,7 @@ export interface MatchCreate {
   team2_id: string;
   match_date: string;
   location: string;
+  num_of_sets: number;
 }
 
 export interface MatchUpdate {
