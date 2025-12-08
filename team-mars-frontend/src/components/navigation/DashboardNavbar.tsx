@@ -1,10 +1,15 @@
 import { Menu, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSidebar } from '@/components/ui/sidebar';
+import { authSignOut } from '@/lib/auth';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { useState } from 'react';
 
 const Navbar2 = () => {
   const navigate = useNavigate();
   const { toggleSidebar } = useSidebar();
+  const logout = useAuthStore((s) => s.logout);
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   return (
     <>
@@ -45,11 +50,36 @@ const Navbar2 = () => {
 
               <div className="text-white leading-tight font-paragraph text-left mx-2 md:mx-4">
                 <p className="text-sm">Admin</p>
-                <p className="text-xs">#12345</p>
               </div>
             </div>
 
-            <LogOut className="text-white border border-white p-2 w-9 h-9 rounded-sm" />
+            <button
+              onClick={async () => {
+                try {
+                  setIsSigningOut(true);
+                  const res = await authSignOut();
+                  if (res?.success) {
+                    console.log('Sign out successful');
+                  }
+                } catch (err) {
+                  console.error('Sign out failed', err);
+                } finally {
+                  // Clear local auth state and redirect to login
+                  logout();
+                  console.log('Local auth state cleared (logged out)');
+                  setIsSigningOut(false);
+                  navigate('/login');
+                }
+              }}
+              aria-label="Sign out"
+              className="h-9 w-9"
+              title="Sign out"
+            >
+              <LogOut
+                className="text-white border border-white p-2 w-9 h-9 rounded-sm hover:cursor-pointer "
+                aria-hidden={isSigningOut}
+              />
+            </button>
           </div>
         </div>
       </nav>

@@ -1,6 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
 import App from '@/App.tsx';
-import LandingPage from '@/pages/LandingPage';
 import Contact from '@/pages/Contact';
 import Login from '@/pages/Login';
 import Dashboard from '@/pages/Dashboard';
@@ -8,7 +7,8 @@ import Players from '@/pages/Players';
 import Team from '@/pages/Team';
 import AddTeam from '@/pages/AddTeam';
 import TeamDetails from '@/pages/TeamDetails';
-
+import ProtectedRoute from '@/components/ProtectedRoute';
+import HomeRedirect from '@/components/HomeRedirect';
 
 export const router = createBrowserRouter([
   {
@@ -17,16 +17,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <LandingPage />,
-      },
-      {
-        path: 'contact',
-        element: <Contact/>,
-      },
-
-      {
-        path: 'login',
-        element: <Login />,
+        element: <HomeRedirect />,
       },
       {
         path: 'login',
@@ -34,23 +25,51 @@ export const router = createBrowserRouter([
       },
       {
         path: 'dashboard',
-        element: <Dashboard />,
+        element: (
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'players',
-        element: <Players />,
+        element: (
+          <ProtectedRoute>
+            <Players />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'teams',
-        element: <Team />,
+        element: (
+          <ProtectedRoute>
+            <Team />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'addteam',
-        element: <AddTeam />,
+        element: (
+          <ProtectedRoute>
+            <AddTeam />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'teams/:teamId',
-        element: <TeamDetails />,
+        element: (
+          <ProtectedRoute>
+            <TeamDetails />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'contact',
+        element: (
+          <ProtectedRoute>
+            <Contact />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
