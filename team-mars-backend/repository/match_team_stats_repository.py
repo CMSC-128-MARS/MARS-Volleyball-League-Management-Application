@@ -6,7 +6,7 @@ All methods return SQLAlchemy models, not Pydantic schemas.
 
 from typing import List, Optional
 from uuid import UUID
-from sqlalchemy import select
+from sqlalchemy import select, and_
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from repository.models.match_team_stats import MatchTeamStats
@@ -135,18 +135,6 @@ class MatchTeamStatsRepository:
         await db.commit()
         return True
 
-    # CHECK IF MATCH TEAM STATS EXISTS
-    async def match_team_stats_exists(
-        self, db: AsyncSession, match_team_stats_id: UUID
-    ) -> bool:
-        """Check if match team stats exists by ID"""
-        result = await db.execute(
-            select(MatchTeamStats).where(
-                MatchTeamStats.match_team_stats_id == match_team_stats_id
-            )
-        )
-        return result.scalars().first() is not None
-
     # CHECK IF STATS EXIST FOR MATCH AND TEAM
     async def get_stats_by_match_and_team(
         self, db: AsyncSession, match_id: UUID, team_id: UUID
@@ -154,7 +142,10 @@ class MatchTeamStatsRepository:
         """Get stats for a specific match and team combination"""
         result = await db.execute(
             select(MatchTeamStats).where(
-                MatchTeamStats.match_id == match_id, MatchTeamStats.team_id == team_id
+                and_(
+                    MatchTeamStats.match_id == match_id,
+                    MatchTeamStats.team_id == team_id,
+                )
             )
         )
         return result.scalars().first()
