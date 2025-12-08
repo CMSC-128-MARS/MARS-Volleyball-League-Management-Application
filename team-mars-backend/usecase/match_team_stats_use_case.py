@@ -116,7 +116,5 @@ class MatchTeamStatsUseCase:
         if not match_team_stats:
             raise NotFoundException("Match team stats not found.")
 
-        if await self.repo.delete_match_team_stats(session, match_team_stats_id):
-            logger.info(
-                "Match team stats successfully deleted: %s", match_team_stats_id
-            )
+        await self.repo.delete_match_team_stats(session, match_team_stats_id)
+        logger.info("Match team stats successfully deleted: %s", match_team_stats_id)
