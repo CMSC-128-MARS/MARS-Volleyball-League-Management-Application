@@ -21,7 +21,6 @@ interface PlayerView {
   jersey_number?: number | null;
   default_position?: string | null;
   skill_level?: string | null;
-  skill_level_description?: string | null;
   notes?: string | null;
 }
 
@@ -42,7 +41,6 @@ export default function ViewPlayerCard({ open, onOpenChange, player }: ViewPlaye
     jerseyNumber: player?.jersey_number ?? undefined,
     defaultPosition: player?.default_position ?? '',
     skillLevel: player?.skill_level ?? '',
-    skillLevelDescription: player?.skill_level_description ?? '',
     notes: player?.notes ?? '',
   }));
 
@@ -53,7 +51,6 @@ export default function ViewPlayerCard({ open, onOpenChange, player }: ViewPlaye
       jerseyNumber: player?.jersey_number ?? undefined,
       defaultPosition: player?.default_position ?? '',
       skillLevel: player?.skill_level ?? '',
-      skillLevelDescription: player?.skill_level_description ?? '',
       notes: player?.notes ?? '',
     });
     if (!open) setIsEditing(false);
@@ -67,7 +64,6 @@ export default function ViewPlayerCard({ open, onOpenChange, player }: ViewPlaye
       jerseyNumber: player?.jersey_number ?? undefined,
       defaultPosition: player?.default_position ?? '',
       skillLevel: player?.skill_level ?? '',
-      skillLevelDescription: player?.skill_level_description ?? '',
       notes: player?.notes ?? '',
     });
     setIsEditing(false);
@@ -199,20 +195,7 @@ export default function ViewPlayerCard({ open, onOpenChange, player }: ViewPlaye
               </div>
             </div>
 
-            <div>
-              <p className="text-[14px] text-black mb-1">Skill Level Description</p>
-              <Textarea
-                value={form.skillLevelDescription}
-                disabled={!isEditing}
-                className="bg-white h-24"
-                onChange={(e) =>
-                  setForm((s) => ({
-                    ...s,
-                    skillLevelDescription: (e.target as HTMLTextAreaElement).value,
-                  }))
-                }
-              />
-            </div>
+            {/* Skill Level Description removed per request */}
 
             <div>
               <p className="text-[14px] text-black mb-1">Notes</p>

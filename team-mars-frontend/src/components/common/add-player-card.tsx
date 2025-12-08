@@ -27,7 +27,7 @@ export default function AddPlayerCard({ open, onOpenChange, onCreate }: AddPlaye
   const [jerseyNumber, setJerseyNumber] = useState<number | undefined>(undefined);
   const [defaultPosition, setDefaultPosition] = useState('');
   const [skillLevel, setSkillLevel] = useState<string | undefined>(undefined);
-  const [skillLevelDescription, setSkillLevelDescription] = useState('');
+
   const [note, setNote] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,7 +41,6 @@ export default function AddPlayerCard({ open, onOpenChange, onCreate }: AddPlaye
       setJerseyNumber(undefined);
       setDefaultPosition('');
       setSkillLevel(undefined);
-      setSkillLevelDescription('');
       setNote('');
       setErrors({});
       setSubmitError(null);
@@ -253,14 +252,7 @@ export default function AddPlayerCard({ open, onOpenChange, onCreate }: AddPlaye
                 )}
               </div>
             </div>
-            <div>
-              <p className="text-[14px] text-black mb-1">Skill Level Description</p>
-              <Textarea
-                value={skillLevelDescription}
-                onChange={(e) => setSkillLevelDescription((e.target as HTMLTextAreaElement).value)}
-                className="bg-white h-24"
-              />
-            </div>
+            {/* Skill Level Description removed per request */}
             <div>
               <p className="text-[14px] text-black mb-1">Notes</p>
               <Textarea

@@ -84,7 +84,6 @@ function PlayerDetailsTableComponent({
     jersey_number?: number | null;
     default_position?: string | null;
     skill_level?: string | null;
-    skill_level_description?: string | null;
     notes?: string | null;
   } | null>(null);
 
@@ -103,7 +102,6 @@ function PlayerDetailsTableComponent({
       jersey_number: p.jerseyNo ?? null,
       default_position: p.position ?? null,
       skill_level: numericSkill != null ? String(numericSkill) : null,
-      skill_level_description: null,
       notes: null,
     });
     setIsViewOpen(true);
@@ -312,7 +310,10 @@ function PlayerDetailsTableComponent({
                               <RectangleEllipsis className="h-5 w-5" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>
+                          <TooltipContent
+                            showArrow={false}
+                            className="bg-muted border border-muted-foreground text-black font-paragraph rounded-sm"
+                          >
                             <p>View Player Details</p>
                           </TooltipContent>
                         </Tooltip>
