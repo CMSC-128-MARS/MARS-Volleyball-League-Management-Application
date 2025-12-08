@@ -74,8 +74,6 @@ class MatchTeamStatsUseCase:
         match_team_stats_list = await self.repo.get_match_team_stats_by_match(
             session, match_id
         )
-        if not match_team_stats_list:
-            raise NotFoundException("No match team stats found for this match.")
         return [MatchTeamStatsFull.model_validate(mts) for mts in match_team_stats_list]
 
     # READ - GET MATCH TEAM STATS BY TEAM ID
@@ -86,8 +84,6 @@ class MatchTeamStatsUseCase:
         match_team_stats_list = await self.repo.get_match_team_stats_by_team(
             session, team_id
         )
-        if not match_team_stats_list:
-            raise NotFoundException("No match team stats found for this team.")
         return [MatchTeamStatsFull.model_validate(mts) for mts in match_team_stats_list]
 
     # UPDATE MATCH TEAM STATS
