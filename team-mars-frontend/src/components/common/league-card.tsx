@@ -11,6 +11,7 @@ import {
 import { MapPin, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { leagueApiService } from '@/lib/league';
+import { useNavigate } from 'react-router-dom';
 
 type LeagueCardProps = {
   leagueId: string;
@@ -22,6 +23,7 @@ type LeagueCardProps = {
 };
 
 export const LeagueCard = ({ leagueId, name, location, description, mode = 'view', onRemoveSuccess }: LeagueCardProps) => {
+    const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -42,6 +44,10 @@ export const LeagueCard = ({ leagueId, name, location, description, mode = 'view
 
     const handleCancel = () => {
         setOpen(false);
+    };
+
+    const handleViewDetails = () => {
+        navigate(`/leagues/${leagueId}`);
     };
     return (
         <Card className="w-full border border-border shadow-md bg-card">
@@ -117,10 +123,7 @@ export const LeagueCard = ({ leagueId, name, location, description, mode = 'view
                         variant="default"
                         size="default"
                         className="text-primary-foreground w-full cursor-pointer"
-                        onClick={() => {
-                            // Navigate to league details page
-                            window.location.href = `/leagues/${leagueId}`;
-                        }}
+                        onClick={handleViewDetails}
                     >
                         View Details
                     </Button>
