@@ -29,7 +29,7 @@ interface Player {
   last_name?: string | null;
   position: string;
   jerseyNo: number;
-  grade: number;
+  grade?: number | null;
 }
 
 export default function PlayerDetailsTable({
@@ -95,13 +95,14 @@ function PlayerDetailsTableComponent({
     } catch {
       // ignore handler errors
     }
+    const numericSkill = p.grade ?? null;
     setViewPlayer({
       id: p.id,
       first_name: p.first_name,
       last_name: p.last_name,
       jersey_number: p.jerseyNo ?? null,
       default_position: p.position ?? null,
-      skill_level: p.grade ? String(p.grade) : null,
+      skill_level: numericSkill != null ? String(numericSkill) : null,
       skill_level_description: null,
       notes: null,
     });

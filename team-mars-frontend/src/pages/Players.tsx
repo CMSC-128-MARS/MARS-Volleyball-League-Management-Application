@@ -12,7 +12,8 @@ interface Player {
   last_name?: string | null;
   position: string;
   jerseyNo: number;
-  grade: number;
+  grade?: number | null;
+  skill_level?: number | null;
 }
 
 const Players = () => {
@@ -28,7 +29,6 @@ const Players = () => {
     setLoading(true);
     try {
       const data = await playerService.fetchPlayers();
-      // Map service Player -> page Player shape (ensure `grade` exists)
       setPlayers(
         data.map((p) => ({
           id: p.id,
@@ -37,7 +37,8 @@ const Players = () => {
           last_name: p.last_name,
           position: p.position ?? '',
           jerseyNo: p.jerseyNo ?? 0,
-          grade: p.grade ?? 0,
+          grade: p.grade ?? null,
+          skill_level: p.skill_level ?? p.grade ?? null,
         })),
       );
     } catch (err) {

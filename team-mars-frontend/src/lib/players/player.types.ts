@@ -3,6 +3,8 @@
 export interface PlayerDto {
   player_id: string;
   first_name: string;
+  grade?: number | null;
+  skill_level?: number | null;
   last_name?: string | null;
   jersey_number?: number | null;
   default_position?: string | null;
@@ -26,5 +28,7 @@ export interface Player {
   last_name?: string | null;
   position: string | null;
   jerseyNo: number | null;
+  grade?: number | null;
+  skill_level?: number | null;
   createdAt?: string;
 }

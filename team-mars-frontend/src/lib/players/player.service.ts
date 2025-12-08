@@ -16,6 +16,9 @@ function mapDtoToUi(dto: PlayerDto): PlayerUI {
     last_name: dto.last_name ?? null,
     position: dto.default_position ?? null,
     jerseyNo: dto.jersey_number ?? null,
+    // Backends might return `grade` or `skill_level` — normalize both onto the UI model
+    grade: dto.skill_level ?? dto.grade ?? null,
+    skill_level: dto.skill_level ?? dto.grade ?? null,
     createdAt: dto.created_at,
   };
 }
