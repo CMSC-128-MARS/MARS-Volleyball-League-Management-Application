@@ -42,7 +42,7 @@ const Navbar2 = () => {
           </div>
 
           {/* Right Section */}
-          <div className="">
+          <div>
 
 
             <button
