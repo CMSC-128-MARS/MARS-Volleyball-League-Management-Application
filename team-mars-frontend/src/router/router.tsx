@@ -9,6 +9,7 @@ import Team from '@/pages/Team';
 import AddTeam from '@/pages/AddTeam';
 import TeamDetails from '@/pages/TeamDetails';
 
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -20,8 +21,9 @@ export const router = createBrowserRouter([
       },
       {
         path: 'contact',
-        element: <Contact />,
+        element: <Contact/>,
       },
+
       {
         path: 'login',
         element: <Login />,
