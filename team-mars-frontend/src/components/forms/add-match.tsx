@@ -53,18 +53,6 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
     team2_set_scores: [] as string[],
   });
 
-  const handleSetsPlayedChange = (value: string) => {
-    const numSets = parseInt(value);
-    if (!isNaN(numSets) && numSets > 0) {
-      setCompletedData({
-        ...completedData,
-        sets_played: value,
-        team1_set_scores: Array(numSets).fill(''),
-        team2_set_scores: Array(numSets).fill(''),
-      });
-    }
-  };
-
   const handleSetScoreChange = (team: 'team1' | 'team2', index: number, value: string) => {
     const scoreArray =
       team === 'team1' ? [...completedData.team1_set_scores] : [...completedData.team2_set_scores];
