@@ -11,6 +11,7 @@ import TeamDetails from '@/pages/TeamDetails';
 import LeagueDashboard from '@/pages/Leagues';
 import LeagueDetails from '@/pages/LeagueDetails';
 
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -22,8 +23,9 @@ export const router = createBrowserRouter([
       },
       {
         path: 'contact',
-        element: <Contact />,
+        element: <Contact/>,
       },
+
       {
         path: 'login',
         element: <Login />,
