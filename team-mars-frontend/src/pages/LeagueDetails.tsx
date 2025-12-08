@@ -119,8 +119,8 @@ export default function LeagueDetails() {
               description={league.description}
             />
             <ViewLeagueTeamsCard
-              teams={(league.teams as any) || []}
-              matches={(league.matches as any) || []}
+              teams={league.teams as Team[]}
+              matches={league.matches as Match[]}
               showTeamsOnly={true}
               isEditing={isEditing}
               leagueId={league.league_id}
@@ -130,8 +130,8 @@ export default function LeagueDetails() {
           {/* Right Column: Matches */}
           <div className="lg:w-2/3">
             <ViewLeagueTeamsCard
-              teams={(league.teams as any) || []}
-              matches={(league.matches as any) || []}
+              teams={league.teams as Team[]}
+              matches={league.matches as Match[]}
               showMatchesOnly={true}
               isEditing={isEditing}
               leagueId={league.league_id}
