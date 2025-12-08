@@ -208,7 +208,6 @@ export default function AddPlayerCard({ open, onOpenChange, onCreate }: AddPlaye
                       <SelectLabel>Default Position</SelectLabel>
                       <SelectItem value="Setter">Setter</SelectItem>
                       <SelectItem value="Outside Hitter">Outside Hitter</SelectItem>
-                      <SelectItem value="Opposite Hitter">Opposite Hitter</SelectItem>
                       <SelectItem value="Middle Blocker">Middle Blocker</SelectItem>
                       <SelectItem value="Libero">Libero</SelectItem>
                       <SelectItem value="Defensive Specialist">Defensive Specialist</SelectItem>
