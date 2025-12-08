@@ -60,6 +60,25 @@ async def get_matches(
 
 
 """
+READ - GET ALL MATCHES BY TEAM 
+"""
+
+
+@router.get(
+    "/team/{team_id}",
+    response_model=List[MatchNested],
+    status_code=status.HTTP_200_OK,
+)
+async def get_matches_by_team(
+    team_id: UUID,
+    session: AsyncSession = Depends(get_async_session),
+    use_case: MatchUseCase = Depends(get_match_use_case),
+):
+    matches = await use_case.get_matches_by_team(session, team_id)
+    return matches
+
+
+"""
 READ ALL MATCHES BY LEAGUE WITH CONDITIONAL = is_completed=true/false
 """
 

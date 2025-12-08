@@ -13,7 +13,9 @@ class Team(Base):
 
     # Foreign Keys
     league_id = Column(
-        UUID(as_uuid=True), ForeignKey("league.league_id"), nullable=False
+        UUID(as_uuid=True),
+        ForeignKey("league.league_id", ondelete="CASCADE"),
+        nullable=False,
     )
 
     # Relationships
