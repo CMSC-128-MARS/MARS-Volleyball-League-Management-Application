@@ -84,7 +84,7 @@ export function AppSidebar() {
     <div ref={sidebarRef}>
       <Sidebar
         collapsible="offcanvas"
-        className="!top-[80px] !h-[calc(100vh-80px)] !z-50 !border-none"
+        className="!top-[73px] !h-[calc(100vh-73px)] !z-50 !border-none"
       >
         <SidebarContent className="bg-primary-alt font-paragraph pt-6 pb-6 pr-1 pl-1">
           <SidebarGroup>
