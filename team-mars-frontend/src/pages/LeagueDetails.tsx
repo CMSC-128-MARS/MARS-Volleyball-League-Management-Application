@@ -2,9 +2,11 @@ import LeagueViewButtons from '@/components/navigation/league-view-buttons';
 import LeagueDetailsComponent from '@/components/common/league-details';
 import ViewLeagueTeamsCard from '@/components/common/view-league-teams-card';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { leagueApiService } from '@/lib/league';
 import type { LeagueFull } from '@/lib/league';
+import type { Team } from '@/lib/team';
+import type { Match } from '@/lib/match';
 
 export default function LeagueDetails() {
   const { leagueId } = useParams<{ leagueId: string }>();
@@ -14,13 +16,8 @@ export default function LeagueDetails() {
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  useEffect(() => {
-    fetchLeagueData();
-  }, [leagueId]);
-
-  const fetchLeagueData = async () => {
+  const fetchLeagueData = useCallback(async () => {
     if (!leagueId) return;
-
     try {
       setIsLoading(true);
       const data = await leagueApiService.fetchLeague(leagueId);
@@ -30,7 +27,11 @@ export default function LeagueDetails() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [leagueId]);
+
+  useEffect(() => {
+    fetchLeagueData();
+  }, [fetchLeagueData]);
 
   const handleBack = () => {
     navigate('/leagues');
@@ -118,8 +119,8 @@ export default function LeagueDetails() {
               description={league.description}
             />
             <ViewLeagueTeamsCard
-              teams={(league.teams as any) || []}
-              matches={(league.matches as any) || []}
+              teams={league.teams as Team[]}
+              matches={league.matches as Match[]}
               showTeamsOnly={true}
               isEditing={isEditing}
               leagueId={league.league_id}
@@ -129,8 +130,8 @@ export default function LeagueDetails() {
           {/* Right Column: Matches */}
           <div className="lg:w-2/3">
             <ViewLeagueTeamsCard
-              teams={(league.teams as any) || []}
-              matches={(league.matches as any) || []}
+              teams={league.teams as Team[]}
+              matches={league.matches as Match[]}
               showMatchesOnly={true}
               isEditing={isEditing}
               leagueId={league.league_id}
