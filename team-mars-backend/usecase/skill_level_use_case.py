@@ -8,7 +8,7 @@ from uuid import UUID
 from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
 from repository.skill_level_repository import SkillLevelRepository
-from core.exceptions import NotFoundException
+from core.exceptions import NotFoundException, ConflictException
 from model.skill_level.skill_level import (
     SkillLevelCreate,
     SkillLevelUpdate,
@@ -37,7 +37,7 @@ class SkillLevelUseCase:
             session, payload.level
         )
         if existing_skill_level:
-            raise ValueError(
+            raise ConflictException(
                 f'Skill level with level {payload.level} already exists.'
             )
 
@@ -86,7 +86,7 @@ class SkillLevelUseCase:
                 session, payload.level
             )
             if existing_skill_level:
-                raise ValueError(
+                raise ConflictException(
                     f'Skill level with level {payload.level} already exists.'
                 )
 
