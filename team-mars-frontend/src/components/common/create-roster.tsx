@@ -212,14 +212,7 @@ export default function AddTeamDetails({
                             />
                           </div>
                         </div>
-                        <div>
-                          <p className="text-[14px] text-black mb-1">Skill Level Description</p>
-                          <Input
-                            value={currentPlayer.skill_level_description || 'N/A'}
-                            readOnly
-                            className="bg-gray-50 text-[14px] text-gray-500"
-                          />
-                        </div>
+                        {/* Skill Level Description removed per request */}
                         <div>
                           <p className="text-[14px] text-black mb-1">Notes</p>
                           <Input
