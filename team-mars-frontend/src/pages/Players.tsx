@@ -1,133 +1,144 @@
-// Import Button component based on the path seen in your LandingPage example
-import { RectangleEllipsis } from 'lucide-react';
-// --- Consolidated Types and Data ---
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useEffect, useState } from 'react';
+import PlayerDetailsTable from '@/components/common/player-details-table';
+import { playerService } from '@/lib/players';
+
 interface Player {
   id: string;
   name: string;
   position: string;
   jerseyNo: number;
-  teamCode: string;
+  grade: number;
 }
 
-const tableHeaders: string[] = [
-  'ID',
-  'Player Name',
-  'Default Position',
-  'Jersey No.',
-  'Team Code',
-  '', // Action column
-];
-
-const playerList: Player[] = [
-  { id: '1234', name: 'Doe', position: 'Middle Blocker', jerseyNo: 77, teamCode: 'XYZ' },
-  { id: '1235', name: 'Smith', position: 'Setter', jerseyNo: 77, teamCode: 'XYZ' },
-  { id: '1236', name: 'Jones', position: 'Middle Blocker', jerseyNo: 77, teamCode: 'XYZ' },
-  { id: '1237', name: 'Brown', position: 'Middle Blocker', jerseyNo: 77, teamCode: 'XYZ' },
-  { id: '1238', name: 'Garcia', position: 'Middle Blocker', jerseyNo: 77, teamCode: 'XYZ' },
-  { id: '1239', name: 'Chen', position: 'Middle Blocker', jerseyNo: 77, teamCode: 'XYZ' },
-  { id: '1240', name: 'Lee', position: 'Middle Blocker', jerseyNo: 77, teamCode: 'XYZ' },
-];
-
-// ------------------------------------
-
-// The Page component that displays the Player Management UI
 const Players = () => {
   const handleViewDetails = (player: Player): void => {
     console.log(`Viewing details for ID: ${player.id}`);
     alert(`Viewing details for ${player.name} (${player.position})`);
   };
 
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const loadPlayers = async () => {
+    setLoading(true);
+    try {
+      const data = await playerService.fetchPlayers();
+      // Map service Player -> page Player shape (ensure `grade` exists)
+      setPlayers(
+        data.map((p: any) => ({
+          id: p.id,
+          name: p.name,
+          position: p.position ?? '',
+          jerseyNo: p.jerseyNo ?? 0,
+          grade: p.grade ?? 0,
+        })),
+      );
+    } catch (err) {
+      console.error('Failed to load players', err);
+      setPlayers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    void loadPlayers();
+  }, []);
+
+  const handleAdd = async () => {
+    const firstName = window.prompt('First name');
+    if (!firstName) return;
+    const lastName = window.prompt('Last name (optional)');
+    try {
+      await playerService.createPlayer({ first_name: firstName, last_name: lastName || undefined });
+      await loadPlayers();
+      alert('Player created');
+    } catch (err) {
+      console.error('Failed to create player', err);
+      alert('Failed to create player');
+    }
+  };
+
+  const handleRemoveSelected = async (ids: string[]) => {
+    if (!ids || ids.length === 0) return;
+    const ok = window.confirm(
+      `Delete ${ids.length} selected player(s)? This action cannot be undone.`,
+    );
+    if (!ok) return;
+    try {
+      for (const id of ids) {
+        await playerService.deletePlayer(id);
+      }
+      await loadPlayers();
+      alert('Selected players deleted');
+    } catch (err) {
+      console.error('Failed to delete players', err);
+      alert('Failed to delete selected players');
+    }
+  };
+
   return (
-    // Apply container and background colors from your theme
-    <div className="">
-      <div className="bg-background min-h-screen py-15 text-foreground px-2">
-        <div className="mx-auto max-w-7xl lg:ml- px-1 sm:px-20">
-          {/* PLAYER MANAGEMENT Title */}
-          <h1 className="text-center mb-8 h2  text-foreground ">PLAYER MANAGEMENT</h1>
+    <div
+      className="w-full min-h-screen"
+      style={{
+        backgroundImage: `url('/assets/Grunge.png')`,
+        backgroundSize: 'auto',
+        backgroundRepeat: 'repeat',
+      }}
+    >
+      <Tabs defaultValue="view" className="w-full">
+        <div className="w-full max-w-4xl xl:max-w-5xl mx-auto px-4 md:px-8">
+          <div className="justify-center items-center pt-8 px-8 pb-4 flex flex-col gap-5">
+            <h2 className="text-center">Player Management</h2>
 
-          {/* Action Buttons: View, Add, Remove */}
-          <div className="flex justify-center mb-12 ">
-            <div className="inline-flex rounded-l rounded-r border-border overflow-hidden bg-card bg-card shadow-md">
-              {/* Active Button Style */}
-              <button className="px-4 py-2 paragraph-s-medium text-foreground border-2 rounded-l rounded-r shadow-md bg-primary text-white ">
+            <TabsList className="shadow-md">
+              <TabsTrigger
+                value="view"
+                className="data-[state=active]:bg-primary data-[state=active]:text-white"
+              >
                 View
-              </button>
-              {/* Default Button Style */}
-              <button className="px-4 paragraph-s-medium text-foreground bg-card bg-card ">
+              </TabsTrigger>
+              <TabsTrigger
+                value="add"
+                className="data-[state=active]:bg-[#15803D] data-[state=active]:text-white"
+              >
                 Add
-              </button>
-              <button className="px-4 paragraph-s-medium text-foreground bg-card bg-card ">
+              </TabsTrigger>
+              <TabsTrigger
+                value="remove"
+                className="data-[state=active]:bg-[#D52020] data-[state=active]:text-white"
+              >
                 Remove
-              </button>
-            </div>
-          </div>
-
-          {/* All Players Card */}
-          <div className=" border-t-2 border-gray-300 pt-10">
-            <div className="bg-card shadow-lg border border-border rounded-xl p-7 px-14 ">
-              <h2 className="h4 text-foreground">All Players</h2>
-              <p className="paragraph-s-regular text-muted-foreground mb-4 ">
-                Last Updated: November 1, 2025
-              </p>
-
-              {/* Player Data Table */}
-              <div className="overflow-x-auto px-13 ">
-                <table className="w-full border-collapse text-left ">
-                  <thead>
-                    <tr className="border-b border-border border-b-2 border-gray-400 ">
-                      {tableHeaders.map((header) => (
-                        <th
-                          key={header}
-                          className=" px-4 py-3 paragraph-s-regular font-normal  text-center text-foreground"
-                        >
-                          {header}
-                          {/* Sorting indicator */}
-                          {['Player Name', 'Default Position'].includes(header) && (
-                            <span className="ml-1 cursor-pointer text-muted-foreground">⇅</span>
-                          )}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {playerList.map((player) => (
-                      <tr
-                        key={player.id}
-                        className="border-b border-border/60 paragraph-s-regular text-foreground transition-colors odd: bg-muted/100 even:bg-muted/0 group"
-                      >
-                        <td className="px-2 py-3 text-center">{player.id}</td>
-                        <td className="px-2 py-3 text-center">{player.name}</td>
-                        <td className="px-2 py-3 text-center">{player.position}</td>
-                        <td className="px-2 py-3 text-center">{player.jerseyNo}</td>
-                        <td className="px-2 py-3 text-center">{player.teamCode}</td>
-
-                        {/* Action Cell (Group for hover tooltip) */}
-                        <td className="relative w-12 text-right ">
-                          <div className="relative inline-block ">
-                            <button
-                              className="p-1 text-muted-foreground hover:text-primary transition-colors peer"
-                              onClick={() => handleViewDetails(player)}
-                              title="View Player Details"
-                            >
-                              <RectangleEllipsis className="h-5 w-5 mr-4 " />
-                            </button>
-
-                            {/* Tooltip: only visible when hovering the icon (uses peer) */}
-                            <span className="absolute bottom-full left-1/2 -translate-x-1/2 bg-primary-foreground text-black border-1 rounded-l rounded-r px-1 py-1 text-xs whitespace-nowrap opacity-0  peer-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-20">
-                              View Player Details
-                            </span>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+              </TabsTrigger>
+            </TabsList>
           </div>
         </div>
-      </div>
+        <div className="w-full px-4 md:px-10 lg:px-12 xl:px-16 my-4">
+          <hr className="border-t border-[#A3A3A3]" role="separator" aria-label="Section divider" />
+        </div>
+        <div className="w-full px-4 md:px-10 lg:px-12 xl:px-16">
+          <TabsContent value="view">
+            <PlayerDetailsTable playerList={players} handleViewDetails={handleViewDetails} />
+          </TabsContent>
+          <TabsContent value="add">
+            <PlayerDetailsTable
+              playerList={players}
+              handleViewDetails={handleViewDetails}
+              showAddRow={true}
+              handleAdd={handleAdd}
+            />
+          </TabsContent>
+          <TabsContent value="remove">
+            <PlayerDetailsTable
+              playerList={players}
+              handleViewDetails={handleViewDetails}
+              showRemoveButton={true}
+              onRemoveSelected={handleRemoveSelected}
+            />
+          </TabsContent>
+        </div>
+      </Tabs>
     </div>
   );
 };
