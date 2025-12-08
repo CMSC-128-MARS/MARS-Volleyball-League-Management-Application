@@ -24,7 +24,7 @@ const Footer = () => {
             </div>
             <div className="footer-contact-responsive">
 
-              <p className="pg3 mt-8">2025 MARS Volleyball League Management. No Copyright Infringement</p>
+              <p className="pg3 mt-8">2025 MARS Volleyball League Management. No Copyright Infringement.</p>
             </div>
           </div>
         </div>
