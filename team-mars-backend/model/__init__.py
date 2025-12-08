@@ -12,8 +12,6 @@ def rebuild_models():
     )
     from model.league.league import LeagueFull, LeagueSimple, LeagueNested
     from model.match.match import MatchSimple, MatchNested, MatchFull, MatchWithTeams
-    from model.player_skill.player_skill import PlayerSkillNested
-    from model.skill_level.skill_level import SkillLevelSimple
     from model.match_team_stats.match_team_stats import MatchTeamStatsNested
 
     # Rebuild models in dependency order (models with fewer dependencies first)
@@ -25,8 +23,6 @@ def rebuild_models():
     LeagueSimple.model_rebuild()
     MatchSimple.model_rebuild()
     TeamSimple.model_rebuild()
-    PlayerSkillNested.model_rebuild()
-    SkillLevelSimple.model_rebuild()
     PlayerSimple.model_rebuild()
     MatchNested.model_rebuild()
     LeagueNested.model_rebuild()
