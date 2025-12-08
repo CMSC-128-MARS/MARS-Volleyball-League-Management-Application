@@ -37,7 +37,7 @@ const items = [
   },
   {
     title: 'Contact Support',
-    url: 'contact-support',
+    url: 'contact',
     icon: Headset,
   },
 ];
