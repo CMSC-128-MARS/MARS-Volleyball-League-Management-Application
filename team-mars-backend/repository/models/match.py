@@ -1,4 +1,13 @@
-from sqlalchemy import Column, String, DateTime, ForeignKey, func, Boolean
+from sqlalchemy import (
+    Column,
+    String,
+    DateTime,
+    ForeignKey,
+    func,
+    Boolean,
+    Integer,
+    text,
+)
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from repository.database import Base
@@ -13,6 +22,7 @@ class Match(Base):
     location = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     is_completed = Column(Boolean, nullable=False, server_default="false")
+    num_of_sets = Column(Integer, nullable=False, server_default=text("1"))
 
     # foreign keys
     league_id = Column(

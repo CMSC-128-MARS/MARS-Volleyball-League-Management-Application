@@ -1,5 +1,5 @@
 from uuid import UUID
-from typing import Optional
+from typing import List  # Add this if needed
 from sqlalchemy.ext.asyncio import AsyncSession
 from repository.team_repository import TeamRepository
 from repository.match_repository import MatchRepository
@@ -21,19 +21,15 @@ class TeamUseCase:
     async def create_team(
         self, session: AsyncSession, payload: TeamCreate
     ) -> TeamSimple:
-        """
-        Create a new team
-        """
-
+        """Create a new team"""
         existing = await self.repo.get_by_team_name(session, payload.team_name)
         if existing:
             raise ConflictException("Team with this name already exists.")
-
         team = await self.repo.create_team(session, payload)
         return TeamSimple.model_validate(team)
 
     # READ - GET ALL TEAMS
-    async def list_teams(self, session: AsyncSession) -> TeamNested:
+    async def list_teams(self, session: AsyncSession) -> List[TeamNested]:
         teams = await self.repo.get_teams(session)
         return [TeamNested.model_validate(team) for team in teams]
 
@@ -51,7 +47,6 @@ class TeamUseCase:
         team = await self.repo.get_team_by_id(session, team_id)
         if not team:
             raise NotFoundException("Team not found.")
-
         updated = await self.repo.update_team(session, team_id, payload)
         return TeamSimple.model_validate(updated)
 
@@ -61,11 +56,11 @@ class TeamUseCase:
         if not team:
             raise NotFoundException("Team not found.")
 
-        # NEW: check if team is referenced
+        # Check if team is referenced by matches
         matches = await self.match_repo.get_matches_by_team(session, team_id)
         if matches:
             raise ConflictException(
-                "Cannot delete team because there are matches associated with it."
+                "Cannot delete team because it is referenced by existing matches."
             )
 
         await self.repo.delete_team(session, team_id)
