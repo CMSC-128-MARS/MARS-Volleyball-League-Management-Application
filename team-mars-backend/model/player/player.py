@@ -1,4 +1,3 @@
-# schema/player.py
 from pydantic import BaseModel, Field, ConfigDict, field_validator
 from typing import Optional
 from uuid import UUID
@@ -13,7 +12,7 @@ class PlayerCreate(BaseModel):
     last_name: Optional[str] = Field(None, title="Last Name", max_length=100)
     jersey_number: Optional[int] = Field(None, title="Jersey Number", ge=0, le=999)
     default_position: Optional[str] = Field(
-        None, title="Default Position", max_length=51
+        None, title="Default Position", max_length=50
     )
 
     # Skill level directly embedded

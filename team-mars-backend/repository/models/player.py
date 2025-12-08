@@ -1,4 +1,3 @@
-# model/player/player.py
 from sqlalchemy import Column, String, Integer, DateTime, func
 from sqlalchemy.orm import relationship, validates
 from sqlalchemy.dialects.postgresql import UUID
@@ -12,9 +11,9 @@ class Player(Base):
 
     player_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     first_name = Column(String, nullable=False)
-    last_name = Column(String)
-    jersey_number = Column(Integer)
-    default_position = Column(String)
+    last_name = Column(String, nullable=True)
+    jersey_number = Column(Integer, nullable=True)
+    default_position = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     notes = Column(String, nullable=True)
     skill_level = Column(Integer, nullable=True)
