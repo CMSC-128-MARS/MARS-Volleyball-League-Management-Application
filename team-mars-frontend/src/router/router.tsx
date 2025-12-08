@@ -10,6 +10,7 @@ import TeamDetails from '@/pages/TeamDetails';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import HomeRedirect from '@/components/HomeRedirect';
 import LeagueDashboard from '@/pages/Leagues';
+import LeagueDetails from '@/pages/LeagueDetails';
 
 export const router = createBrowserRouter([
   {
@@ -75,6 +76,10 @@ export const router = createBrowserRouter([
       {
         path: 'leagues',
         element: <LeagueDashboard />,
+      },
+      {
+        path: 'leagues/:leagueId',
+        element: <LeagueDetails />,
       },
     ],
   },
