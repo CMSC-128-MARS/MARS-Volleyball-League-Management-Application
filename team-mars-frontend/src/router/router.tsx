@@ -12,6 +12,7 @@ import HomeRedirect from '@/components/HomeRedirect';
 import LeagueDashboard from '@/pages/Leagues';
 import LeagueDetails from '@/pages/LeagueDetails';
 
+
 export const router = createBrowserRouter([
   {
     path: '/',
