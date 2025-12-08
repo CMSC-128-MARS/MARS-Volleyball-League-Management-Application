@@ -14,14 +14,12 @@ export default function LeagueViewButtons({
   onBack,
   isEditing = false,
   onEditToggle,
-  onSave,
   onDelete,
   leagueName,
 }: {
   onBack: () => void;
   isEditing?: boolean;
   onEditToggle?: (editing: boolean) => void;
-  onSave?: () => void;
   onDelete?: () => void;
   leagueName?: string;
 }) {
@@ -36,9 +34,6 @@ export default function LeagueViewButtons({
     onEditToggle?.(false);
   };
 
-  const handleSave = () => {
-    onSave?.();
-  };
 
   const handleDelete = async () => {
     try {
@@ -124,13 +119,6 @@ export default function LeagueViewButtons({
             className="px-6 py-[9.5px] border-primary font-semibold h-10 cursor-pointer"
           >
             Cancel
-          </Button>
-          <Button
-            variant="default"
-            onClick={handleSave}
-            className="px-6 py-[9.5px] font-semibold h-10 cursor-pointer"
-          >
-            Save
           </Button>
         </div>
       )}

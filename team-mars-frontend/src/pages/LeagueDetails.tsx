@@ -41,11 +41,6 @@ export default function LeagueDetails() {
     setIsEditing(editing);
   };
 
-  const handleSave = async () => {
-    // TODO: Implement save functionality
-    setIsEditing(false);
-  };
-
   const handleDelete = async () => {
     if (!leagueId) return;
 
@@ -57,6 +52,7 @@ export default function LeagueDetails() {
       alert('Failed to delete league. Please try again.');
     }
   };
+
 
   if (isLoading) {
     return (
@@ -106,7 +102,6 @@ export default function LeagueDetails() {
           onBack={handleBack}
           isEditing={isEditing}
           onEditToggle={handleEditToggle}
-          onSave={handleSave}
           onDelete={handleDelete}
           leagueName={league.league_name}
         />
@@ -115,8 +110,11 @@ export default function LeagueDetails() {
           <div className="flex flex-col gap-6 lg:w-1/3">
             <LeagueDetailsComponent
               leagueId={league.league_id}
+              leagueName={league.league_name}
               location={league.location}
               description={league.description}
+              isEditing={isEditing}
+              onSaved={fetchLeagueData}
             />
             <ViewLeagueTeamsCard
               teams={league.teams as Team[]}
