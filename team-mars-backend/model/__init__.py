@@ -5,7 +5,11 @@ def rebuild_models():
     """
     from model.player.player import PlayerFull, PlayerSimple
     from model.team.team import TeamFull, TeamNested, TeamSimple
-    from model.team_player.team_player import TeamPlayerNested
+    from model.team_player.team_player import (
+        TeamPlayerNested,
+        TeamPlayerSimple,
+        TeamPlayerFull,
+    )
     from model.league.league import LeagueFull, LeagueSimple, LeagueNested
     from model.match.match import MatchSimple, MatchNested, MatchFull, MatchWithTeams
     from model.player_skill.player_skill import PlayerSkillNested
@@ -29,3 +33,6 @@ def rebuild_models():
     MatchFull.model_rebuild()
     MatchTeamStatsNested.model_rebuild()
     MatchWithTeams.model_rebuild()
+    TeamPlayerSimple.model_rebuild()
+    PlayerSimple.model_rebuild()
+    TeamPlayerFull.model_rebuild()
