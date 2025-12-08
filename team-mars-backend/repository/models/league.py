@@ -20,5 +20,8 @@ class League(Base):
     # Relationships with CASCADE DELETE
     teams = relationship("Team", back_populates="league", cascade="all, delete-orphan")
     matches = relationship(
-        "Match", back_populates="league", cascade="all, delete-orphan"
+        "Match",
+        back_populates="league",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
