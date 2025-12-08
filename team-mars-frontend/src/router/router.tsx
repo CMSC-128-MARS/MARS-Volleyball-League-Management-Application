@@ -12,7 +12,6 @@ import LeagueDetails from '@/pages/LeagueDetails';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import HomeRedirect from '@/components/HomeRedirect';
 
-
 export const router = createBrowserRouter([
   {
     path: '/',
