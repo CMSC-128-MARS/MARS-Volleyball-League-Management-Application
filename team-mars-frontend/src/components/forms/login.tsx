@@ -39,7 +39,10 @@ export default function Login({ onContactClick }: LoginFormProps) {
       }
 
       // If Cognito requires new password, do not navigate yet
-      if ((result as any).challenge === 'NEW_PASSWORD_REQUIRED') {
+      if (
+        result.success &&
+        (result as { success: true; challenge?: string }).challenge === 'NEW_PASSWORD_REQUIRED'
+      ) {
         console.warn('NEW_PASSWORD_REQUIRED challenge returned. Complete new password flow.');
         // TODO: show modal to complete new password
         return;

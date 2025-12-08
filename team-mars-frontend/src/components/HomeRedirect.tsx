@@ -1,27 +1,21 @@
-import { useEffect, useState } from 'react';
-import type { ReactElement } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
+import LandingPage from '@/pages/LandingPage';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { useEffect, useState } from 'react';
 import { getCurrentAuthUser } from '@/lib/auth';
-import Loader from './Loader';
+import Loader from '@/components/Loader';
 
-interface ProtectedRouteProps {
-  children: ReactElement;
-}
-
-export default function ProtectedRoute({ children }: ProtectedRouteProps) {
+export default function HomeRedirect() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const setUser = useAuthStore((s) => s.setUser);
-  const location = useLocation();
   const [checking, setChecking] = useState(false);
 
   useEffect(() => {
-    let mounted = true;
     if (!isAuthenticated) {
       setChecking(true);
       void getCurrentAuthUser()
         .then((res) => {
-          if (mounted && res?.success && res.user) {
+          if (res?.success && res.user) {
             const maybeUser = res.user;
 
             const isAuthLike = (
@@ -42,19 +36,15 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
             }
           }
         })
-        .catch(() => {})
-        .finally(() => {
-          if (mounted) setChecking(false);
-        });
+        .catch(() => {
+          // ignore
+        })
+        .finally(() => setChecking(false));
     }
-    return () => {
-      mounted = false;
-    };
   }, [isAuthenticated, setUser]);
 
-  if (isAuthenticated) return children;
-  if (checking) return <Loader />; // show loader while checking session
+  if (isAuthenticated) return <Navigate to="/dashboard" replace />;
+  if (checking) return <Loader />;
 
-  // Not authenticated — redirect to login and preserve attempted location
-  return <Navigate to="/login" state={{ from: location }} replace />;
+  return <LandingPage />;
 }
