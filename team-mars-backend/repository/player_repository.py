@@ -38,7 +38,6 @@ class PlayerRepository:
         result = await db.execute(
             select(Player)
             .options(
-                selectinload(Player.skills),
                 selectinload(Player.team_memberships),
             )
             .where(Player.player_id == player_id)
@@ -55,7 +54,6 @@ class PlayerRepository:
         result = await db.execute(
             select(Player)
             .options(
-                selectinload(Player.skills),
                 selectinload(Player.team_memberships),
             )
             .offset(skip)
@@ -97,7 +95,6 @@ class PlayerRepository:
 
         if load_relationships:
             stmt = stmt.options(
-                selectinload(Player.skills),
                 selectinload(Player.team_memberships),
             )
 
