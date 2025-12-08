@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useEffect, useState } from 'react';
+import type { PlayerCreateDto } from '@/lib/players';
 import PlayerDetailsTable from '@/components/common/player-details-table';
 import { playerService } from '@/lib/players';
 import AddPlayerCard from '@/components/common/add-player-card';
@@ -17,11 +18,10 @@ interface Player {
 const Players = () => {
   const handleViewDetails = (player: Player): void => {
     console.log(`Viewing details for ID: ${player.id}`);
-    alert(`Viewing details for ${player.name} (${player.position})`);
   };
 
   const [players, setPlayers] = useState<Player[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const loadPlayers = async () => {
@@ -30,7 +30,7 @@ const Players = () => {
       const data = await playerService.fetchPlayers();
       // Map service Player -> page Player shape (ensure `grade` exists)
       setPlayers(
-        data.map((p: any) => ({
+        data.map((p) => ({
           id: p.id,
           name: `${p.first_name || ''} ${p.last_name || ''}`.trim(),
           first_name: p.first_name,
@@ -56,7 +56,7 @@ const Players = () => {
     setIsAddDialogOpen(true);
   };
 
-  const handleCreatePlayer = async (payload: any) => {
+  const handleCreatePlayer = async (payload: PlayerCreateDto) => {
     try {
       await playerService.createPlayer(payload);
       await loadPlayers();

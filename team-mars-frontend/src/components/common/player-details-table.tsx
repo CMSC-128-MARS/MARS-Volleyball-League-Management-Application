@@ -34,7 +34,7 @@ interface Player {
 
 export default function PlayerDetailsTable({
   playerList,
-  handleViewDetails,
+  handleViewDetails: _handleViewDetails,
   showAddRow,
   handleAdd,
   showRemoveButton,
@@ -43,7 +43,7 @@ export default function PlayerDetailsTable({
   return (
     <PlayerDetailsTableComponent
       playerList={playerList}
-      handleViewDetails={handleViewDetails}
+      handleViewDetails={_handleViewDetails}
       showAddRow={showAddRow}
       handleAdd={handleAdd}
       showRemoveButton={showRemoveButton}
@@ -66,7 +66,7 @@ type SortConfig = { key: keyof Player; direction: SortDirection } | null;
 
 function PlayerDetailsTableComponent({
   playerList,
-  handleViewDetails,
+  handleViewDetails: _handleViewDetails,
   showAddRow,
   handleAdd,
   showRemoveButton,
@@ -78,6 +78,7 @@ function PlayerDetailsTableComponent({
   const [isRemoveOpen, setIsRemoveOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [viewPlayer, setViewPlayer] = useState<{
+    id?: string;
     first_name?: string | null;
     last_name?: string | null;
     jersey_number?: number | null;
@@ -88,7 +89,14 @@ function PlayerDetailsTableComponent({
   } | null>(null);
 
   const openPlayerView = (p: Player) => {
+    // call parent handler if provided (keeps backward compatibility)
+    try {
+      _handleViewDetails?.(p);
+    } catch {
+      // ignore handler errors
+    }
     setViewPlayer({
+      id: p.id,
       first_name: p.first_name,
       last_name: p.last_name,
       jersey_number: p.jerseyNo ?? null,
@@ -106,6 +114,11 @@ function PlayerDetailsTableComponent({
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key];
         const bValue = b[sortConfig.key];
+
+        if (aValue == null && bValue == null) return 0;
+        if (aValue == null) return sortConfig.direction === 'ascending' ? 1 : -1;
+        if (bValue == null) return sortConfig.direction === 'ascending' ? -1 : 1;
+
         if (aValue < bValue) {
           return sortConfig.direction === 'ascending' ? -1 : 1;
         }
@@ -126,14 +139,6 @@ function PlayerDetailsTableComponent({
     setSortConfig({ key, direction });
   };
 
-  const handleSelectAll = (checked: boolean | 'indeterminate') => {
-    if (checked === true) {
-      setSelectedPlayerIds(playerList.map((p) => p.id));
-    } else {
-      setSelectedPlayerIds([]);
-    }
-  };
-
   const handleSelectPlayer = (playerId: string, checked: boolean | 'indeterminate') => {
     setSelectedPlayerIds((prev) =>
       checked ? [...prev, playerId] : prev.filter((id) => id !== playerId),
@@ -141,9 +146,6 @@ function PlayerDetailsTableComponent({
   };
 
   const numSelected = selectedPlayerIds.length;
-  const rowCount = sortedPlayers.length;
-  const allPlayersSelected = rowCount > 0 && numSelected === rowCount;
-  const colSpan = 5 + (showRemoveButton ? 1 : 0);
 
   return (
     <Card className="shadow-lg bg-background">
@@ -156,75 +158,72 @@ function PlayerDetailsTableComponent({
                 List of all registered players.
               </p>
             </div>
-            {showRemoveButton && (
-              <Dialog open={isRemoveOpen} onOpenChange={setIsRemoveOpen}>
-                <DialogTrigger asChild>
-                  <Button
-                    className="bg-[#D52020] h-10 hover:bg-[#D52020] hover:opacity-80 hover:cursor-pointer gap-2"
-                    disabled={numSelected === 0}
-                  >
-                    <Trash />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle className="text-left">Delete Player(s)?</DialogTitle>
-                    <DialogDescription>
-                      <p className="font-paragraph text-left">
-                        Are you sure you want to delete{' '}
-                        <span className="text-red-600">{numSelected}</span> selected player(s)? This
-                        action cannot be undone.
-                      </p>
-                      <div className="flex gap-2 mt-4 justify-end items-end">
-                        <Button
-                          variant={'outline'}
-                          className="hover:cursor-pointer h-10 border-muted-foreground"
-                          onClick={() => setIsRemoveOpen(false)}
-                          disabled={isDeleting}
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          className="bg-[#D52020] h-10 hover:bg-[#D52020] hover:opacity-80 hover:cursor-pointer"
-                          onClick={async () => {
-                            try {
-                              setIsDeleting(true);
-                              if (onRemoveSelected) {
-                                await onRemoveSelected(selectedPlayerIds);
-                              }
-                              setSelectedPlayerIds([]);
-                              setIsRemoveOpen(false);
-                            } catch (err) {
-                              console.error('Failed to delete players', err);
-                            } finally {
-                              setIsDeleting(false);
-                            }
-                          }}
-                          disabled={isDeleting}
-                        >
-                          <Trash /> {isDeleting ? 'Deleting...' : 'Delete'}
-                        </Button>
-                      </div>
-                    </DialogDescription>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
-            )}
-          </div>
-          {showAddRow && (
-            <div className="mb-4">
-              <Button
-                variant="ghost"
-                className="w-full h-12 flex items-center justify-center gap-3 border-2 border-dashed rounded-md hover:bg-transparent"
-                onClick={() => handleAdd?.()}
-              >
-                <div className="inline-flex items-center justify-center w-6 h-6 rounded border bg-muted-foreground/5">
+            <div className="flex items-center gap-3">
+              {showAddRow && (
+                <Button
+                  className="h-10 flex items-center justify-center gap-3 border-2 rounded-sm"
+                  onClick={() => handleAdd?.()}
+                >
                   <Plus className="w-4 h-4" />
-                </div>
-                <span className="font-medium">Add a player</span>
-              </Button>
+                  <span className="font-medium">Add a player</span>
+                </Button>
+              )}
+              {showRemoveButton && (
+                <Dialog open={isRemoveOpen} onOpenChange={setIsRemoveOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      className="bg-[#D52020] h-10 hover:bg-[#D52020] hover:opacity-80 hover:cursor-pointer gap-2"
+                      disabled={numSelected === 0}
+                    >
+                      <Trash />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle className="text-left">Delete Player(s)?</DialogTitle>
+                      <DialogDescription>
+                        <p className="font-paragraph text-left">
+                          Are you sure you want to delete{' '}
+                          <span className="text-red-600">{numSelected}</span> selected player(s)?
+                          This action cannot be undone.
+                        </p>
+                        <div className="flex gap-2 mt-4 justify-end items-end">
+                          <Button
+                            variant={'outline'}
+                            className="hover:cursor-pointer h-10 border-muted-foreground"
+                            onClick={() => setIsRemoveOpen(false)}
+                            disabled={isDeleting}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            className="bg-[#D52020] h-10 hover:bg-[#D52020] hover:opacity-80 hover:cursor-pointer"
+                            onClick={async () => {
+                              try {
+                                setIsDeleting(true);
+                                if (onRemoveSelected) {
+                                  await onRemoveSelected(selectedPlayerIds);
+                                }
+                                setSelectedPlayerIds([]);
+                                setIsRemoveOpen(false);
+                              } catch (err) {
+                                console.error('Failed to delete players', err);
+                              } finally {
+                                setIsDeleting(false);
+                              }
+                            }}
+                            disabled={isDeleting}
+                          >
+                            <Trash /> {isDeleting ? 'Deleting...' : 'Delete'}
+                          </Button>
+                        </div>
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              )}
             </div>
-          )}
+          </div>
 
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
             <Table>

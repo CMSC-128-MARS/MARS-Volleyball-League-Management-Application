@@ -11,9 +11,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
+import { Pencil } from 'lucide-react';
 
 interface PlayerView {
+  id?: string;
   first_name?: string | null;
   last_name?: string | null;
   jersey_number?: number | null;
@@ -29,9 +31,23 @@ interface ViewPlayerCardProps {
   player?: PlayerView;
 }
 
+import { playerService } from '@/lib/players';
+import type { PlayerUpdateDto } from '@/lib/players';
+
 export default function ViewPlayerCard({ open, onOpenChange, player }: ViewPlayerCardProps) {
-  const values = useMemo(
-    () => ({
+  const [isEditing, setIsEditing] = useState(false);
+  const [form, setForm] = useState(() => ({
+    firstName: player?.first_name ?? '',
+    lastName: player?.last_name ?? '',
+    jerseyNumber: player?.jersey_number ?? undefined,
+    defaultPosition: player?.default_position ?? '',
+    skillLevel: player?.skill_level ?? '',
+    skillLevelDescription: player?.skill_level_description ?? '',
+    notes: player?.notes ?? '',
+  }));
+
+  useEffect(() => {
+    setForm({
       firstName: player?.first_name ?? '',
       lastName: player?.last_name ?? '',
       jerseyNumber: player?.jersey_number ?? undefined,
@@ -39,9 +55,48 @@ export default function ViewPlayerCard({ open, onOpenChange, player }: ViewPlaye
       skillLevel: player?.skill_level ?? '',
       skillLevelDescription: player?.skill_level_description ?? '',
       notes: player?.notes ?? '',
-    }),
-    [player],
-  );
+    });
+    if (!open) setIsEditing(false);
+  }, [player, open]);
+
+  const handleCancelEdit = () => {
+    // revert to player values
+    setForm({
+      firstName: player?.first_name ?? '',
+      lastName: player?.last_name ?? '',
+      jerseyNumber: player?.jersey_number ?? undefined,
+      defaultPosition: player?.default_position ?? '',
+      skillLevel: player?.skill_level ?? '',
+      skillLevelDescription: player?.skill_level_description ?? '',
+      notes: player?.notes ?? '',
+    });
+    setIsEditing(false);
+  };
+
+  const handleSave = async () => {
+    if (!player?.id) {
+      setIsEditing(false);
+      return;
+    }
+    try {
+      const payload: PlayerUpdateDto = {
+        first_name: form.firstName || undefined,
+        last_name: form.lastName || undefined,
+        jersey_number: form.jerseyNumber ?? undefined,
+        default_position: form.defaultPosition || undefined,
+      };
+      await playerService.updatePlayer(player.id, payload);
+      // close and refresh list
+      setIsEditing(false);
+      onOpenChange(false);
+      // refresh parent list to reflect changes
+      window.location.reload();
+    } catch (err) {
+      console.error('Failed to save player', err);
+      // TODO: show user-facing error
+      setIsEditing(false);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -59,18 +114,37 @@ export default function ViewPlayerCard({ open, onOpenChange, player }: ViewPlaye
             <div className="flex flex-col md:grid md:grid-cols-3 gap-4">
               <div>
                 <p className="text-[14px] text-black mb-1">First Name</p>
-                <Input value={values.firstName} disabled className="bg-white" />
+                <Input
+                  value={form.firstName}
+                  disabled={!isEditing}
+                  className="bg-white"
+                  onChange={(e) =>
+                    setForm((s) => ({ ...s, firstName: (e.target as HTMLInputElement).value }))
+                  }
+                />
               </div>
               <div>
                 <p className="text-[14px] text-black mb-1">Last Name</p>
-                <Input value={values.lastName} disabled className="bg-white" />
+                <Input
+                  value={form.lastName}
+                  disabled={!isEditing}
+                  className="bg-white"
+                  onChange={(e) =>
+                    setForm((s) => ({ ...s, lastName: (e.target as HTMLInputElement).value }))
+                  }
+                />
               </div>
               <div>
                 <p className="text-[14px] text-black mb-1">Jersey Number</p>
                 <Input
-                  value={values.jerseyNumber !== undefined ? String(values.jerseyNumber) : ''}
-                  disabled
+                  value={form.jerseyNumber !== undefined ? String(form.jerseyNumber) : ''}
+                  disabled={!isEditing}
                   className="bg-white"
+                  onChange={(e) => {
+                    const raw = (e.target as HTMLInputElement).value;
+                    const digits = raw.replace(/\D+/g, '');
+                    setForm((s) => ({ ...s, jerseyNumber: digits ? Number(digits) : undefined }));
+                  }}
                 />
               </div>
             </div>
@@ -79,9 +153,10 @@ export default function ViewPlayerCard({ open, onOpenChange, player }: ViewPlaye
               <div>
                 <p className="text-[14px] text-black mb-1">Default Position</p>
                 <Select
-                  value={values.defaultPosition || undefined}
+                  value={form.defaultPosition || undefined}
                   onOpenChange={() => {}}
-                  disabled
+                  onValueChange={(val) => setForm((s) => ({ ...s, defaultPosition: val }))}
+                  disabled={!isEditing}
                 >
                   <SelectTrigger className="w-full rounded-sm border border-[#E5E5E5] bg-white shadow-[0_1px_2px_0_rgba(0,0,0,0.05)] cursor-default">
                     <SelectValue placeholder={'--'} />
@@ -101,7 +176,12 @@ export default function ViewPlayerCard({ open, onOpenChange, player }: ViewPlaye
 
               <div>
                 <p className="text-[14px] text-black mb-1">Skill Level</p>
-                <Select value={values.skillLevel || undefined} onOpenChange={() => {}} disabled>
+                <Select
+                  value={form.skillLevel || undefined}
+                  onOpenChange={() => {}}
+                  onValueChange={(val) => setForm((s) => ({ ...s, skillLevel: val }))}
+                  disabled={!isEditing}
+                >
                   <SelectTrigger className="w-full rounded-sm border border-[#E5E5E5] bg-white shadow-[0_1px_2px_0_rgba(0,0,0,0.05)] cursor-default">
                     <SelectValue placeholder={'--'} />
                   </SelectTrigger>
@@ -121,12 +201,29 @@ export default function ViewPlayerCard({ open, onOpenChange, player }: ViewPlaye
 
             <div>
               <p className="text-[14px] text-black mb-1">Skill Level Description</p>
-              <Textarea value={values.skillLevelDescription} disabled className="bg-white h-24" />
+              <Textarea
+                value={form.skillLevelDescription}
+                disabled={!isEditing}
+                className="bg-white h-24"
+                onChange={(e) =>
+                  setForm((s) => ({
+                    ...s,
+                    skillLevelDescription: (e.target as HTMLTextAreaElement).value,
+                  }))
+                }
+              />
             </div>
 
             <div>
               <p className="text-[14px] text-black mb-1">Notes</p>
-              <Textarea value={values.notes} disabled className="bg-white h-24" />
+              <Textarea
+                value={form.notes}
+                disabled={!isEditing}
+                className="bg-white h-24"
+                onChange={(e) =>
+                  setForm((s) => ({ ...s, notes: (e.target as HTMLTextAreaElement).value }))
+                }
+              />
             </div>
           </div>
         </div>
@@ -134,9 +231,30 @@ export default function ViewPlayerCard({ open, onOpenChange, player }: ViewPlaye
         <hr className="w-[calc(100%+3rem)] -ml-6 border-t border-[#A3A3A3] mt-6 flex-shrink-0" />
 
         <div className="w-full mt-4 flex flex-row gap-2 justify-end flex-shrink-0">
-          <Button onClick={() => onOpenChange(false)}>
-            <p className="font-extralight">Close</p>
-          </Button>
+          {!isEditing ? (
+            <>
+              <Button
+                className="hover:cursor-pointer h-10 border-muted-foreground"
+                onClick={() => setIsEditing(true)}
+              >
+                <Pencil className="h-4 w-4" />
+                <p className="font-extralight">Edit</p>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                variant={'outline'}
+                className="hover:cursor-pointer h-10 border-muted-foreground"
+                onClick={handleCancelEdit}
+              >
+                Cancel
+              </Button>
+              <Button className="px-6 py-[9.5px] h-10" onClick={handleSave}>
+                <p className="text-sm font-light">Save</p>
+              </Button>
+            </>
+          )}
         </div>
       </DialogContent>
     </Dialog>

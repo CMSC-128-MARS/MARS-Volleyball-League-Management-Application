@@ -26,10 +26,8 @@ export default function AddPlayerCard({ open, onOpenChange, onCreate }: AddPlaye
   const [lastName, setLastName] = useState('');
   const [jerseyNumber, setJerseyNumber] = useState<number | undefined>(undefined);
   const [defaultPosition, setDefaultPosition] = useState('');
-  const [isPositionSelectOpen, setIsPositionSelectOpen] = useState(false);
   const [skillLevel, setSkillLevel] = useState<string | undefined>(undefined);
   const [skillLevelDescription, setSkillLevelDescription] = useState('');
-  const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [note, setNote] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -75,9 +73,9 @@ export default function AddPlayerCard({ open, onOpenChange, onCreate }: AddPlaye
     try {
       if (onCreate) await onCreate(payload);
       onOpenChange(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to create player', err);
-      setSubmitError(err?.message || 'Failed to create player');
+      setSubmitError((err as Error)?.message || 'Failed to create player');
     } finally {
       setIsSubmitting(false);
     }
@@ -193,7 +191,6 @@ export default function AddPlayerCard({ open, onOpenChange, onCreate }: AddPlaye
                   Default Position <span className="text-secondary-alt">*</span>
                 </p>
                 <Select
-                  onOpenChange={setIsPositionSelectOpen}
                   value={defaultPosition || undefined}
                   onValueChange={(val) => {
                     setDefaultPosition(val);
@@ -227,7 +224,6 @@ export default function AddPlayerCard({ open, onOpenChange, onCreate }: AddPlaye
                   Skill Level <span className="text-secondary-alt">*</span>
                 </p>
                 <Select
-                  onOpenChange={setIsSelectOpen}
                   value={skillLevel}
                   onValueChange={(val) => {
                     setSkillLevel(val);
