@@ -7,7 +7,14 @@ export default function Login() {
   const [showContact, setShowContact] = useState(false);
 
   return (
-    <div className="relative h-full w-full bg-primary flex flex-col justify-center items-center px-4 lg:px-0">
+    <div
+      className="relative w-full h-full bg-primary flex flex-col justify-center items-center px-4 lg:px-0"
+      style={{
+        backgroundImage: `url('/assets/Dust.png')`,
+        backgroundSize: 'auto',
+        backgroundRepeat: 'repeat',
+      }}
+    >
       {showContact && (
         <button
           onClick={() => setShowContact(false)}
