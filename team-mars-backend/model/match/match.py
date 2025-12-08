@@ -21,7 +21,7 @@ class MatchFull(BaseModel):
     match_date: datetime = Field(..., title="Match Date")
     location: str = Field(..., title="Location")
     created_at: datetime = Field(..., title="Created At")
-    is_completed: bool = Field(..., title="Is Completed?")
+    is_completed: Optional[bool] = Field(None, title="Is Completed?")
 
     # Relationships
     league: Optional["LeagueNested"] = Field(None, title="League")
@@ -37,11 +37,6 @@ class MatchFull(BaseModel):
         if self.team1 and self.team2:
             return f"{self.team1.team_name} vs {self.team2.team_name}"
         return "TBD vs TBD"
-
-    @property
-    def computed_completion(self) -> bool:
-        """Check if match has been completed (has stats)"""
-        return self.team_stats is not None and len(self.team_stats) >= 2
 
     @property
     def winner(self) -> Optional[TeamSimple]:

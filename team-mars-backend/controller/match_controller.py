@@ -65,7 +65,7 @@ READ - GET ALL MATCHES BY TEAM
 
 
 @router.get(
-    "/{team_id}",
+    "/team/{team_id}",
     response_model=List[MatchNested],
     status_code=status.HTTP_200_OK,
 )

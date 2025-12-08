@@ -15,7 +15,6 @@ class League(Base):
     description = Column(String, nullable=True)
 
     # Relationships
-    teams = relationship("Team", back_populates="league")
     matches = relationship("Match", back_populates="league")
 
     # Relationships with CASCADE DELETE
