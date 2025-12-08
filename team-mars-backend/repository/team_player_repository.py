@@ -31,11 +31,17 @@ class TeamPlayerRepository:
         self, db: AsyncSession, team_player_id: UUID
     ) -> Optional[TeamPlayer]:
         result = await db.execute(
-            select(TeamPlayer).where(TeamPlayer.team_player_id == team_player_id)
+            select(TeamPlayer)
+            .options(
+                selectinload(TeamPlayer.player),
+                selectinload(TeamPlayer.team),
+            )
+            .where(TeamPlayer.team_player_id == team_player_id)
         )
         return result.scalars().first()
 
     # GET TEAM PLAYER WITH RELATIONSHIPS
+
     async def get_team_player_with_relationships(
         self, db: AsyncSession, team_player_id: UUID
     ) -> Optional[TeamPlayer]:

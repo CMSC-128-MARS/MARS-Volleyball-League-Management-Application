@@ -160,12 +160,7 @@ class TeamPlayerUseCase:
         if not team_player:
             raise NotFoundException("Team player not found.")
 
-        # Business Rule: Cannot update leave_date if already set (prevent re-activation)
-        if payload.leave_date is not None:
-            if team_player.leave_date is not None:
-                raise BadRequestException(
-                    "Cannot update leave date - player has already left the team."
-                )
+        team_player.leave_date = None
 
         # TODO: Add business rule - Validate position changes
         # TODO: Add business rule - Prevent updates if player is in active match

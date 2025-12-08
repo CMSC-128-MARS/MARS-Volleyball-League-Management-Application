@@ -22,6 +22,7 @@ class MatchFull(BaseModel):
     location: str = Field(..., title="Location")
     created_at: datetime = Field(..., title="Created At")
     is_completed: Optional[bool] = Field(None, title="Is Completed?")
+    num_of_sets: int = Field(..., title="Number of Sets")
 
     # Relationships
     league: Optional["LeagueNested"] = Field(None, title="League")
@@ -92,6 +93,7 @@ class MatchSimple(BaseModel):
     location: str = Field(..., title="Location")
     created_at: datetime = Field(..., title="Created At")
     is_completed: bool = Field(..., title="Is Completed?")
+    num_of_sets: int = Field(..., title="Number of Sets")
 
 
 # Base schema - for creation
@@ -109,6 +111,7 @@ class MatchCreate(BaseModel):
     location: str = Field(
         ..., title="Location", max_length=200, description="Match location"
     )
+    num_of_sets: int = Field(..., title="Number of Sets")
 
 
 # Base schema - for updates
@@ -133,6 +136,7 @@ class MatchWithTeams(BaseModel):
     match_date: datetime = Field(..., title="Match Date")
     location: str = Field(..., title="Location")
     is_completed: bool = Field(..., title="Is Completed?")
+    num_of_sets: int = Field(..., title="Number of Sets")
 
     # Relationships
     team1: Optional[TeamNested] = Field(None, title="Team 1")
@@ -159,3 +163,4 @@ class MatchNested(BaseModel):
     team1: Optional[TeamSimple] = Field(None, title="Team 1")
     team2: Optional[TeamSimple] = Field(None, title="Team 2")
     is_completed: bool = Field(..., title="Is Completed?")
+    num_of_sets: int = Field(..., title="Number of Sets")
