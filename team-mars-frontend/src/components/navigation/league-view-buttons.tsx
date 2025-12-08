@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Undo2, Trash, Pencil } from 'lucide-react';
+import { Undo2, Trash, MoreHorizontal } from 'lucide-react';
 import { useState } from 'react';
 
 export default function LeagueViewButtons({
@@ -113,7 +113,7 @@ export default function LeagueViewButtons({
             onClick={handleEdit}
             className="px-6 py-[9.5px] font-semibold h-10 cursor-pointer"
           >
-            <Pencil strokeWidth={2.5} />
+            <MoreHorizontal strokeWidth={2.5} />
           </Button>
         </div>
       ) : (
