@@ -1,6 +1,18 @@
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Trash } from 'lucide-react';
 import AddMatchDialog from '@/components/forms/add-match';
+import EditMatchDialog from '@/components/forms/edit-match';
 import LeagueMatchCard from './league-match-card';
+import { matchApiService } from '@/lib/match';
 
 type Team = {
   team_id: string;
@@ -13,6 +25,8 @@ type Match = {
   match_id: string;
   match_date: string;
   location?: string;
+  is_completed?: boolean;
+  num_of_sets?: number;
   team1?: {
     team_id: string;
     team_name: string;
@@ -50,6 +64,12 @@ export default function ViewLeagueTeamsCard({
   leagueId,
   onMatchesChange 
 }: ViewLeagueTeamsCardProps) {
+  const [editingMatchId, setEditingMatchId] = useState<string | null>(null);
+  const [editingMatchData, setEditingMatchData] = useState<Match | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deletingMatchId, setDeletingMatchId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   // Separate matches into upcoming and completed
   const now = new Date();
   const upcomingMatches = matches.filter(match => {
@@ -64,13 +84,43 @@ export default function ViewLeagueTeamsCard({
   });
 
   const handleEditMatch = (matchId: string) => {
-    // TODO: Implement edit match
-    console.log('Edit match:', matchId);
+    const match = matches.find(m => m.match_id === matchId);
+    if (match) {
+      setEditingMatchId(matchId);
+      setEditingMatchData(match);
+    }
+  };
+
+  const handleCloseEditDialog = () => {
+    setEditingMatchId(null);
+    setEditingMatchData(null);
   };
 
   const handleDeleteMatch = (matchId: string) => {
-    // TODO: Implement delete match
-    console.log('Delete match:', matchId);
+    setDeletingMatchId(matchId);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingMatchId) return;
+
+    try {
+      setIsDeleting(true);
+      await matchApiService.deleteMatch(deletingMatchId);
+      setIsDeleteDialogOpen(false);
+      setDeletingMatchId(null);
+      onMatchesChange?.(); // Refresh the matches
+    } catch (error) {
+      console.error('Failed to delete match:', error);
+      alert('Failed to delete match. Please try again.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const cancelDelete = () => {
+    setIsDeleteDialogOpen(false);
+    setDeletingMatchId(null);
   };
 
   // If showMatchesOnly is true, only render matches
@@ -93,8 +143,7 @@ export default function ViewLeagueTeamsCard({
                 {/* Upcoming Section */}
                 {upcomingMatches.length > 0 && (
                   <div>
-                    <h3 className="text-lg font-semibold mb-4">Upcoming</h3>
-                    <div className="flex flex-col gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {upcomingMatches.map((match) => (
                         <LeagueMatchCard
                           key={match.match_id}
@@ -103,8 +152,8 @@ export default function ViewLeagueTeamsCard({
                           location={match.location}
                           team1Name={match.team1?.team_name || 'TBD'}
                           team2Name={match.team2?.team_name || 'TBD'}
-                          firstToSets={3}
-                          isCompleted={false}
+                          num_of_sets={match.num_of_sets}
+                          isCompleted={match.is_completed || false}
                           isEditing={isEditing}
                           onEdit={handleEditMatch}
                           onDelete={handleDeleteMatch}
@@ -117,7 +166,7 @@ export default function ViewLeagueTeamsCard({
                 {/* Completed Section */}
                 {completedMatches.length > 0 && (
                   <div>
-                    <h3 className="text-lg font-semibold mb-4">Completed</h3>
+                    <h3 className="pg1-bold mb-4">Completed</h3>
                     <div className="flex flex-col gap-4">
                       {completedMatches.map((match) => {
                         const team1Stats = match.match_stats?.find(s => s.team_id === match.team1?.team_id);
@@ -135,7 +184,8 @@ export default function ViewLeagueTeamsCard({
                             team2Score={team2Stats?.sets_won}
                             team1Sets={team1Stats ? [team1Stats.total_score || 0] : []}
                             team2Sets={team2Stats ? [team2Stats.total_score || 0] : []}
-                            isCompleted={true}
+                            num_of_sets={match.num_of_sets }
+                            isCompleted={match.is_completed || true}
                             isEditing={isEditing}
                             onEdit={handleEditMatch}
                             onDelete={handleDeleteMatch}
@@ -160,6 +210,56 @@ export default function ViewLeagueTeamsCard({
             )}
           </CardContent>
         </Card>
+
+        {/* Edit Match Dialog */}
+        {editingMatchId && editingMatchData && (
+          <EditMatchDialog
+            matchId={editingMatchId}
+            isOpen={!!editingMatchId}
+            onClose={handleCloseEditDialog}
+            teams={teams}
+            initialData={{
+              team1_id: editingMatchData.team1?.team_id || '',
+              team2_id: editingMatchData.team2?.team_id || '',
+              match_date: editingMatchData.match_date,
+              location: editingMatchData.location || '',
+              num_of_sets: editingMatchData.num_of_sets || 3,
+              is_completed: editingMatchData.is_completed || false,
+            }}
+            onMatchUpdated={onMatchesChange}
+          />
+        )}
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="text-left">Delete Match?</DialogTitle>
+              <DialogDescription>
+                <p className="font-paragraph text-left">
+                  Are you sure you want to delete this match?
+                </p>
+                <div className="flex gap-2 mt-4 justify-end items-end">
+                  <Button
+                    variant={'outline'}
+                    className="hover:cursor-pointer h-10 border-muted-foreground"
+                    onClick={cancelDelete}
+                    disabled={isDeleting}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    className="bg-[#D52020] h-10 hover:bg-[#D52020] hover:opacity-80 hover:cursor-pointer"
+                    onClick={confirmDelete}
+                    disabled={isDeleting}
+                  >
+                    <Trash /> {isDeleting ? 'Deleting...' : 'Delete'}
+                  </Button>
+                </div>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }

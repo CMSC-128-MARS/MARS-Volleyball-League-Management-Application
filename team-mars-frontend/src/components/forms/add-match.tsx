@@ -119,6 +119,7 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
         match_date: new Date(formData.match_date).toISOString(),
         location: formData.location,
         num_of_sets: parseInt(formData.num_of_sets),
+        is_completed: matchStatus === 'completed',
       };
 
       await matchApiService.createMatch(matchData);
@@ -357,8 +358,6 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
                     </div>
                   </div>
                 </div>
-
-                {/* Sets Played */}
                 
                 {/* Set Scores */}
                 {formData.num_of_sets && parseInt(formData.num_of_sets) > 0 && (

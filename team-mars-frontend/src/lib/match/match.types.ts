@@ -30,12 +30,15 @@ export interface MatchCreate {
   match_date: string;
   location: string;
   num_of_sets: number;
+  is_completed: boolean;
 }
 
 export interface MatchUpdate {
   match_date?: string;
   location?: string;
   league_id?: string;
+  num_of_sets?: number;
+  is_completed: boolean;
 }
 
 export interface MatchFull extends Match {
