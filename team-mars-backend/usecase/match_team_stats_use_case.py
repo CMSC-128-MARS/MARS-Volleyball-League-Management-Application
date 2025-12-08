@@ -9,6 +9,7 @@ from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
 from repository.match_team_stats_repository import MatchTeamStatsRepository
 from core.exceptions import NotFoundException, ConflictException
+from constants.logger import logger
 from model.match_team_stats.match_team_stats import (
     MatchTeamStatsCreate,
     MatchTeamStatsUpdate,
@@ -51,8 +52,6 @@ class MatchTeamStatsUseCase:
         match_team_stats_list = await self.repo.list_match_team_stats(
             session, skip, limit
         )
-        if not match_team_stats_list:
-            raise NotFoundException("No match team stats found.")
         return [MatchTeamStatsFull.model_validate(mts) for mts in match_team_stats_list]
 
     # READ - GET MATCH TEAM STATS BY ID
@@ -122,4 +121,6 @@ class MatchTeamStatsUseCase:
             raise NotFoundException("Match team stats not found.")
 
         if await self.repo.delete_match_team_stats(session, match_team_stats_id):
-            print("Match team stats successfully deleted!")
+            logger.info(
+                "Match team stats successfully deleted: %s", match_team_stats_id
+            )
