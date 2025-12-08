@@ -60,10 +60,16 @@ export default function AddLeagueDialog({ children }: AddLeagueDialogProps) {
           description: '',
         });
         navigate(`/leagues/${createdLeague.league_id}`);
-      } catch (err: any) {
+      } catch (err: unknown) {
         // Basic error handling for security
         let msg = 'Failed to create league. Please try again.';
-        if (err?.response?.status === 422) {
+        if (
+          typeof err === 'object' &&
+          err !== null &&
+          'response' in err &&
+          typeof (err as { response?: { status?: number } }).response === 'object' &&
+          (err as { response?: { status?: number } }).response?.status === 422
+        ) {
           msg = 'Invalid input. Please check your entries.';
         }
         alert(msg);
