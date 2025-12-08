@@ -9,6 +9,7 @@ import Team from '@/pages/Team';
 import AddTeam from '@/pages/AddTeam';
 import TeamDetails from '@/pages/TeamDetails';
 import LeagueDashboard from '@/pages/Leagues';
+import LeagueDetails from '@/pages/LeagueDetails';
 
 export const router = createBrowserRouter([
   {
@@ -54,6 +55,10 @@ export const router = createBrowserRouter([
       {
         path: 'leagues',
         element: <LeagueDashboard />,
+      },
+      {
+        path: 'leagues/:leagueId',
+        element: <LeagueDetails />,
       },
     ],
   },
