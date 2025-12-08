@@ -28,12 +28,17 @@ function TooltipTrigger({ ...props }: React.ComponentProps<typeof TooltipPrimiti
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />;
 }
 
+interface TooltipContentProps extends React.ComponentProps<typeof TooltipPrimitive.Content> {
+  showArrow?: boolean;
+}
+
 function TooltipContent({
   className,
   sideOffset = 0,
   children,
+  showArrow = true,
   ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Content>) {
+}: TooltipContentProps) {
   return (
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Content
@@ -52,10 +57,12 @@ function TooltipContent({
       >
         {children}
 
-        {/* Wrap the arrow in a div and style the div instead */}
-        <div className="absolute z-50 w-2.5 h-2.5 bg-foreground rotate-45 rounded-[2px]">
-          <TooltipPrimitive.Arrow />
-        </div>
+        {/* Optional arrow / tail */}
+        {showArrow && (
+          <div className="absolute z-50 w-2.5 h-2.5 bg-foreground rotate-45 rounded-[2px]">
+            <TooltipPrimitive.Arrow />
+          </div>
+        )}
       </TooltipPrimitive.Content>
     </TooltipPrimitive.Portal>
   );
