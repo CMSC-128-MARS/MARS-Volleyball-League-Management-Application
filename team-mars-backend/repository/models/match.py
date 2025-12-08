@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime, ForeignKey, func
+from sqlalchemy import Column, String, DateTime, ForeignKey, func, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from repository.database import Base
@@ -12,13 +12,24 @@ class Match(Base):
     match_date = Column(DateTime(timezone=True), server_default=func.now())
     location = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    is_completed = Column(Boolean, nullable=False, server_default="false")
 
     # foreign keys
     league_id = Column(
-        UUID(as_uuid=True), ForeignKey("league.league_id"), nullable=False
+        UUID(as_uuid=True),
+        ForeignKey("league.league_id", ondelete="CASCADE"),
+        nullable=False,
     )
-    team1_id = Column(UUID(as_uuid=True), ForeignKey("team.team_id"), nullable=False)
-    team2_id = Column(UUID(as_uuid=True), ForeignKey("team.team_id"), nullable=False)
+    team1_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("team.team_id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    team2_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("team.team_id", ondelete="CASCADE"),
+        nullable=False,
+    )
 
     # relationships
     league = relationship("League", back_populates="matches")

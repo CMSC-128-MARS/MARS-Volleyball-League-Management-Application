@@ -9,7 +9,6 @@ class SkillLevelSimple(BaseModel):
 
     skill_level_id: UUID = Field(..., title="Skill Level ID")
     level: int = Field(..., title="Skill Level")
-    level_description: Optional[str] = Field(None, title="Level Description")
 
     @property
     def level_name(self) -> str:
