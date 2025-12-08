@@ -27,6 +27,11 @@ export interface ConfirmSignUpParams {
 export async function authSignIn({ username, password }: SignInParams) {
   try {
     const user = await signIn({ username, password });
+
+    if ((user as any)?.challengeName === 'NEW_PASSWORD_REQUIRED') {
+      return { success: true, user, challenge: 'NEW_PASSWORD_REQUIRED' };
+    }
+
     return { success: true, user };
   } catch (error) {
     console.error('Error signing in:', error);
@@ -81,7 +86,23 @@ export async function getCurrentAuthUser() {
     const user = await getCurrentUser();
     return { success: true, user };
   } catch (error) {
-    console.error('Error getting current user:', error);
+    // Amplify will throw when there is no authenticated user (this is expected
+    // after sign-out). Avoid noisy error-level logging for that case.
+    const msg = String(error ?? '');
+    const name = (error as any)?.name;
+    const unauthenticated =
+      name === 'UserNotAuthenticatedException' ||
+      name === 'UserUnauthenticatedException' ||
+      /User needs to be authenticated/i.test(msg) ||
+      /not authenticated/i.test(msg);
+
+    if (unauthenticated) {
+      // Debug-level message for expected unauthenticated state
+      // eslint-disable-next-line no-console
+      console.debug('No current authenticated user');
+    } else {
+      console.error('Error getting current user:', error);
+    }
     return { success: false, error };
   }
 }
@@ -93,6 +114,28 @@ export async function getUserSession() {
     return { success: true, session };
   } catch (error) {
     console.error('Error getting session:', error);
+    return { success: false, error };
+  }
+}
+
+export async function authCompleteNewPassword({
+  user,
+  newPassword,
+  requiredAttributes,
+}: {
+  user: any;
+  newPassword: string;
+  requiredAttributes?: { [key: string]: string };
+}) {
+  try {
+    if (typeof user.completeNewPassword === 'function') {
+      const result = await user.completeNewPassword(newPassword, requiredAttributes);
+      return { success: true, result };
+    } else {
+      throw new Error('completeNewPassword method not found on user object.');
+    }
+  } catch (error) {
+    console.error('Error completing new password:', error);
     return { success: false, error };
   }
 }

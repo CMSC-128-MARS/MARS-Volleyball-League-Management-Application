@@ -11,6 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
 import { authSignIn } from '@/lib/auth';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 interface LoginFormProps {
   onContactClick?: () => void;
@@ -23,16 +25,32 @@ interface LoginFormData {
 
 export default function Login({ onContactClick }: LoginFormProps) {
   const form = useForm<LoginFormData>();
+  const navigate = useNavigate();
+  const setUser = useAuthStore((s) => s.setUser);
+  const setLoading = useAuthStore((s) => s.setLoading);
   const handleSubmit = async (data: LoginFormData) => {
-    const result = await authSignIn({
-      username: data.username,
-      password: data.password,
-    });
+    try {
+      setLoading(true);
+      const result = await authSignIn({ username: data.username, password: data.password });
 
-    if (result.success) {
-      console.log('Login successful!', result.user);
-    } else {
-      console.error('Login failed:', result.error);
+      if (!result.success) {
+        console.error('Login failed:', result.error);
+        return;
+      }
+
+      // If Cognito requires new password, do not navigate yet
+      if ((result as any).challenge === 'NEW_PASSWORD_REQUIRED') {
+        console.warn('NEW_PASSWORD_REQUIRED challenge returned. Complete new password flow.');
+        // TODO: show modal to complete new password
+        return;
+      }
+
+      // Mark user authenticated and navigate to dashboard
+      setUser(data.username);
+      console.log('Login successful:', { username: data.username });
+      navigate('/dashboard');
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -70,7 +88,11 @@ export default function Login({ onContactClick }: LoginFormProps) {
             )}
           />
         </div>
-        <Button type="submit" className="w-full" onClick={form.handleSubmit(handleSubmit)}>
+        <Button
+          type="submit"
+          className="w-full hover:cursor-pointer"
+          onClick={form.handleSubmit(handleSubmit)}
+        >
           <LogIn className="it4 w-4 text-white" />
           <p>Sign In</p>
         </Button>
