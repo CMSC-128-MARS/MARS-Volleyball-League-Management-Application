@@ -22,10 +22,20 @@ from repository.database import get_async_session
 
 router = APIRouter(prefix="/match-team-stats", tags=["Match Team Stats"])
 
+"""
+Dependency Injection
+"""
 
-def get_match_team_stats_use_case() -> MatchTeamStatsUseCase:
-    """Dependency injection for Match Team Stats use case"""
-    repo = MatchTeamStatsRepository()
+
+def get_match_team_stats_repo() -> MatchTeamStatsRepository:
+    """Dependency to get Match Team Stats Repository"""
+    return MatchTeamStatsRepository()
+
+
+def get_match_team_stats_use_case(
+    repo: MatchTeamStatsRepository = Depends(get_match_team_stats_repo),
+) -> MatchTeamStatsUseCase:
+    """Dependency to get Match Team Stats use case"""
     return MatchTeamStatsUseCase(repo=repo)
 
 
