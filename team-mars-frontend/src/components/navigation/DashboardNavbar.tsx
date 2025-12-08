@@ -42,16 +42,8 @@ const Navbar2 = () => {
           </div>
 
           {/* Right Section */}
-          <div className="flex flex-row items-center gap-6 md:gap-20 rounded-[2px] bg-[rgba(255,255,255,0.10)] px-4 py-2">
-            <div className="flex flex-row items-center">
-              <p className="border-secondary bg-primary border-2 rounded-[8px] w-8 h-8 justify-center flex items-center text-secondary">
-                A
-              </p>
+          <div className="">
 
-              <div className="text-white leading-tight font-paragraph text-left mx-2 md:mx-4">
-                <p className="text-sm">Admin</p>
-              </div>
-            </div>
 
             <button
               onClick={async () => {
@@ -76,7 +68,7 @@ const Navbar2 = () => {
               title="Sign out"
             >
               <LogOut
-                className="text-white border border-white p-2 w-9 h-9 rounded-sm hover:cursor-pointer "
+                className="text-white border border-white -ml-4 p-2 w-9 h-9 rounded-sm hover:cursor-pointer bg-[rgba(255,255,255,0.10)] "
                 aria-hidden={isSigningOut}
               />
             </button>
