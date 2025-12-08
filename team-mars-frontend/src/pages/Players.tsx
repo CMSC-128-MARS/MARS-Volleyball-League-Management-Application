@@ -2,10 +2,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useEffect, useState } from 'react';
 import PlayerDetailsTable from '@/components/common/player-details-table';
 import { playerService } from '@/lib/players';
+import AddPlayerCard from '@/components/common/add-player-card';
 
 interface Player {
   id: string;
   name: string;
+  first_name?: string | null;
+  last_name?: string | null;
   position: string;
   jerseyNo: number;
   grade: number;
@@ -19,6 +22,7 @@ const Players = () => {
 
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const loadPlayers = async () => {
     setLoading(true);
@@ -28,7 +32,9 @@ const Players = () => {
       setPlayers(
         data.map((p: any) => ({
           id: p.id,
-          name: p.name,
+          name: `${p.first_name || ''} ${p.last_name || ''}`.trim(),
+          first_name: p.first_name,
+          last_name: p.last_name,
           position: p.position ?? '',
           jerseyNo: p.jerseyNo ?? 0,
           grade: p.grade ?? 0,
@@ -47,12 +53,14 @@ const Players = () => {
   }, []);
 
   const handleAdd = async () => {
-    const firstName = window.prompt('First name');
-    if (!firstName) return;
-    const lastName = window.prompt('Last name (optional)');
+    setIsAddDialogOpen(true);
+  };
+
+  const handleCreatePlayer = async (payload: any) => {
     try {
-      await playerService.createPlayer({ first_name: firstName, last_name: lastName || undefined });
+      await playerService.createPlayer(payload);
       await loadPlayers();
+      setIsAddDialogOpen(false);
       alert('Player created');
     } catch (err) {
       console.error('Failed to create player', err);
@@ -62,19 +70,13 @@ const Players = () => {
 
   const handleRemoveSelected = async (ids: string[]) => {
     if (!ids || ids.length === 0) return;
-    const ok = window.confirm(
-      `Delete ${ids.length} selected player(s)? This action cannot be undone.`,
-    );
-    if (!ok) return;
     try {
       for (const id of ids) {
         await playerService.deletePlayer(id);
       }
       await loadPlayers();
-      alert('Selected players deleted');
     } catch (err) {
       console.error('Failed to delete players', err);
-      alert('Failed to delete selected players');
     }
   };
 
@@ -139,6 +141,11 @@ const Players = () => {
           </TabsContent>
         </div>
       </Tabs>
+      <AddPlayerCard
+        open={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        onCreate={handleCreatePlayer}
+      />
     </div>
   );
 };

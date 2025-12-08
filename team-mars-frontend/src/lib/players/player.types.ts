@@ -22,6 +22,8 @@ export type PlayerUpdateDto = Partial<PlayerCreateDto>;
 export interface Player {
   id: string;
   name: string;
+  first_name?: string | null;
+  last_name?: string | null;
   position: string | null;
   jerseyNo: number | null;
   createdAt?: string;

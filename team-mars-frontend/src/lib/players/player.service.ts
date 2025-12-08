@@ -12,6 +12,8 @@ function mapDtoToUi(dto: PlayerDto): PlayerUI {
   return {
     id: dto.player_id,
     name: `${dto.first_name}${dto.last_name ? ' ' + dto.last_name : ''}`,
+    first_name: dto.first_name,
+    last_name: dto.last_name ?? null,
     position: dto.default_position ?? null,
     jerseyNo: dto.jersey_number ?? null,
     createdAt: dto.created_at,
