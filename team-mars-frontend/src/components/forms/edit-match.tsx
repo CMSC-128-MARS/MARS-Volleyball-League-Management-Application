@@ -121,35 +121,37 @@ export default function EditMatchDialog({
 
       await matchApiService.updateMatch(matchId, matchData);
 
-      // If match is completed, update or create match stats for both teams
+      // If match is completed, update both teams' match stats individually
       if (matchStatus === 'completed') {
-        // Final scores are actually sets won
         const team1SetsWon = Number(completedData.team1_final_score);
         const team2SetsWon = Number(completedData.team2_final_score);
 
-        // Calculate total points from all set scores
         let team1TotalScore = 0;
         let team2TotalScore = 0;
-        
         for (let i = 0; i < completedData.team1_set_scores.length; i++) {
           team1TotalScore += Number(completedData.team1_set_scores[i]) || 0;
           team2TotalScore += Number(completedData.team2_set_scores[i]) || 0;
         }
 
-        // Use updateMatchResults to update both teams atomically
-        await matchStatsApiService.updateMatchResults(matchId, {
-          team1_id: initialData.team1_id,
-          team1_stats: {
-            total_score: team1TotalScore,
-            sets_won: team1SetsWon,
-            sets_lost: team2SetsWon,
-          },
-          team2_id: initialData.team2_id,
-          team2_stats: {
-            total_score: team2TotalScore,
-            sets_won: team2SetsWon,
-            sets_lost: team1SetsWon,
-          },
+        // Fetch match team stats for this match
+        const matchTeamStats = await matchStatsApiService.getMatchTeamStatsByMatch(matchId);
+        const team1Stats = matchTeamStats.find((stats) => stats.team?.team_id === initialData.team1_id);
+        const team2Stats = matchTeamStats.find((stats) => stats.team?.team_id === initialData.team2_id);
+
+        if (!team1Stats || !team2Stats) {
+          alert('Could not find match team stats for one or both teams.');
+          return;
+        }
+
+        await matchStatsApiService.updateMatchTeamStats(team1Stats.match_team_stats_id, {
+          total_score: team1TotalScore,
+          sets_won: team1SetsWon,
+          sets_lost: team2SetsWon,
+        });
+        await matchStatsApiService.updateMatchTeamStats(team2Stats.match_team_stats_id, {
+          total_score: team2TotalScore,
+          sets_won: team2SetsWon,
+          sets_lost: team1SetsWon,
         });
       }
 
