@@ -65,7 +65,7 @@ export default function LeagueDetails() {
         }}
       >
         <div className="py-[56px] md:px-[20px] lg:px-[80px] min-h-full gap-[36px] flex flex-col items-center justify-center">
-          <p className="text-lg">Loading league details...</p>
+          <p className="pg1-bold uppercase text-foreground">Loading league details...</p>
         </div>
       </div>
     );

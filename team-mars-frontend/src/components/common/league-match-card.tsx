@@ -47,16 +47,11 @@ export default function LeagueMatchCard({
 }: MatchCardProps) {
   // State for live stats
   const [stats, setStats] = useState<MatchTeamStatsFull[] | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isCompleted) return;
-    setLoading(true);
     matchStatsApiService.getMatchTeamStatsByMatch(matchId)
-      .then((data) => setStats(data))
-      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to fetch match stats'))
-      .finally(() => setLoading(false));
+      .then((data) => setStats(data));
   }, [isCompleted, matchId]);
 
   // Helper to get stat for a team name
