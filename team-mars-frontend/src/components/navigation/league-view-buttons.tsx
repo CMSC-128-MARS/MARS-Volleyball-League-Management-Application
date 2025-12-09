@@ -55,7 +55,7 @@ export default function LeagueViewButtons({
         <Button
           variant="outline"
           onClick={onBack}
-          className="px-6 py-[9.5px] border-primary font-semibold w-[98.25px] h-10 cursor-pointer"
+          className="px-6 py-[9.5px] border-primary w-[98.25px] h-10 cursor-pointer"
         >
           <Undo2 strokeWidth={2.5} />
           Back
@@ -68,7 +68,7 @@ export default function LeagueViewButtons({
               <Button
                 type="button"
                 aria-label="Remove league"
-                className="bg-red-600 text-white p-1 rounded-sm hover:bg-red-700 transition-colors h-10 w-10 cursor-pointer"
+                className="bg-destructive text-white p-1 rounded-[2px] hover:bg-destructive/80 transition-colors h-10 w-10 cursor-pointer"
               >
                 <Trash className="w-5 h-5" />
               </Button>
@@ -84,14 +84,14 @@ export default function LeagueViewButtons({
                   <div className="flex gap-2 mt-4 justify-end items-end">
                     <Button
                       variant={'outline'}
-                      className="hover:cursor-pointer h-10"
+                      className="hover:cursor-pointer hover:bg-gray-100 hover:text-primary h-10 border-primary"
                       onClick={handleCancelDelete}
                       disabled={isDeleting}
                     >
                       Cancel
                     </Button>
                     <Button
-                      className="bg-[#D52020] h-10 hover:bg-[#D52020] hover:opacity-80 hover:cursor-pointer"
+                      className="bg-destructive h-10 hover:bg-destructive/80 hover:cursor-pointer"
                       onClick={handleDelete}
                       disabled={isDeleting}
                     >

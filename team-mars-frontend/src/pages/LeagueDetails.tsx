@@ -1,6 +1,7 @@
 import LeagueViewButtons from '@/components/navigation/league-view-buttons';
 import LeagueDetailsComponent from '@/components/common/league-details';
 import ViewLeagueTeamsCard from '@/components/common/view-league-teams-card';
+import ViewLeagueMatchesCard from '@/components/common/view-league-matches-card';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useCallback } from 'react';
 import { leagueApiService } from '@/lib/league';
@@ -126,10 +127,9 @@ export default function LeagueDetails() {
           </div>
           {/* Right Column: Matches */}
           <div className="lg:w-2/3">
-            <ViewLeagueTeamsCard
+            <ViewLeagueMatchesCard
               teams={league.teams as Team[]}
               matches={league.matches as Match[]}
-              showMatchesOnly={true}
               isEditing={isEditing}
               leagueId={league.league_id}
               onMatchesChange={fetchLeagueData}
