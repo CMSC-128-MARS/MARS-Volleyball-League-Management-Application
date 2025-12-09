@@ -15,6 +15,7 @@ from model.match_team_stats.match_team_stats import (
     MatchTeamStatsUpdate,
     MatchTeamStatsSimple,
     MatchTeamStatsFull,
+    MatchResultsSummary,
 )
 
 
@@ -118,3 +119,17 @@ class MatchTeamStatsUseCase:
 
         await self.repo.delete_match_team_stats(session, match_team_stats_id)
         logger.info("Match team stats successfully deleted: %s", match_team_stats_id)
+
+    # READ - GET MATCH RESULTS SUMMARY
+    async def get_match_results(
+        self, session: AsyncSession, match_id: UUID
+    ) -> MatchResultsSummary:
+        """Get formatted match results summary with both teams"""
+        match_results = await self.repo.get_match_results(session, match_id)
+
+        if not match_results:
+            raise NotFoundException(
+                "Match results not found. Ensure the match has exactly 2 teams with stats."
+            )
+
+        return MatchResultsSummary.model_validate(match_results)

@@ -11,8 +11,6 @@ class MatchTeamStatsFull(BaseModel):
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
     match_team_stats_id: UUID = Field(..., title="Match Team Stats ID")
-    match_id: UUID = Field(..., title="Match ID")
-    team_id: UUID = Field(..., title="Team ID")
     total_score: Optional[int] = Field(None, title="Total Score")
     sets_won: Optional[int] = Field(None, title="Sets Won")
     sets_lost: Optional[int] = Field(None, title="Sets Lost")
@@ -127,3 +125,104 @@ class MatchTeamStatsNested(BaseModel):
     sets_lost: Optional[int] = Field(None, title="Sets Lost")
     is_winner: Optional[bool] = Field(None, title="Is Winner")
     team: Optional[TeamSimple] = Field(None, title="Team")
+
+
+# ============= NEW SCHEMAS FOR MATCH RESULTS =============
+
+
+class FinalScores(BaseModel):
+    """Final scores for both teams"""
+
+    team1_name: str
+    team1_total_score: int
+    team2_name: str
+    team2_total_score: int
+
+
+class FinalSets(BaseModel):
+    """Final sets for both teams"""
+
+    team1_sets_won: int
+    team2_sets_won: int
+
+
+class MatchResultsSummary(BaseModel):
+    """Summary of match results with both teams"""
+
+    final_scores: FinalScores
+    final_sets: FinalSets
+
+    @property
+    def winner(self) -> str:
+        """Determine the winner based on sets won"""
+        if self.final_sets.team1_sets_won > self.final_sets.team2_sets_won:
+            return self.final_scores.team1_name
+        elif self.final_sets.team2_sets_won > self.final_sets.team1_sets_won:
+            return self.final_scores.team2_name
+        return "Draw"
+
+    @property
+    def is_complete(self) -> bool:
+        """Check if match has a definitive winner"""
+        return self.final_sets.team1_sets_won != self.final_sets.team2_sets_won
+
+
+class TeamStatsUpdate(BaseModel):
+    """Stats update for a single team"""
+
+    total_score: Optional[int] = Field(None, ge=0, description="Total points scored")
+    sets_won: Optional[int] = Field(None, ge=0, description="Number of sets won")
+    sets_lost: Optional[int] = Field(None, ge=0, description="Number of sets lost")
+
+    @field_validator("sets_won", "sets_lost")
+    @classmethod
+    def validate_sets_together(cls, v, info):
+        """Ensure sets_won and sets_lost are consistent"""
+        # This validator runs for each field, so we need to check context
+        return v
+
+
+class MatchResultsUpdate(BaseModel):
+    """Update payload for match results (both teams)"""
+
+    model_config = ConfigDict(extra="forbid")
+
+    team1_id: UUID = Field(..., description="ID of first team")
+    team1_stats: TeamStatsUpdate = Field(..., description="Stats for first team")
+    team2_id: UUID = Field(..., description="ID of second team")
+    team2_stats: TeamStatsUpdate = Field(..., description="Stats for second team")
+
+    @field_validator("team2_id")
+    @classmethod
+    def validate_different_teams(cls, v, info):
+        """Ensure team1_id and team2_id are different"""
+        if "team1_id" in info.data and v == info.data["team1_id"]:
+            raise ValueError("team1_id and team2_id must be different")
+        return v
+
+    def model_post_init(self, __context):
+        """Additional validation after model is initialized"""
+        # Validate that if sets are provided for one team, they should be for both
+        team1_has_sets = (
+            self.team1_stats.sets_won is not None
+            or self.team1_stats.sets_lost is not None
+        )
+        team2_has_sets = (
+            self.team2_stats.sets_won is not None
+            or self.team2_stats.sets_lost is not None
+        )
+
+        if team1_has_sets != team2_has_sets:
+            raise ValueError(
+                "If sets are provided for one team, they must be provided for both teams"
+            )
+
+        # Validate sets_won and sets_lost are provided together for each team
+        if self.team1_stats.sets_won is not None and self.team1_stats.sets_lost is None:
+            raise ValueError("team1: sets_won and sets_lost must be provided together")
+        if self.team1_stats.sets_lost is not None and self.team1_stats.sets_won is None:
+            raise ValueError("team1: sets_won and sets_lost must be provided together")
+        if self.team2_stats.sets_won is not None and self.team2_stats.sets_lost is None:
+            raise ValueError("team2: sets_won and sets_lost must be provided together")
+        if self.team2_stats.sets_lost is not None and self.team2_stats.sets_won is None:
+            raise ValueError("team2: sets_won and sets_lost must be provided together")
