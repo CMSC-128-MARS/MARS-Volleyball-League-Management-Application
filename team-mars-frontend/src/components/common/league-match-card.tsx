@@ -76,26 +76,17 @@ export default function LeagueMatchCard({
   };
 
   return (
-    <Card className="p-[24px] shadow-md border border-border">
+    <Card className="p-[24px] shadow-md border-2 border-border gap-4 justify-between">
       {/* Top Row */}
       <div className="flex justify-between items-start">
-        <div className="flex items-center gap-3">
           <Badge
-            className="text-white rounded-[2px] px-[8px] py-[4px]"
+            className="text-white rounded-[2px] px-[8px] py-[4px] h-full"
             style={{
               backgroundColor: isCompleted ? 'var(--primary)' : 'var(--secondary-alt)',
             }}
           >
             {formatDate(matchDate)}
           </Badge>
-          {isCompleted && location && (
-            <div className="flex items-center gap-1 text-muted-foreground pg2">
-              <MapPin className="h-3 w-3" />
-              <span>{location}</span>
-            </div>
-          )}
-        </div>
-
         {/* Edit/Delete Buttons */}
         {isEditing && (
           <div className="flex gap-2">
@@ -119,69 +110,88 @@ export default function LeagueMatchCard({
         )}
       </div>
 
+      {/* Sets and Location Info for Upcoming Matches */}
+        {!isCompleted && (
+          <div className="flex items-center gap-1 text-muted-foreground justify-between pg2 w-full">
+            {location && (
+              <div className="flex justify-end items-center gap-[4px] text-muted-foreground pg2">
+                <MapPin className="h-4 w-4" />
+                <span>{location}</span>
+              </div>
+            )}
+              <p className="pg2 text-muted-foreground">
+                <span className="pg1-bold text-black">{num_of_sets}</span> set
+                {num_of_sets !== 1 ? 's' : ''}
+              </p>
+          </div>
+        )}
+
       {/* Main Content */}
-      <div className="flex justify-between items-start gap-6">
+      <div className="grid grid-cols-1 justify-between items-start gap-2">
+      {isCompleted && location && (
+        <div className="flex items-center gap-1 text-muted-foreground pg2 w-full">
+          <MapPin className="h-4 w-4" />
+            <span className='text-center'>{location}</span>
+        </div>
+      )}
+      
         {/* Teams and Scores */}
         <div className={`space-y-0 flex flex-col ${isCompleted ? 'w-full' : ''}`}>
           {/* Team 1 */}
-          <div className="flex justify-between items-center py-2">
+          <div
+            className={`flex justify-between items-center py-2 transition-all duration-300 ${isCompleted ? 'w-full' : 'w-auto max-w-[320px]'} mx-auto`}
+          >
             <p className={`pg1-bold ${t1IsWinner === true && isCompleted ? 'text-secondary-alt' : ''}`}>
               {team1Name}
             </p>
             {isCompleted && (
-              <div className="flex items-center gap-4">
+              <div className="flex items-end gap-4">
                 <div className="flex flex-col items-center">
-                  <span className={`text-2xl font-bold ${t1IsWinner === true ? 'text-secondary-alt' : ''}`}>{t1SetsWon ?? 0}</span>
-                  <span className="text-xs text-muted-foreground">Sets Won</span>
+                  <span className={`pg1-bold ${t1IsWinner === true ? 'text-secondary-alt' : ''}`}>{t1SetsWon ?? 0}</span>
+                  <span className="pg3 text-muted-foreground">Sets Won</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <span className={`text-lg font-semibold ${t1IsWinner === true ? 'text-secondary-alt' : ''}`}>{t1TotalScore ?? 0}</span>
-                  <span className="text-xs text-muted-foreground">Total Pts</span>
+                  <span className={`pg3-bold font-semibold ${t1IsWinner === true ? 'text-secondary-alt' : ''}`}>{t1TotalScore ?? 0}</span>
+                  <span className="pg3 text-muted-foreground">Total Pts</span>
                 </div>
               </div>
             )}
           </div>
 
           {/* Divider */}
-          <hr className="border-gray-300" />
+          {isCompleted ? (
+            <hr className="border-gray-300 w-full" />
+          ) : (
+            <div className="relative flex items-center justify-center my-1 w-full mx-auto">
+              <hr className="flex-grow border-gray-300 border-dashed" />
+              <span className="pg3 text-secondary-alt px-2">vs</span>
+              <hr className="flex-grow border-gray-300 border-dashed" />
+            </div>
+          )}
 
           {/* Team 2 */}
-          <div className="flex justify-between items-center py-2">
+          <div
+            className={`flex justify-between items-center py-2 transition-all duration-300 ${isCompleted ? 'w-full' : 'w-auto max-w-[320px]'} mx-auto`}
+          >
             <p className={`pg1-bold ${t2IsWinner === true && isCompleted ? 'text-secondary-alt' : ''}`}>
               {team2Name}
             </p>
             {isCompleted && (
-              <div className="flex items-center gap-4">
+              <div className="flex items-end gap-4">
                 <div className="flex flex-col items-center">
-                  <span className={`text-2xl font-bold ${t2IsWinner === true ? 'text-secondary-alt' : ''}`}>{t2SetsWon ?? 0}</span>
-                  <span className="text-xs text-muted-foreground">Sets Won</span>
+                  <span className={`pg1-bold  ${t2IsWinner === true ? 'text-secondary-alt' : ''}`}>{t2SetsWon ?? 0}</span>
+                  <span className="pg3 text-muted-foreground">Sets Won</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <span className={`text-lg font-semibold ${t2IsWinner === true ? 'text-secondary-alt' : ''}`}>{t2TotalScore ?? 0}</span>
-                  <span className="text-xs text-muted-foreground">Total Pts</span>
+                  <span className={`pg3-bold font-semibold ${t2IsWinner === true ? 'text-secondary-alt' : ''}`}>{t2TotalScore ?? 0}</span>
+                  <span className="pg3 text-muted-foreground">Total Pts</span>
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Sets and Location Info for Upcoming Matches */}
-        {!isCompleted && (
-          <div className="flex flex-col gap-2 text-right h-full justify-center">
-            <div>
-              <p className="pg2 text-muted-foreground">
-                <span className="font-bold text-black">{num_of_sets}</span> set
-                {num_of_sets !== 1 ? 's' : ''}
-              </p>
-            </div>
-            {location && (
-              <div className="flex items-center justify-end gap-1 text-muted-foreground pg2">
-                <MapPin className="h-3 w-3" />
-                <span>{location}</span>
-              </div>
-            )}
-          </div>
-        )}
+        
       </div>
     </Card>
   );
