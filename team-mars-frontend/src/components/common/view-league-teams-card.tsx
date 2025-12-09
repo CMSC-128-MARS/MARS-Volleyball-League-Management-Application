@@ -56,14 +56,14 @@ type ViewLeagueTeamsCardProps = {
   onMatchesChange?: () => void;
 };
 
-export default function ViewLeagueTeamsCard({ 
-  teams, 
-  matches, 
-  showTeamsOnly, 
-  showMatchesOnly, 
-  isEditing, 
+export default function ViewLeagueTeamsCard({
+  teams,
+  matches,
+  showTeamsOnly,
+  showMatchesOnly,
+  isEditing,
   leagueId,
-  onMatchesChange 
+  onMatchesChange,
 }: ViewLeagueTeamsCardProps) {
   const navigate = useNavigate();
   const [editingMatchId, setEditingMatchId] = useState<string | null>(null);
@@ -74,19 +74,19 @@ export default function ViewLeagueTeamsCard({
 
   // Separate matches into upcoming and completed
   const now = new Date();
-  const upcomingMatches = matches.filter(match => {
+  const upcomingMatches = matches.filter((match) => {
     const matchDate = new Date(match.match_date);
     const hasStats = match.match_stats && match.match_stats.length > 0;
     return matchDate > now || !hasStats;
   });
-  const completedMatches = matches.filter(match => {
+  const completedMatches = matches.filter((match) => {
     const matchDate = new Date(match.match_date);
     const hasStats = match.match_stats && match.match_stats.length > 0;
     return matchDate <= now && hasStats;
   });
 
   const handleEditMatch = (matchId: string) => {
-    const match = matches.find(m => m.match_id === matchId);
+    const match = matches.find((m) => m.match_id === matchId);
     if (match) {
       setEditingMatchId(matchId);
       setEditingMatchData(match);
@@ -171,9 +171,13 @@ export default function ViewLeagueTeamsCard({
                     <h3 className="pg1-bold mb-4">Completed</h3>
                     <div className="flex flex-col gap-4">
                       {completedMatches.map((match) => {
-                        const team1Stats = match.match_stats?.find(s => s.team_id === match.team1?.team_id);
-                        const team2Stats = match.match_stats?.find(s => s.team_id === match.team2?.team_id);
-                        
+                        const team1Stats = match.match_stats?.find(
+                          (s) => s.team_id === match.team1?.team_id,
+                        );
+                        const team2Stats = match.match_stats?.find(
+                          (s) => s.team_id === match.team2?.team_id,
+                        );
+
                         return (
                           <LeagueMatchCard
                             key={match.match_id}
@@ -186,7 +190,7 @@ export default function ViewLeagueTeamsCard({
                             team2Score={team2Stats?.sets_won}
                             team1Sets={team1Stats ? [team1Stats.total_score || 0] : []}
                             team2Sets={team2Stats ? [team2Stats.total_score || 0] : []}
-                            num_of_sets={match.num_of_sets }
+                            num_of_sets={match.num_of_sets}
                             isCompleted={match.is_completed || true}
                             isEditing={isEditing}
                             onEdit={handleEditMatch}
@@ -201,8 +205,8 @@ export default function ViewLeagueTeamsCard({
                 {/* Add Match Button */}
                 {isEditing && leagueId && (
                   <div className="flex justify-center py-4">
-                    <AddMatchDialog 
-                      leagueId={leagueId} 
+                    <AddMatchDialog
+                      leagueId={leagueId}
                       teams={teams}
                       onMatchAdded={onMatchesChange}
                     />
@@ -281,8 +285,8 @@ export default function ViewLeagueTeamsCard({
             <div className="flex flex-col gap-4">
               {teams.length === 0 && isEditing ? (
                 <div className="flex justify-center">
-                  <Button 
-                    variant="default" 
+                  <Button
+                    variant="default"
                     className="w-full px-6 py-2 cursor-pointer"
                     onClick={() => navigate('/teams')}
                   >
@@ -304,7 +308,9 @@ export default function ViewLeagueTeamsCard({
                       {teams.map((team, index) => (
                         <tr key={team.team_id} className="border-b border-border hover:bg-accent">
                           <td className="py-3 px-2 text-center pg2">{index + 1}</td>
-                          <td className="py-3 px-2 font-medium text-center pg2-bold">{team.team_name}</td>
+                          <td className="py-3 px-2 font-medium text-center pg2-bold">
+                            {team.team_name}
+                          </td>
                           <td className="py-3 px-2 text-center pg2">{team.wins ?? '-'}</td>
                           <td className="py-3 px-2 text-center pg2">{team.losses ?? '-'}</td>
                         </tr>
@@ -314,8 +320,8 @@ export default function ViewLeagueTeamsCard({
                 </div>
               ) : null}
               {teams.length > 0 && isEditing && (
-                <Button 
-                  variant="default" 
+                <Button
+                  variant="default"
                   className="w-full px-6 py-2 cursor-pointer"
                   onClick={() => navigate('/teams')}
                 >
@@ -345,8 +351,8 @@ export default function ViewLeagueTeamsCard({
             <div className="flex flex-col gap-4">
               {teams.length === 0 && isEditing ? (
                 <div className="flex justify-center">
-                  <Button 
-                    variant="default" 
+                  <Button
+                    variant="default"
                     className="w-full px-6 py-2 cursor-pointer"
                     onClick={() => navigate('/addteam')}
                   >
@@ -368,7 +374,9 @@ export default function ViewLeagueTeamsCard({
                       {teams.map((team, index) => (
                         <tr key={team.team_id} className="border-b border-border hover:bg-accent">
                           <td className="py-3 px-2 text-center pg2">{index + 1}</td>
-                          <td className="py-3 px-2 font-medium text-center pg2-bold">{team.team_name}</td>
+                          <td className="py-3 px-2 font-medium text-center pg2-bold">
+                            {team.team_name}
+                          </td>
                           <td className="py-3 px-2 text-center pg2">{team.wins ?? '-'}</td>
                           <td className="py-3 px-2 text-center pg2">{team.losses ?? '-'}</td>
                         </tr>
@@ -378,8 +386,8 @@ export default function ViewLeagueTeamsCard({
                 </div>
               ) : null}
               {teams.length > 0 && isEditing && (
-                <Button 
-                  variant="default" 
+                <Button
+                  variant="default"
                   className="w-full px-6 py-2 cursor-pointer"
                   onClick={() => navigate('/addteam')}
                 >
@@ -408,7 +416,9 @@ export default function ViewLeagueTeamsCard({
               <div className="flex flex-col gap-2">
                 {matches.map((match) => (
                   <div key={match.match_id} className="p-3 border rounded hover:bg-gray-50">
-                    <p className="text-sm">Match on {new Date(match.match_date).toLocaleDateString()}</p>
+                    <p className="text-sm">
+                      Match on {new Date(match.match_date).toLocaleDateString()}
+                    </p>
                   </div>
                 ))}
               </div>

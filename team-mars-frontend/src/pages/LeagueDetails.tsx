@@ -53,7 +53,6 @@ export default function LeagueDetails() {
     }
   };
 
-
   if (isLoading) {
     return (
       <div

@@ -34,7 +34,6 @@ export default function LeagueViewButtons({
     onEditToggle?.(false);
   };
 
-
   const handleDelete = async () => {
     try {
       setIsDeleting(true);

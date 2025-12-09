@@ -50,7 +50,7 @@ export default function Contact({ onSuccess }: ContactProps) {
   const onSubmit = async (data: ContactFormData) => {
     try {
       console.log('Contact form data:', data);
-      
+
       // TODO: Send data to your backend API
       // const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
       // const response = await fetch(`${API_URL}/contact`, {
@@ -58,11 +58,11 @@ export default function Contact({ onSuccess }: ContactProps) {
       //   headers: { 'Content-Type': 'application/json' },
       //   body: JSON.stringify(data),
       // });
-      
+
       // if (!response.ok) throw new Error('Failed to submit');
-      
+
       form.reset();
-      
+
       if (onSuccess) {
         onSuccess();
       }
@@ -73,7 +73,7 @@ export default function Contact({ onSuccess }: ContactProps) {
 
   return (
     <Form {...form}>
-      <form 
+      <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="rounded-[2px] border border-border relative z-10 bg-white flex flex-col justify-center paragraph-s-regular items-center gap-6 p-8 w-full md:w-md lg:w-lg max-w-lg"
       >

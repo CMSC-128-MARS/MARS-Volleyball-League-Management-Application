@@ -1,10 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -54,7 +49,7 @@ export default function EditMatchDialog({
       // Format date for input (YYYY-MM-DD)
       const date = new Date(initialData.match_date);
       const formattedDate = date.toISOString().split('T')[0];
-      
+
       setFormData({
         match_date: formattedDate,
         location: initialData.location,
@@ -140,7 +135,7 @@ export default function EditMatchDialog({
                 type="date"
                 value={formData.match_date}
                 onChange={(e) => setFormData({ ...formData, match_date: e.target.value })}
-                className={isCompleted ? "bg-gray-100" : "cursor-pointer"}
+                className={isCompleted ? 'bg-gray-100' : 'cursor-pointer'}
                 disabled={isCompleted}
                 required={!isCompleted}
               />
@@ -157,7 +152,7 @@ export default function EditMatchDialog({
                 placeholder="Enter match location"
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                className={isCompleted ? "bg-gray-100" : ""}
+                className={isCompleted ? 'bg-gray-100' : ''}
                 disabled={isCompleted}
                 required={!isCompleted}
               />
@@ -174,8 +169,10 @@ export default function EditMatchDialog({
                 min="1"
                 max="5"
                 value={formData.num_of_sets}
-                onChange={(e) => setFormData({ ...formData, num_of_sets: parseInt(e.target.value) || 1 })}
-                className={isCompleted ? "bg-gray-100" : ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, num_of_sets: parseInt(e.target.value) || 1 })
+                }
+                className={isCompleted ? 'bg-gray-100' : ''}
                 disabled={isCompleted}
                 required={!isCompleted}
               />

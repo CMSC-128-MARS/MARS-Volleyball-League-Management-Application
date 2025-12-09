@@ -6,11 +6,11 @@ class LeagueApiService {
 
   async fetchLeagues(params?: FetchLeaguesParams): Promise<League[]> {
     const leagues = await apiClient.get<League[]>(this.basePath);
-    
+
     if (params?.limit) {
       return leagues.slice(0, params.limit);
     }
-    
+
     return leagues;
   }
 
