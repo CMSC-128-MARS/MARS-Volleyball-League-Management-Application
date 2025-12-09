@@ -147,11 +147,13 @@ export default function EditMatchDialog({
           total_score: team1TotalScore,
           sets_won: team1SetsWon,
           sets_lost: team2SetsWon,
+          is_winner: team1SetsWon > team2SetsWon,
         });
         await matchStatsApiService.updateMatchTeamStats(team2Stats.match_team_stats_id, {
           total_score: team2TotalScore,
           sets_won: team2SetsWon,
           sets_lost: team1SetsWon,
+          is_winner: team2SetsWon > team1SetsWon,
         });
       }
 

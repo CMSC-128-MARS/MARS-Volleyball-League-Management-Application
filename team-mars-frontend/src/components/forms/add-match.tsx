@@ -128,22 +128,16 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
 
       const createdMatch = await matchApiService.createMatch(matchData);
 
-      // If match is completed, create match stats for both teams
       if (matchStatus === 'completed') {
-        // Final scores are actually sets won
+        // ...existing code for completed match stats creation...
         const team1SetsWon = Number(completedData.team1_final_score);
         const team2SetsWon = Number(completedData.team2_final_score);
-
-        // Calculate total points from all set scores
         let team1TotalScore = 0;
         let team2TotalScore = 0;
-        
         for (let i = 0; i < completedData.team1_set_scores.length; i++) {
           team1TotalScore += Number(completedData.team1_set_scores[i]) || 0;
           team2TotalScore += Number(completedData.team2_set_scores[i]) || 0;
         }
-
-        // Create stats for team 1
         await matchStatsApiService.createMatchTeamStats({
           match_id: createdMatch.match_id,
           team_id: formData.team1_id,
@@ -152,8 +146,6 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
           sets_lost: team2SetsWon,
           is_winner: team1SetsWon > team2SetsWon,
         });
-
-        // Create stats for team 2
         await matchStatsApiService.createMatchTeamStats({
           match_id: createdMatch.match_id,
           team_id: formData.team2_id,
@@ -161,6 +153,16 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
           sets_won: team2SetsWon,
           sets_lost: team1SetsWon,
           is_winner: team2SetsWon > team1SetsWon,
+        });
+      } else {
+        // If upcoming, initialize empty match stats for both teams
+        await matchStatsApiService.createMatchTeamStats({
+          match_id: createdMatch.match_id,
+          team_id: formData.team1_id,
+        });
+        await matchStatsApiService.createMatchTeamStats({
+          match_id: createdMatch.match_id,
+          team_id: formData.team2_id,
         });
       }
 
