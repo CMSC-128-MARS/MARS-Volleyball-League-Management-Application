@@ -67,7 +67,9 @@ export default function AddPlayerCard({ open, onOpenChange, onCreate }: AddPlaye
       jersey_number: jerseyNumber ?? undefined,
       default_position: defaultPosition || undefined,
       skill_level: skillLevel ? Number(skillLevel) : undefined,
-      notes: note || undefined,
+      // backend expects `skill_notes`; include both keys for compatibility
+      skill_notes: note ? note : undefined,
+      notes: note ? note : undefined,
     };
 
     setIsSubmitting(true);

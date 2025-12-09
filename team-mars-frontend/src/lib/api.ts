@@ -1,4 +1,5 @@
 import { teamApiService } from './team';
+import { playerService } from './players';
 
 // Re-export team types for backward compatibility
 export type { TeamWithCounts as ApiTeam } from './team/team.types';
@@ -195,19 +196,8 @@ const normalizePlayerResponse = (payload: ApiPlayer[] | PlayersEnvelope): ApiPla
   return [];
 };
 
-export const fetchPlayers = async (params: FetchPlayersParams = {}): Promise<ApiPlayer[]> => {
-  const searchParams = new URLSearchParams();
-
-  if (typeof params.limit === 'number') {
-    searchParams.set('limit', params.limit.toString());
-  }
-
-  if (typeof params.skip === 'number') {
-    searchParams.set('skip', params.skip.toString());
-  }
-
-  const query = searchParams.toString();
-  const endpoint = `/players${query ? `?${query}` : ''}`;
-  const response = await apiClient.get<ApiPlayer[] | PlayersEnvelope>(endpoint);
-  return normalizePlayerResponse(response);
-};
+export const fetchPlayers = playerService.fetchPlayers.bind(playerService);
+export const fetchPlayerById = playerService.fetchPlayerById.bind(playerService);
+export const createPlayer = playerService.createPlayer.bind(playerService);
+export const updatePlayer = playerService.updatePlayer.bind(playerService);
+export const deletePlayer = playerService.deletePlayer.bind(playerService);

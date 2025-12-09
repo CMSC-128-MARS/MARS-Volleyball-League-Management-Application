@@ -17,6 +17,8 @@ export interface PlayerCreateDto {
   jersey_number?: number | null;
   default_position?: string | null;
   skill_level?: number | null;
+  // Back-end expects `skill_notes` for player notes; keep `notes` optional too for compatibility.
+  skill_notes?: string | null;
   notes?: string | null;
 }
 
@@ -32,5 +34,6 @@ export interface Player {
   jerseyNo: number | null;
   grade?: number | null;
   skill_level?: number | null;
+  notes?: string | null;
   createdAt?: string;
 }
