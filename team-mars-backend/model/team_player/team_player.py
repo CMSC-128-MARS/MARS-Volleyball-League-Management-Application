@@ -56,7 +56,7 @@ class TeamPlayerNested(BaseModel):
     join_date: datetime = Field(..., title="Join Date")
     leave_date: Optional[datetime] = Field(None, title="Leave Date")
     position: Optional[str] = Field(None, title="Position")
-    player: Optional[Any] = Field(None, title="Player")
+    player: Optional[PlayerSimple] = Field(None, title="Player")
 
     @property
     def is_active(self) -> bool:

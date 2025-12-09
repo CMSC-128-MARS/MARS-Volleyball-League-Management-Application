@@ -18,7 +18,9 @@ class Player(Base):
     notes = Column(String, nullable=True)
     skill_level = Column(Integer, nullable=True)
 
-    team_memberships = relationship("TeamPlayer", back_populates="player")
+    team_memberships = relationship(
+        "TeamPlayer", back_populates="player", lazy="selectin"
+    )
 
     @validates("skill_level")
     def validate_skill_level(self, key, skill_level):

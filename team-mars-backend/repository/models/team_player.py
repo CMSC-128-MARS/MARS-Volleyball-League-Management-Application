@@ -22,4 +22,4 @@ class TeamPlayer(Base):
 
     # Relationships
     team = relationship("Team", back_populates="team_players")
-    player = relationship("Player", back_populates="team_memberships")
+    player = relationship("Player", back_populates="team_memberships", lazy="selectin")
