@@ -16,6 +16,8 @@ export interface PlayerCreateDto {
   last_name?: string | null;
   jersey_number?: number | null;
   default_position?: string | null;
+  skill_level?: number | null;
+  notes?: string | null;
 }
 
 export type PlayerUpdateDto = Partial<PlayerCreateDto>;

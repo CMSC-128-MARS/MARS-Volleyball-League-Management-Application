@@ -52,6 +52,5 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   if (checking) return <Loader />; // show loader while checking session
   if (isAuthenticated) return children;
 
-  // Not authenticated — redirect to login and preserve attempted location
   return <Navigate to="/login" state={{ from: location }} replace />;
 }
