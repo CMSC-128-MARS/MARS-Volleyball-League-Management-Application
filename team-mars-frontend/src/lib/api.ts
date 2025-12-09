@@ -1,4 +1,5 @@
 import { teamApiService } from './team';
+import { playerService } from './players';
 
 // Re-export team types for backward compatibility
 export type { TeamWithCounts as ApiTeam } from './team/team.types';
@@ -169,45 +170,8 @@ export interface FetchPlayersParams {
   skip?: number;
 }
 
-type PlayersEnvelope = {
-  players?: ApiPlayer[];
-  data?: ApiPlayer[];
-  results?: ApiPlayer[];
-};
-
-const normalizePlayerResponse = (payload: ApiPlayer[] | PlayersEnvelope): ApiPlayer[] => {
-  if (Array.isArray(payload)) {
-    return payload;
-  }
-
-  if (Array.isArray(payload.players)) {
-    return payload.players;
-  }
-
-  if (Array.isArray(payload.data)) {
-    return payload.data;
-  }
-
-  if (Array.isArray(payload.results)) {
-    return payload.results;
-  }
-
-  return [];
-};
-
-export const fetchPlayers = async (params: FetchPlayersParams = {}): Promise<ApiPlayer[]> => {
-  const searchParams = new URLSearchParams();
-
-  if (typeof params.limit === 'number') {
-    searchParams.set('limit', params.limit.toString());
-  }
-
-  if (typeof params.skip === 'number') {
-    searchParams.set('skip', params.skip.toString());
-  }
-
-  const query = searchParams.toString();
-  const endpoint = `/players${query ? `?${query}` : ''}`;
-  const response = await apiClient.get<ApiPlayer[] | PlayersEnvelope>(endpoint);
-  return normalizePlayerResponse(response);
-};
+export const fetchPlayers = playerService.fetchPlayers.bind(playerService);
+export const fetchPlayerById = playerService.fetchPlayerById.bind(playerService);
+export const createPlayer = playerService.createPlayer.bind(playerService);
+export const updatePlayer = playerService.updatePlayer.bind(playerService);
+export const deletePlayer = playerService.deletePlayer.bind(playerService);

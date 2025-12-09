@@ -62,10 +62,8 @@ const Players = () => {
       await playerService.createPlayer(payload);
       await loadPlayers();
       setIsAddDialogOpen(false);
-      alert('Player created');
     } catch (err) {
       console.error('Failed to create player', err);
-      alert('Failed to create player');
     }
   };
 

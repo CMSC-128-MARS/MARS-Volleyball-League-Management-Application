@@ -5,11 +5,12 @@ All methods return SQLAlchemy models, not Pydantic schemas.
 """
 
 from typing import List, Optional
-from uuid import UUID
+from uuid import UUID, uuid4
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from repository.models.player import Player
+from sqlalchemy.exc import SQLAlchemyError
 from model.player.player import PlayerCreate, PlayerUpdate
 
 
@@ -18,11 +19,36 @@ class PlayerRepository:
 
     # CREATE PLAYER
     async def create_player(self, db: AsyncSession, data: PlayerCreate) -> Player:
-        player = Player(**data.model_dump())
-        db.add(player)
-        await db.commit()
-        await db.refresh(player)
-        return player
+        try:
+            # Normalize incoming data and filter unknown keys
+            payload = data.model_dump()
+
+            # Map top-level `skill_notes` -> `notes` if present
+            if "skill_notes" in payload and "notes" not in payload:
+                payload["notes"] = payload.pop("skill_notes")
+            # Only keep player-level keys that exist on the Player model
+            allowed_player_keys = {
+                "first_name",
+                "last_name",
+                "jersey_number",
+                "default_position",
+                "notes",
+                "skill_level",
+            }
+
+            player_kwargs = {
+                k: v for k, v in payload.items() if k in allowed_player_keys
+            }
+
+            player = Player(player_id=uuid4(), **player_kwargs)
+
+            db.add(player)
+            await db.commit()
+            await db.refresh(player)
+            return player
+        except SQLAlchemyError as e:
+            await db.rollback()
+            raise e
 
     # GET PLAYER BY ID
     async def get_player_by_id(

@@ -5,6 +5,9 @@ export interface PlayerDto {
   first_name: string;
   grade?: number | null;
   skill_level?: number | null;
+  // Backend may return either `notes` or legacy `skill_notes`.
+  notes?: string | null;
+  skill_notes?: string | null;
   last_name?: string | null;
   jersey_number?: number | null;
   default_position?: string | null;
@@ -16,6 +19,10 @@ export interface PlayerCreateDto {
   last_name?: string | null;
   jersey_number?: number | null;
   default_position?: string | null;
+  skill_level?: number | null;
+  // Back-end expects `skill_notes` for player notes; keep `notes` optional too for compatibility.
+  skill_notes?: string | null;
+  notes?: string | null;
 }
 
 export type PlayerUpdateDto = Partial<PlayerCreateDto>;
@@ -30,5 +37,6 @@ export interface Player {
   jerseyNo: number | null;
   grade?: number | null;
   skill_level?: number | null;
+  notes?: string | null;
   createdAt?: string;
 }
