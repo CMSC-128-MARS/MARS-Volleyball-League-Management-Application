@@ -170,12 +170,6 @@ export interface FetchPlayersParams {
   skip?: number;
 }
 
-type PlayersEnvelope = {
-  players?: ApiPlayer[];
-  data?: ApiPlayer[];
-  results?: ApiPlayer[];
-};
-// Note: player endpoints are served by the axios-backed player service; no envelope normalization needed here.
 export const fetchPlayers = playerService.fetchPlayers.bind(playerService);
 export const fetchPlayerById = playerService.fetchPlayerById.bind(playerService);
 export const createPlayer = playerService.createPlayer.bind(playerService);

@@ -52,13 +52,24 @@ export default function AddTeamDetails({
 
   const handleAddPlayer = () => {
     if (currentPlayer) {
-      onPlayerAdd?.(currentPlayer);
+      const apiPlayer: ApiPlayer = {
+        player_id: currentPlayer.id,
+        first_name: currentPlayer.first_name || '',
+        last_name: currentPlayer.last_name ?? '',
+        jersey_number: currentPlayer.jerseyNo ?? null,
+        default_position: currentPlayer.position ?? null,
+        created_at: currentPlayer.createdAt ?? undefined,
+        skill_level: currentPlayer.skill_level ?? null,
+        notes: currentPlayer.notes ?? null,
+      };
+
+      onPlayerAdd?.(apiPlayer);
       setIsDialogOpen(false);
       setSelectedPlayer(null);
     }
   };
 
-  const currentPlayer = players.find((p) => p.player_id === selectedPlayer);
+  const currentPlayer = players.find((p) => p.id === selectedPlayer) ?? null;
 
   return (
     <div className="w-full h-full shadow-md">
@@ -119,12 +130,12 @@ export default function AddTeamDetails({
                     )}
                     {players.map((player) => (
                       <SelectItem
-                        key={player.player_id}
-                        value={player.player_id}
-                        disabled={selectedPlayerIds.includes(player.player_id)}
+                        key={player.id}
+                        value={player.id}
+                        disabled={selectedPlayerIds.includes(player.id)}
                       >
                         {player.first_name} {player.last_name || ''}
-                        {player.jersey_number ? ` #${player.jersey_number}` : ''}
+                        {player.jerseyNo ? ` #${player.jerseyNo}` : ''}
                       </SelectItem>
                     ))}
                   </SelectGroup>
@@ -146,7 +157,7 @@ export default function AddTeamDetails({
                           <div>
                             <p className="text-[14px] text-black mb-1">First Name</p>
                             <Input
-                              value={currentPlayer.first_name}
+                              value={currentPlayer.first_name ?? ''}
                               readOnly
                               className="bg-gray-50 text-[14px] text-gray-500"
                             />
@@ -154,7 +165,7 @@ export default function AddTeamDetails({
                           <div>
                             <p className="text-[14px] text-black mb-1">Last Name</p>
                             <Input
-                              value={currentPlayer.last_name || 'N/A'}
+                              value={currentPlayer.last_name ?? 'N/A'}
                               readOnly
                               className="bg-gray-50 text-[14px] text-gray-500"
                             />
@@ -162,7 +173,7 @@ export default function AddTeamDetails({
                           <div>
                             <p className="text-[14px] text-black mb-1">Jersey Number</p>
                             <Input
-                              value={currentPlayer.jersey_number?.toString() || 'N/A'}
+                              value={currentPlayer.jerseyNo?.toString() || 'N/A'}
                               readOnly
                               className="bg-gray-50 text-[14px] text-gray-500"
                             />
@@ -172,7 +183,7 @@ export default function AddTeamDetails({
                           <div>
                             <p className="text-[14px] text-black mb-1">Default Position</p>
                             <Input
-                              value={currentPlayer.default_position || 'N/A'}
+                              value={currentPlayer.position || 'N/A'}
                               readOnly
                               className="bg-gray-50 text-[14px] text-gray-500"
                             />
@@ -181,8 +192,8 @@ export default function AddTeamDetails({
                             <p className="text-[14px] text-black mb-1">Player Creation Date</p>
                             <Input
                               value={
-                                currentPlayer.created_at
-                                  ? new Date(currentPlayer.created_at).toLocaleDateString()
+                                currentPlayer.createdAt
+                                  ? new Date(currentPlayer.createdAt).toLocaleDateString()
                                   : 'N/A'
                               }
                               readOnly
@@ -202,11 +213,7 @@ export default function AddTeamDetails({
                           <div>
                             <p className="text-[14px] text-black mb-1">Date Evaluated</p>
                             <Input
-                              value={
-                                currentPlayer.date_evaluated
-                                  ? new Date(currentPlayer.date_evaluated).toLocaleDateString()
-                                  : 'N/A'
-                              }
+                              value={'N/A'}
                               readOnly
                               className="bg-gray-50 text-[14px] text-gray-500"
                             />

@@ -53,7 +53,10 @@ export async function createPlayer(payload: PlayerCreateDto): Promise<PlayerUI> 
         delete (rest as Partial<PlayerCreateDto>).skill_notes;
         delete (rest as Partial<PlayerCreateDto>).notes;
 
-        const created = await httpClient.post<PlayerDto>(API_BASE, rest as unknown as PlayerCreateDto);
+        const created = await httpClient.post<PlayerDto>(
+          API_BASE,
+          rest as unknown as PlayerCreateDto,
+        );
 
         // Try to PATCH the created player to add skill_notes (best-effort)
         try {

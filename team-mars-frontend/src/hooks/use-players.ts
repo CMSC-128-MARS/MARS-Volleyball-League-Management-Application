@@ -1,12 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
-import { fetchPlayers, type ApiPlayer } from '@/lib/api';
+import { fetchPlayers } from '@/lib/api';
+import type { Player as PlayerUI } from '@/lib/players';
 
-interface UsePlayersOptions {
-  limit?: number;
-}
-
-export const usePlayers = ({ limit = 100 }: UsePlayersOptions = {}) => {
-  const [players, setPlayers] = useState<ApiPlayer[]>([]);
+export const usePlayers = () => {
+  const [players, setPlayers] = useState<PlayerUI[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,8 +12,8 @@ export const usePlayers = ({ limit = 100 }: UsePlayersOptions = {}) => {
     setError(null);
 
     try {
-      const apiPlayers = await fetchPlayers({ limit });
-      setPlayers(apiPlayers);
+      const apiPlayers = await fetchPlayers();
+      setPlayers(apiPlayers as unknown as PlayerUI[]);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load players';
       setError(message);
@@ -24,7 +21,7 @@ export const usePlayers = ({ limit = 100 }: UsePlayersOptions = {}) => {
     } finally {
       setIsLoading(false);
     }
-  }, [limit]);
+  }, []);
 
   useEffect(() => {
     loadPlayers();
