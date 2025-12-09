@@ -112,7 +112,11 @@ class MatchCreate(BaseModel):
         ..., title="Location", max_length=200, description="Match location"
     )
     num_of_sets: int = Field(..., title="Number of Sets")
-    is_completed: bool = Field(default=False, title="Is Completed", description="Whether the match is completed")
+    is_completed: bool = Field(
+        default=False,
+        title="Is Completed",
+        description="Whether the match is completed",
+    )
 
 
 # Base schema - for updates
