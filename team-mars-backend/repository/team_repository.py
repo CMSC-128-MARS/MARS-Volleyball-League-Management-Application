@@ -1,4 +1,5 @@
 from repository.models.team import Team
+from repository.models.team_player import TeamPlayer
 from model.team.team import TeamCreate, TeamUpdate
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
@@ -41,7 +42,7 @@ class TeamRepository:
         result = await db.execute(
             select(Team)
             .options(
-                selectinload(Team.team_players),
+                selectinload(Team.team_players).selectinload(TeamPlayer.player),
                 selectinload(Team.matches),
                 selectinload(Team.league),
                 selectinload(Team.match_stats),
