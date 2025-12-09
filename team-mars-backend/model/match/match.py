@@ -112,6 +112,7 @@ class MatchCreate(BaseModel):
         ..., title="Location", max_length=200, description="Match location"
     )
     num_of_sets: int = Field(..., title="Number of Sets")
+    is_completed: bool = Field(default=False, title="Is Completed", description="Whether the match is completed")
 
 
 # Base schema - for updates
@@ -123,6 +124,7 @@ class MatchUpdate(BaseModel):
     match_date: Optional[datetime] = Field(None, title="Match Date")
     location: Optional[str] = Field(None, title="Location", max_length=200)
     league_id: Optional[UUID] = Field(None, title="League ID")
+    num_of_sets: Optional[int] = Field(None, title="Number of Sets")
     is_completed: bool = Field(..., title="Is Completed?")
 
 

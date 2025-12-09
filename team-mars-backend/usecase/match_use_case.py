@@ -70,13 +70,13 @@ class MatchUseCase:
 
     async def update_match(
         self, session: AsyncSession, match_id: UUID, payload: MatchUpdate
-    ) -> MatchFull:
+    ) -> MatchSimple:
         match = await self.repo.get_match_by_id(session, match_id)
         if not match:
             raise NotFoundException("Match not found.")
 
         updated = await self.repo.update_match(session, match_id, payload)
-        return MatchFull.model_validate(updated)
+        return MatchSimple.model_validate(updated)
 
     # DELETE
     async def delete_match(self, session: AsyncSession, match_id: UUID) -> None:
