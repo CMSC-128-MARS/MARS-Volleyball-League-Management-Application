@@ -1,7 +1,10 @@
+import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Pencil, Trash} from 'lucide-react';
+import { matchStatsApiService } from '@/lib/match-stats';
+import type { MatchTeamStatsFull } from '@/lib/match-stats';
 
 type MatchCardProps = {
   matchId: string;
@@ -9,11 +12,14 @@ type MatchCardProps = {
   location?: string;
   team1Name: string;
   team2Name: string;
-  team1Score?: number;
-  team2Score?: number;
-  team1Sets?: number[];
-  team2Sets?: number[];
-  firstToSets?: number;
+  team1SetsWon?: number;
+  team2SetsWon?: number;
+  team1SetsLost?: number;
+  team2SetsLost?: number;
+  team1TotalScore?: number;
+  team2TotalScore?: number;
+  team1IsWinner?: boolean;
+  team2IsWinner?: boolean;
   num_of_sets?: number;
   isCompleted?: boolean;
   isEditing?: boolean;
@@ -27,16 +33,45 @@ export default function LeagueMatchCard({
   location,
   team1Name,
   team2Name,
-  team1Score,
-  team2Score,
-  team1Sets = [],
-  team2Sets = [],
+  team1SetsWon,
+  team2SetsWon,
+  team1TotalScore,
+  team2TotalScore,
+  team1IsWinner,
+  team2IsWinner,
   num_of_sets = 3,
   isCompleted = false,
   isEditing = false,
   onEdit,
   onDelete,
 }: MatchCardProps) {
+  // State for live stats
+  const [stats, setStats] = useState<MatchTeamStatsFull[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isCompleted) return;
+    setLoading(true);
+    matchStatsApiService.getMatchTeamStatsByMatch(matchId)
+      .then((data) => setStats(data))
+      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to fetch match stats'))
+      .finally(() => setLoading(false));
+  }, [isCompleted, matchId]);
+
+  // Helper to get stat for a team name
+  const getStatByTeam = (teamName: string | undefined) =>
+    stats?.find((s) => s.team?.team_name === teamName);
+
+  // Use fetched stats if available, otherwise fallback to props
+  const t1Stats = isCompleted && stats ? getStatByTeam(team1Name) : undefined;
+  const t2Stats = isCompleted && stats ? getStatByTeam(team2Name) : undefined;
+  const t1SetsWon = t1Stats?.sets_won ?? team1SetsWon;
+  const t2SetsWon = t2Stats?.sets_won ?? team2SetsWon;
+  const t1TotalScore = t1Stats?.total_score ?? team1TotalScore;
+  const t2TotalScore = t2Stats?.total_score ?? team2TotalScore;
+  const t1IsWinner = t1Stats?.is_winner ?? team1IsWinner;
+  const t2IsWinner = t2Stats?.is_winner ?? team2IsWinner;
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: '2-digit',
@@ -44,13 +79,6 @@ export default function LeagueMatchCard({
       year: 'numeric',
     });
   };
-
-  const winner =
-    team1Score !== undefined && team2Score !== undefined && team1Score > team2Score
-      ? 1
-      : team1Score !== undefined && team2Score !== undefined && team2Score > team1Score
-        ? 2
-        : null;
 
   return (
     <Card className="p-[24px] shadow-md border border-border">
@@ -102,23 +130,19 @@ export default function LeagueMatchCard({
         <div className={`space-y-0 flex flex-col ${isCompleted ? 'w-full' : ''}`}>
           {/* Team 1 */}
           <div className="flex justify-between items-center py-2">
-            <p className={`pg1-bold ${winner === 1 && isCompleted ? 'text-[#B8860B]' : ''}`}>
+            <p className={`pg1-bold ${t1IsWinner === true && isCompleted ? 'text-secondary-alt' : ''}`}>
               {team1Name}
             </p>
-            {isCompleted && team1Score !== undefined && (
+            {isCompleted && (
               <div className="flex items-center gap-4">
-                <span className={`text-2xl font-bold ${winner === 1 ? 'text-[#B8860B]' : ''}`}>
-                  {team1Score}
-                </span>
-                {team1Sets.length > 0 && (
-                  <div className="flex gap-2 text-sm">
-                    {team1Sets.map((set, idx) => (
-                      <span key={idx} className="font-semibold text-right min-w-[20px]">
-                        {set}
-                      </span>
-                    ))}
-                  </div>
-                )}
+                <div className="flex flex-col items-center">
+                  <span className={`text-2xl font-bold ${t1IsWinner === true ? 'text-secondary-alt' : ''}`}>{t1SetsWon ?? 0}</span>
+                  <span className="text-xs text-muted-foreground">Sets Won</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className={`text-lg font-semibold ${t1IsWinner === true ? 'text-secondary-alt' : ''}`}>{t1TotalScore ?? 0}</span>
+                  <span className="text-xs text-muted-foreground">Total Pts</span>
+                </div>
               </div>
             )}
           </div>
@@ -128,23 +152,19 @@ export default function LeagueMatchCard({
 
           {/* Team 2 */}
           <div className="flex justify-between items-center py-2">
-            <p className={`pg1-bold ${winner === 2 && isCompleted ? 'text-[#B8860B]' : ''}`}>
+            <p className={`pg1-bold ${t2IsWinner === true && isCompleted ? 'text-secondary-alt' : ''}`}>
               {team2Name}
             </p>
-            {isCompleted && team2Score !== undefined && (
+            {isCompleted && (
               <div className="flex items-center gap-4">
-                <span className={`text-2xl font-bold ${winner === 2 ? 'text-[#B8860B]' : ''}`}>
-                  {team2Score}
-                </span>
-                {team2Sets.length > 0 && (
-                  <div className="flex gap-2 text-sm">
-                    {team2Sets.map((set, idx) => (
-                      <span key={idx} className="font-semibold text-right min-w-[20px]">
-                        {set}
-                      </span>
-                    ))}
-                  </div>
-                )}
+                <div className="flex flex-col items-center">
+                  <span className={`text-2xl font-bold ${t2IsWinner === true ? 'text-secondary-alt' : ''}`}>{t2SetsWon ?? 0}</span>
+                  <span className="text-xs text-muted-foreground">Sets Won</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className={`text-lg font-semibold ${t2IsWinner === true ? 'text-secondary-alt' : ''}`}>{t2TotalScore ?? 0}</span>
+                  <span className="text-xs text-muted-foreground">Total Pts</span>
+                </div>
               </div>
             )}
           </div>

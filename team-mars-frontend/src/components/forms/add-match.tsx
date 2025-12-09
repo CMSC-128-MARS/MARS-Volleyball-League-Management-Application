@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/select';
 import { matchApiService } from '@/lib/match';
 import type { MatchCreate } from '@/lib/match';
+import { matchStatsApiService } from '@/lib/match-stats';
 
 type Team = {
   team_id: string;
@@ -125,7 +126,43 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
         is_completed: matchStatus === 'completed',
       };
 
-      await matchApiService.createMatch(matchData);
+      const createdMatch = await matchApiService.createMatch(matchData);
+
+      // If match is completed, create match stats for both teams
+      if (matchStatus === 'completed') {
+        // Final scores are actually sets won
+        const team1SetsWon = Number(completedData.team1_final_score);
+        const team2SetsWon = Number(completedData.team2_final_score);
+
+        // Calculate total points from all set scores
+        let team1TotalScore = 0;
+        let team2TotalScore = 0;
+        
+        for (let i = 0; i < completedData.team1_set_scores.length; i++) {
+          team1TotalScore += Number(completedData.team1_set_scores[i]) || 0;
+          team2TotalScore += Number(completedData.team2_set_scores[i]) || 0;
+        }
+
+        // Create stats for team 1
+        await matchStatsApiService.createMatchTeamStats({
+          match_id: createdMatch.match_id,
+          team_id: formData.team1_id,
+          total_score: team1TotalScore,
+          sets_won: team1SetsWon,
+          sets_lost: team2SetsWon,
+          is_winner: team1SetsWon > team2SetsWon,
+        });
+
+        // Create stats for team 2
+        await matchStatsApiService.createMatchTeamStats({
+          match_id: createdMatch.match_id,
+          team_id: formData.team2_id,
+          total_score: team2TotalScore,
+          sets_won: team2SetsWon,
+          sets_lost: team1SetsWon,
+          is_winner: team2SetsWon > team1SetsWon,
+        });
+      }
 
       setIsOpen(false);
       setFormData({ team1_id: '', team2_id: '', match_date: '', location: '', num_of_sets: '' });

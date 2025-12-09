@@ -2,7 +2,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LeagueCard } from '@/components/common/league-card';
 import AddLeagueCard from '@/components/common/add-league-card';
 import { useLeagues } from '@/hooks/use-leagues';
-
 const LeagueDashboard = () => {
   const { leagues, isLoading, error, refetch } = useLeagues({ limit: 50 });
 
@@ -16,6 +15,7 @@ const LeagueDashboard = () => {
           backgroundRepeat: 'repeat',
         }}
       >
+        
         <Tabs defaultValue="view" className="w-full">
           {/* Main Container */}
           <div className="py-[56px] md:px-[20px] lg:px-[80px] min-h-full gap-[36px] flex flex-col">

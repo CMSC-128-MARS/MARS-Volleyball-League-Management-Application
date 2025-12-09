@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { matchApiService } from '@/lib/match';
 import type { MatchUpdate } from '@/lib/match';
+import { matchStatsApiService } from '@/lib/match-stats';
 
 type Team = {
   team_id: string;
@@ -92,6 +93,23 @@ export default function EditMatchDialog({
       return;
     }
 
+    // Validate completed match data
+    if (matchStatus === 'completed') {
+      if (!completedData.team1_final_score || !completedData.team2_final_score) {
+        alert('Please fill in all match result fields');
+        return;
+      }
+
+      const hasEmptySetScores =
+        completedData.team1_set_scores.some((s) => !s) ||
+        completedData.team2_set_scores.some((s) => !s);
+
+      if (hasEmptySetScores) {
+        alert('Please fill in all set scores');
+        return;
+      }
+    }
+
     try {
       setIsSubmitting(true);
       const matchData: MatchUpdate = {
@@ -99,16 +117,41 @@ export default function EditMatchDialog({
         location: formData.location,
         num_of_sets: formData.num_of_sets,
         is_completed: matchStatus === 'completed',
-        // Optionally add completedData fields here if your backend supports them
-        ...(matchStatus === 'completed' && {
-          team1_final_score: completedData.team1_final_score,
-          team2_final_score: completedData.team2_final_score,
-          team1_set_scores: completedData.team1_set_scores,
-          team2_set_scores: completedData.team2_set_scores,
-        }),
       };
 
       await matchApiService.updateMatch(matchId, matchData);
+
+      // If match is completed, update or create match stats for both teams
+      if (matchStatus === 'completed') {
+        // Final scores are actually sets won
+        const team1SetsWon = Number(completedData.team1_final_score);
+        const team2SetsWon = Number(completedData.team2_final_score);
+
+        // Calculate total points from all set scores
+        let team1TotalScore = 0;
+        let team2TotalScore = 0;
+        
+        for (let i = 0; i < completedData.team1_set_scores.length; i++) {
+          team1TotalScore += Number(completedData.team1_set_scores[i]) || 0;
+          team2TotalScore += Number(completedData.team2_set_scores[i]) || 0;
+        }
+
+        // Use updateMatchResults to update both teams atomically
+        await matchStatsApiService.updateMatchResults(matchId, {
+          team1_id: initialData.team1_id,
+          team1_stats: {
+            total_score: team1TotalScore,
+            sets_won: team1SetsWon,
+            sets_lost: team2SetsWon,
+          },
+          team2_id: initialData.team2_id,
+          team2_stats: {
+            total_score: team2TotalScore,
+            sets_won: team2SetsWon,
+            sets_lost: team1SetsWon,
+          },
+        });
+      }
 
       onClose();
       onMatchUpdated?.();
