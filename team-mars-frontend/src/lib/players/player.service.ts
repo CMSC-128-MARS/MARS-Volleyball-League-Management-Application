@@ -20,7 +20,7 @@ function mapDtoToUi(dto: PlayerDto): PlayerUI {
     grade: dto.skill_level ?? dto.grade ?? null,
     skill_level: dto.skill_level ?? dto.grade ?? null,
     // Map either `notes` or legacy `skill_notes` into UI `notes`.
-    notes: (dto as any).notes ?? (dto as any).skill_notes ?? null,
+    notes: dto.notes ?? dto.skill_notes ?? null,
     createdAt: dto.created_at,
   };
 }
@@ -45,24 +45,26 @@ export async function createPlayer(payload: PlayerCreateDto): Promise<PlayerUI> 
     const looksLikeExtraFieldError = /extra|unexpected|field.*not.*allowed|422/.test(
       String(message).toLowerCase(),
     );
-
-    if (payload && (payload as any).skill_notes && looksLikeExtraFieldError) {
+    if (payload.skill_notes && looksLikeExtraFieldError) {
       try {
-        // Create without the notes field
-        const { skill_notes, notes, ...rest } = payload as any;
-        const created = await httpClient.post<PlayerDto>(API_BASE, rest);
+        // Create without the notes fields
+        const skill_notes = payload.skill_notes;
+        const rest: Partial<PlayerCreateDto> = { ...payload };
+        delete (rest as Partial<PlayerCreateDto>).skill_notes;
+        delete (rest as Partial<PlayerCreateDto>).notes;
+
+        const created = await httpClient.post<PlayerDto>(API_BASE, rest as unknown as PlayerCreateDto);
 
         // Try to PATCH the created player to add skill_notes (best-effort)
         try {
-          await httpClient.patch(`${API_BASE}/${created.player_id}`, { skill_notes: skill_notes });
+          await httpClient.patch(`${API_BASE}/${created.player_id}`, { skill_notes });
         } catch (patchErr) {
           // ignore patch errors but log for debugging
-          // eslint-disable-next-line no-console
           console.warn('Failed to patch skill_notes after create:', patchErr);
         }
 
         return mapDtoToUi(created);
-      } catch (retryErr) {
+      } catch {
         // rethrow the original error if retry also fails
         throw err;
       }

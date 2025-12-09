@@ -5,6 +5,9 @@ export interface PlayerDto {
   first_name: string;
   grade?: number | null;
   skill_level?: number | null;
+  // Backend may return either `notes` or legacy `skill_notes`.
+  notes?: string | null;
+  skill_notes?: string | null;
   last_name?: string | null;
   jersey_number?: number | null;
   default_position?: string | null;

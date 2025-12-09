@@ -175,27 +175,7 @@ type PlayersEnvelope = {
   data?: ApiPlayer[];
   results?: ApiPlayer[];
 };
-
-const normalizePlayerResponse = (payload: ApiPlayer[] | PlayersEnvelope): ApiPlayer[] => {
-  if (Array.isArray(payload)) {
-    return payload;
-  }
-
-  if (Array.isArray(payload.players)) {
-    return payload.players;
-  }
-
-  if (Array.isArray(payload.data)) {
-    return payload.data;
-  }
-
-  if (Array.isArray(payload.results)) {
-    return payload.results;
-  }
-
-  return [];
-};
-
+// Note: player endpoints are served by the axios-backed player service; no envelope normalization needed here.
 export const fetchPlayers = playerService.fetchPlayers.bind(playerService);
 export const fetchPlayerById = playerService.fetchPlayerById.bind(playerService);
 export const createPlayer = playerService.createPlayer.bind(playerService);
