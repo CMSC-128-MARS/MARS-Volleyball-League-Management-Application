@@ -35,7 +35,7 @@ export class TeamApiService {
   }
 
   async addPlayerToTeam(teamId: string, playerId: string, position?: string): Promise<void> {
-    return httpClient.post<void>('/team-player', {
+    return httpClient.post<void>('/team-players', {
       team_id: teamId,
       player_id: playerId,
       position: position || null,
@@ -45,7 +45,7 @@ export class TeamApiService {
 
   async removePlayerFromTeam(teamId: string, playerId: string): Promise<void> {
     // This sets the leave_date for the team-player relationship
-    return httpClient.patch<void>('/team-player', {
+    return httpClient.patch<void>('/team-players', {
       team_id: teamId,
       player_id: playerId,
       leave_date: new Date().toISOString(),

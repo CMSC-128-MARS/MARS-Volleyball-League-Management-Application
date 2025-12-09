@@ -149,7 +149,12 @@ export default function AddLeagueDialog({ children }: AddLeagueDialogProps) {
             Cancel
           </Button>
 
-          <Button className="cursor-pointer" type="submit" form="add-league-form" disabled={isSubmitting}>
+          <Button
+            className="cursor-pointer"
+            type="submit"
+            form="add-league-form"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? 'Creating...' : 'Add League'}
           </Button>
         </div>

@@ -14,7 +14,14 @@ type LeagueDetailsProps = {
   onSaved?: () => void;
 };
 
-export default function LeagueDetails({ leagueId, leagueName, location, description, isEditing = false, onSaved }: LeagueDetailsProps) {
+export default function LeagueDetails({
+  leagueId,
+  leagueName,
+  location,
+  description,
+  isEditing = false,
+  onSaved,
+}: LeagueDetailsProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     league_name: leagueName,

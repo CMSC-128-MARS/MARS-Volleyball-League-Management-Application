@@ -45,14 +45,19 @@ export default function LeagueMatchCard({
     });
   };
 
-  const winner = team1Score !== undefined && team2Score !== undefined && team1Score > team2Score ? 1 : team1Score !== undefined && team2Score !== undefined && team2Score > team1Score ? 2 : null;
+  const winner =
+    team1Score !== undefined && team2Score !== undefined && team1Score > team2Score
+      ? 1
+      : team1Score !== undefined && team2Score !== undefined && team2Score > team1Score
+        ? 2
+        : null;
 
   return (
     <Card className="p-[24px] shadow-md border border-border">
       {/* Top Row */}
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-3">
-          <Badge 
+          <Badge
             className="text-white rounded-[2px] px-[8px] py-[4px]"
             style={{
               backgroundColor: isCompleted ? 'var(--primary)' : 'var(--secondary-alt)',
@@ -112,7 +117,9 @@ export default function LeagueMatchCard({
                 {team1Sets.length > 0 && (
                   <div className="flex gap-2 text-sm">
                     {team1Sets.map((set, idx) => (
-                      <span key={idx} className="font-semibold text-right min-w-[20px]">{set}</span>
+                      <span key={idx} className="font-semibold text-right min-w-[20px]">
+                        {set}
+                      </span>
                     ))}
                   </div>
                 )}
@@ -136,7 +143,9 @@ export default function LeagueMatchCard({
                 {team2Sets.length > 0 && (
                   <div className="flex gap-2 text-sm">
                     {team2Sets.map((set, idx) => (
-                      <span key={idx} className="font-semibold text-right min-w-[20px]">{set}</span>
+                      <span key={idx} className="font-semibold text-right min-w-[20px]">
+                        {set}
+                      </span>
                     ))}
                   </div>
                 )}
@@ -150,7 +159,8 @@ export default function LeagueMatchCard({
           <div className="flex flex-col gap-2 text-right h-full justify-center">
             <div>
               <p className="pg2 text-muted-foreground">
-                <span className="font-bold text-black">{num_of_sets}</span> set{num_of_sets !== 1 ? 's' : ''}
+                <span className="font-bold text-black">{num_of_sets}</span> set
+                {num_of_sets !== 1 ? 's' : ''}
               </p>
             </div>
             {location && (

@@ -68,7 +68,13 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.team1_id || !formData.team2_id || !formData.match_date || !formData.location || !formData.num_of_sets) {
+    if (
+      !formData.team1_id ||
+      !formData.team2_id ||
+      !formData.match_date ||
+      !formData.location ||
+      !formData.num_of_sets
+    ) {
       alert('Please fill in all fields');
       return;
     }
@@ -92,10 +98,7 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
       }
       setCompletedData((prev) => ({ ...prev, winner_team_id }));
 
-      if (
-        !completedData.team1_final_score ||
-        !completedData.team2_final_score
-      ) {
+      if (!completedData.team1_final_score || !completedData.team2_final_score) {
         alert('Please fill in all match result fields');
         return;
       }
@@ -178,7 +181,9 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
                   <SelectGroup>
                     <SelectLabel>Select first team</SelectLabel>
                     {teams.length === 0 && (
-                      <div className="px-2 py-1.5 text-sm text-muted-foreground">No teams available</div>
+                      <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                        No teams available
+                      </div>
                     )}
                     {teams.map((team) => (
                       <SelectItem
@@ -214,7 +219,9 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
                   <SelectGroup>
                     <SelectLabel>Select second team</SelectLabel>
                     {teams.length === 0 && (
-                      <div className="px-2 py-1.5 pg3 text-muted-foreground">No teams available</div>
+                      <div className="px-2 py-1.5 pg3 text-muted-foreground">
+                        No teams available
+                      </div>
                     )}
                     {teams.map((team) => (
                       <SelectItem
@@ -317,7 +324,7 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
                 {/* Final Scores */}
                 <hr className="w-[calc(100%+3rem)] -ml-6 border-t border-[#A3A3A3] flex-shrink-0" />
                 <div className="grid grid-cols gap-4">
-                  <p className='pg1-bold text-gray-500'>Final Results</p>
+                  <p className="pg1-bold text-gray-500">Final Results</p>
                   <div className="grid grid-cols-2 gap-3 pg-3">
                     <div className="flex flex-col h-full gap-2">
                       <Label htmlFor="team1_final_score" className="h-full">
@@ -358,46 +365,48 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Set Scores */}
                 {formData.num_of_sets && parseInt(formData.num_of_sets) > 0 && (
                   <div className="flex flex-col h-full gap-3 ">
-                    
                     {Array.from({ length: Math.min(parseInt(formData.num_of_sets), 5) }, (_, i) => (
                       <>
-                      <p className="pg2 text-gray-500">Set {i + 1}</p>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="flex flex-col h-full gap-2">
-                          <Label htmlFor={`team1_set_${i}`} className="h-full pg1">
-                            {teams.find((t) => t.team_id === formData.team1_id)?.team_name || 'Team 1'}<span className='text-secondary-alt'>*</span>
-                          </Label>
-                          <Input
-                            id={`team1_set_${i}`}
-                            type="number"
-                            min="0"
-                            placeholder="Score"
-                            value={completedData.team1_set_scores[i] || ''}
-                            onChange={(e) => handleSetScoreChange('team1', i, e.target.value)}
-                            required
-                          />
-                        </div>
+                        <p className="pg2 text-gray-500">Set {i + 1}</p>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="flex flex-col h-full gap-2">
+                            <Label htmlFor={`team1_set_${i}`} className="h-full pg1">
+                              {teams.find((t) => t.team_id === formData.team1_id)?.team_name ||
+                                'Team 1'}
+                              <span className="text-secondary-alt">*</span>
+                            </Label>
+                            <Input
+                              id={`team1_set_${i}`}
+                              type="number"
+                              min="0"
+                              placeholder="Score"
+                              value={completedData.team1_set_scores[i] || ''}
+                              onChange={(e) => handleSetScoreChange('team1', i, e.target.value)}
+                              required
+                            />
+                          </div>
 
-                        <div className="flex flex-col h-full gap-2">
-                          <Label htmlFor={`team2_set_${i}`} className="h-full pg1">
-                         
-                            {teams.find((t) => t.team_id === formData.team2_id)?.team_name || 'Team 2'}<span className='text-secondary-alt'>*</span>
-                          </Label>
-                          <Input
-                            id={`team2_set_${i}`}
-                            type="number"
-                            min="0"
-                            placeholder="Score"
-                            value={completedData.team2_set_scores[i] || ''}
-                            onChange={(e) => handleSetScoreChange('team2', i, e.target.value)}
-                            required
-                          />
+                          <div className="flex flex-col h-full gap-2">
+                            <Label htmlFor={`team2_set_${i}`} className="h-full pg1">
+                              {teams.find((t) => t.team_id === formData.team2_id)?.team_name ||
+                                'Team 2'}
+                              <span className="text-secondary-alt">*</span>
+                            </Label>
+                            <Input
+                              id={`team2_set_${i}`}
+                              type="number"
+                              min="0"
+                              placeholder="Score"
+                              value={completedData.team2_set_scores[i] || ''}
+                              onChange={(e) => handleSetScoreChange('team2', i, e.target.value)}
+                              required
+                            />
+                          </div>
                         </div>
-                      </div>
                       </>
                     ))}
                   </div>
