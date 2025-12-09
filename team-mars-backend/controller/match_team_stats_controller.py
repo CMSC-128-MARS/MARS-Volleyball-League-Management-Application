@@ -21,7 +21,7 @@ from model.match_team_stats.match_team_stats import (
     MatchResultsUpdate,
 )
 
-router = APIRouter(prefix="/match-team-stats", tags=["Match Team Stats"])
+router = APIRouter(prefix="/match-stats", tags=["Match Team Stats"])
 
 
 def get_match_team_stats_use_case() -> MatchTeamStatsUseCase:

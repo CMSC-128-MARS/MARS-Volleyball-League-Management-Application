@@ -15,11 +15,18 @@ class TeamPlayer(Base):
     position = Column(String, nullable=True)
 
     # Foreign Keys
-    team_id = Column(UUID(as_uuid=True), ForeignKey("team.team_id"), nullable=False)
+    team_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("team.team_id", ondelete="CASCADE"),
+        nullable=False,
+    )
     player_id = Column(
         UUID(as_uuid=True), ForeignKey("player.player_id"), nullable=False
     )
 
     # Relationships
-    team = relationship("Team", back_populates="team_players")
+    team = relationship(
+        "Team",
+        back_populates="team_players",
+    )
     player = relationship("Player", back_populates="team_memberships", lazy="selectin")

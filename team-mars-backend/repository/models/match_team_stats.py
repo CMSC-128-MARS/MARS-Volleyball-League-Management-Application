@@ -16,8 +16,16 @@ class MatchTeamStats(Base):
     is_winner = Column(Boolean, nullable=True)
 
     # Foreign Keys
-    match_id = Column(UUID(as_uuid=True), ForeignKey("match.match_id"), nullable=False)
-    team_id = Column(UUID(as_uuid=True), ForeignKey("team.team_id"), nullable=False)
+    match_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("match.match_id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    team_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("team.team_id", ondelete="CASCADE"),
+        nullable=False,
+    )
 
     # Relationships
     match = relationship("Match", back_populates="match_stats")
