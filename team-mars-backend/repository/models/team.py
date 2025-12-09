@@ -39,6 +39,6 @@ class Team(Base):
     match_stats = relationship(
         "MatchTeamStats",
         back_populates="team",
-        cascade="save-update",
+        cascade="all, delete-orphan",
         passive_deletes=True,
     )

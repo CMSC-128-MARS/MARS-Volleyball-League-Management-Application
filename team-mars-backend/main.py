@@ -11,6 +11,7 @@ from controller.team_controller import router as team_router
 from controller.team_player_controller import router as team_player_router
 from controller.match_controller import router as match_router
 from controller.league_controller import router as league_router
+from controller.match_team_stats_controller import router as match_team_stats_router
 
 from model import rebuild_models
 
@@ -47,6 +48,7 @@ app.include_router(team_router)
 app.include_router(team_player_router)
 app.include_router(match_router)
 app.include_router(league_router)
+app.include_router(match_team_stats_router)
 
 
 @app.get("/", include_in_schema=False)

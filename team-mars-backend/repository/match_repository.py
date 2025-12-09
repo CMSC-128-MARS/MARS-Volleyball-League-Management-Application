@@ -68,6 +68,8 @@ class MatchRepository:
             select(Match)
             .options(
                 selectinload(Match.league),
+                selectinload(Match.team1),
+                selectinload(Match.team2),
             )
             .where(Match.match_id == match_id)
         )
