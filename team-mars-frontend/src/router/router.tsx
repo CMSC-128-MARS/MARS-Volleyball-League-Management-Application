@@ -75,19 +75,19 @@ export const router = createBrowserRouter([
       },
       {
         path: 'leagues',
-        element: <LeagueDashboard />,
+        element: (
+          <ProtectedRoute>
+            <LeagueDashboard />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'leagues/:leagueId',
-        element: <LeagueDetails />,
-      },
-      {
-        path: 'leagues',
-        element: <LeagueDashboard />,
-      },
-      {
-        path: 'leagues/:leagueId',
-        element: <LeagueDetails />,
+        element: (
+          <ProtectedRoute>
+            <LeagueDetails />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
