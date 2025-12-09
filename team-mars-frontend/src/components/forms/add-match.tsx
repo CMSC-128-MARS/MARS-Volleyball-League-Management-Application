@@ -147,8 +147,25 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
     }
   };
 
+  // Reset form when dialog closes
+  const handleDialogOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      setFormData({ team1_id: '', team2_id: '', match_date: '', location: '', num_of_sets: '' });
+      setCompletedData({
+        winner_team_id: '',
+        sets_played: '',
+        team1_final_score: '',
+        team2_final_score: '',
+        team1_set_scores: [],
+        team2_set_scores: [],
+      });
+      setMatchStatus('upcoming');
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
       <DialogTrigger asChild>
         <Button variant="default" className="w-full px-6 py-2  cursor-pointer">
           Add a match

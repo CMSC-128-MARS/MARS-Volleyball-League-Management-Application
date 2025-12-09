@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Pencil, Trash, MoreHorizontal } from 'lucide-react';
+import { MapPin, Pencil, Trash} from 'lucide-react';
 
 type MatchCardProps = {
   matchId: string;
@@ -82,11 +82,7 @@ export default function LeagueMatchCard({
               className="h-8 w-8 rounded-[2px] hover:bg-primary hover:opacity-80 cursor-pointer"
               onClick={() => onEdit?.(matchId)}
             >
-              {isCompleted ? (
-                <MoreHorizontal className="h-4 w-4" />
-              ) : (
-                <Pencil className="h-4 w-4" />
-              )}
+              <Pencil className="h-4 w-4" />
             </Button>
             <Button
               size="icon"
