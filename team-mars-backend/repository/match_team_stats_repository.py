@@ -13,6 +13,7 @@ from repository.models.match_team_stats import MatchTeamStats
 from model.match_team_stats.match_team_stats import (
     MatchTeamStatsCreate,
     MatchTeamStatsUpdate,
+    MatchResultsSummary,
 )
 
 
@@ -149,3 +150,34 @@ class MatchTeamStatsRepository:
             )
         )
         return result.scalars().first()
+
+    # GET MATCH RESULTS SUMMARY
+    async def get_match_results(
+        self, db: AsyncSession, match_id: UUID
+    ) -> Optional[MatchResultsSummary]:
+        """Get formatted match results with both teams' stats"""
+        result = await db.execute(
+            select(MatchTeamStats)
+            .options(selectinload(MatchTeamStats.team))
+            .where(MatchTeamStats.match_id == match_id)
+            .order_by(MatchTeamStats.is_winner.desc().nullslast())
+        )
+        teams_stats = result.scalars().all()
+
+        if len(teams_stats) != 2:
+            return None
+
+        team1, team2 = teams_stats[0], teams_stats[1]
+
+        return {
+            "final_scores": {
+                "team1_name": team1.team.team_name,
+                "team1_total_score": team1.total_score or 0,
+                "team2_name": team2.team.team_name,
+                "team2_total_score": team2.total_score or 0,
+            },
+            "final_sets": {
+                "team1_sets_won": team1.sets_won or 0,
+                "team2_sets_won": team2.sets_won or 0,
+            },
+        }
