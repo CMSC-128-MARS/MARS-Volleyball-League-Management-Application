@@ -24,8 +24,8 @@ class PlayerRepository:
             payload = data.model_dump()
 
             # Map top-level `skill_notes` -> `notes` if present
-            if "notes" in payload and "notes" not in payload:
-                payload["notes"] = payload.pop("notes")
+            if "skill_notes" in payload and "notes" not in payload:
+                payload["notes"] = payload.pop("skill_notes")
             # Only keep player-level keys that exist on the Player model
             allowed_player_keys = {
                 "first_name",
