@@ -42,7 +42,7 @@ export default function Team() {
 
   return (
     <div
-      className="w-full min-h-screen"
+      className="w-full relative overflow-auto h-full"
       style={{
         backgroundImage: `url('/assets/Grunge.png')`,
         backgroundSize: 'auto',
