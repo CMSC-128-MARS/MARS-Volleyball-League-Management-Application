@@ -1,6 +1,7 @@
 import LeagueViewButtons from '@/components/navigation/league-view-buttons';
 import LeagueDetailsComponent from '@/components/common/league-details';
 import ViewLeagueTeamsCard from '@/components/common/view-league-teams-card';
+import ViewLeagueMatchesCard from '@/components/common/view-league-matches-card';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useCallback } from 'react';
 import { leagueApiService } from '@/lib/league';
@@ -64,7 +65,7 @@ export default function LeagueDetails() {
         }}
       >
         <div className="py-[56px] md:px-[20px] lg:px-[80px] min-h-full gap-[36px] flex flex-col items-center justify-center">
-          <p className="text-lg">Loading league details...</p>
+          <p className="pg1-bold uppercase text-foreground">Loading league details...</p>
         </div>
       </div>
     );
@@ -126,10 +127,14 @@ export default function LeagueDetails() {
           </div>
           {/* Right Column: Matches */}
           <div className="lg:w-2/3">
-            <ViewLeagueTeamsCard
+            <ViewLeagueMatchesCard
+              // Sort matches by most recent match date
               teams={league.teams as Team[]}
-              matches={league.matches as Match[]}
-              showMatchesOnly={true}
+              matches={
+                [...(league.matches as Match[])].sort(
+                  (a, b) => new Date(b.match_date).getTime() - new Date(a.match_date).getTime()
+                )
+              }
               isEditing={isEditing}
               leagueId={league.league_id}
               onMatchesChange={fetchLeagueData}

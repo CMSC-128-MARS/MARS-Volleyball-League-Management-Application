@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/select';
 import { matchApiService } from '@/lib/match';
 import type { MatchCreate } from '@/lib/match';
+import { matchStatsApiService } from '@/lib/match-stats';
 
 type Team = {
   team_id: string;
@@ -125,7 +126,45 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
         is_completed: matchStatus === 'completed',
       };
 
-      await matchApiService.createMatch(matchData);
+      const createdMatch = await matchApiService.createMatch(matchData);
+
+      if (matchStatus === 'completed') {
+        // ...existing code for completed match stats creation...
+        const team1SetsWon = Number(completedData.team1_final_score);
+        const team2SetsWon = Number(completedData.team2_final_score);
+        let team1TotalScore = 0;
+        let team2TotalScore = 0;
+        for (let i = 0; i < completedData.team1_set_scores.length; i++) {
+          team1TotalScore += Number(completedData.team1_set_scores[i]) || 0;
+          team2TotalScore += Number(completedData.team2_set_scores[i]) || 0;
+        }
+        await matchStatsApiService.createMatchTeamStats({
+          match_id: createdMatch.match_id,
+          team_id: formData.team1_id,
+          total_score: team1TotalScore,
+          sets_won: team1SetsWon,
+          sets_lost: team2SetsWon,
+          is_winner: team1SetsWon > team2SetsWon,
+        });
+        await matchStatsApiService.createMatchTeamStats({
+          match_id: createdMatch.match_id,
+          team_id: formData.team2_id,
+          total_score: team2TotalScore,
+          sets_won: team2SetsWon,
+          sets_lost: team1SetsWon,
+          is_winner: team2SetsWon > team1SetsWon,
+        });
+      } else {
+        // If upcoming, initialize empty match stats for both teams
+        await matchStatsApiService.createMatchTeamStats({
+          match_id: createdMatch.match_id,
+          team_id: formData.team1_id,
+        });
+        await matchStatsApiService.createMatchTeamStats({
+          match_id: createdMatch.match_id,
+          team_id: formData.team2_id,
+        });
+      }
 
       setIsOpen(false);
       setFormData({ team1_id: '', team2_id: '', match_date: '', location: '', num_of_sets: '' });
@@ -147,8 +186,25 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
     }
   };
 
+  // Reset form when dialog closes
+  const handleDialogOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      setFormData({ team1_id: '', team2_id: '', match_date: '', location: '', num_of_sets: '' });
+      setCompletedData({
+        winner_team_id: '',
+        sets_played: '',
+        team1_final_score: '',
+        team2_final_score: '',
+        team1_set_scores: [],
+        team2_set_scores: [],
+      });
+      setMatchStatus('upcoming');
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
       <DialogTrigger asChild>
         <Button variant="default" className="w-full px-6 py-2  cursor-pointer">
           Add a match
@@ -316,6 +372,7 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
                 onChange={(e) => setFormData({ ...formData, num_of_sets: e.target.value })}
                 required
               />
+              <span className="block pg3 text-muted-foreground mt-1 italic">Maximum set is 5.</span>
             </div>
 
             {/* Completed Match Extra Fields */}
@@ -327,7 +384,7 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
                   <p className="pg1-bold text-gray-500">Final Results</p>
                   <div className="grid grid-cols-2 gap-3 pg-3">
                     <div className="flex flex-col h-full gap-2">
-                      <Label htmlFor="team1_final_score" className="h-full">
+                      <Label htmlFor="team1_final_score" className="h-full text-center w-full justify-center">
                         {teams.find((t) => t.team_id === formData.team1_id)?.team_name || 'Team 1'}
                         <span className="text-secondary-alt">*</span>
                       </Label>
@@ -335,7 +392,7 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
                         id="team1_final_score"
                         type="number"
                         min="0"
-                        max="5"
+                        max={formData.num_of_sets ? Math.max(0, parseInt(formData.num_of_sets) - Number(completedData.team2_final_score)) : 5}
                         placeholder="Final score"
                         value={completedData.team1_final_score}
                         onChange={(e) =>
@@ -346,7 +403,7 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
                     </div>
 
                     <div className="flex flex-col h-full gap-2">
-                      <Label htmlFor="team2_final_score" className="h-full">
+                      <Label htmlFor="team2_final_score" className="h-full text-center w-full justify-center">
                         {teams.find((t) => t.team_id === formData.team2_id)?.team_name || 'Team 2'}
                         <span className="text-secondary-alt">*</span>
                       </Label>
@@ -354,7 +411,7 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
                         id="team2_final_score"
                         type="number"
                         min="0"
-                        max="5"
+                        max={formData.num_of_sets ? Math.max(0, parseInt(formData.num_of_sets) - Number(completedData.team1_final_score)) : 5}
                         placeholder="Final Score"
                         value={completedData.team2_final_score}
                         onChange={(e) =>
@@ -371,41 +428,30 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
                   <div className="flex flex-col h-full gap-3 ">
                     {Array.from({ length: Math.min(parseInt(formData.num_of_sets), 5) }, (_, i) => (
                       <>
-                        <p className="pg2 text-gray-500">Set {i + 1}</p>
+                        <p className="pg2 text-gray-500 text-center">Set {i + 1}</p>
                         <div className="grid grid-cols-2 gap-3">
                           <div className="flex flex-col h-full gap-2">
-                            <Label htmlFor={`team1_set_${i}`} className="h-full pg1">
-                              {teams.find((t) => t.team_id === formData.team1_id)?.team_name ||
-                                'Team 1'}
-                              <span className="text-secondary-alt">*</span>
-                            </Label>
-                            <Input
+                            <Input 
                               id={`team1_set_${i}`}
                               type="number"
                               min="0"
+                              max="25"
                               placeholder="Score"
                               value={completedData.team1_set_scores[i] || ''}
                               onChange={(e) => handleSetScoreChange('team1', i, e.target.value)}
                               required
                             />
                           </div>
-
-                          <div className="flex flex-col h-full gap-2">
-                            <Label htmlFor={`team2_set_${i}`} className="h-full pg1">
-                              {teams.find((t) => t.team_id === formData.team2_id)?.team_name ||
-                                'Team 2'}
-                              <span className="text-secondary-alt">*</span>
-                            </Label>
-                            <Input
-                              id={`team2_set_${i}`}
-                              type="number"
-                              min="0"
-                              placeholder="Score"
-                              value={completedData.team2_set_scores[i] || ''}
-                              onChange={(e) => handleSetScoreChange('team2', i, e.target.value)}
-                              required
-                            />
-                          </div>
+                          <Input
+                            id={`team2_set_${i}`}
+                            type="number"
+                            min="0"
+                            max="25"
+                            placeholder="Score"
+                            value={completedData.team2_set_scores[i] || ''}
+                            onChange={(e) => handleSetScoreChange('team2', i, e.target.value)}
+                            required
+                          />
                         </div>
                       </>
                     ))}

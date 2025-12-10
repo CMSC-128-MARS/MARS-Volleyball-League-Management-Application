@@ -46,4 +46,9 @@ class Match(Base):
     team1 = relationship("Team", foreign_keys=[team1_id])
     team2 = relationship("Team", foreign_keys=[team2_id])
 
-    match_stats = relationship("MatchTeamStats", back_populates="match")
+    match_stats = relationship(
+        "MatchTeamStats",
+        back_populates="match",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )

@@ -3,8 +3,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { matchApiService } from '@/lib/match';
 import type { MatchUpdate } from '@/lib/match';
+import { matchStatsApiService } from '@/lib/match-stats';
 
 type Team = {
   team_id: string;
@@ -36,13 +38,20 @@ export default function EditMatchDialog({
   onMatchUpdated,
 }: EditMatchDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [formData, setFormData] = useState({
     match_date: '',
     location: '',
     num_of_sets: 3,
   });
+  const [matchStatus, setMatchStatus] = useState<'upcoming' | 'completed'>(initialData.is_completed ? 'completed' : 'upcoming');
+  const [completedData, setCompletedData] = useState({
+    team1_final_score: '',
+    team2_final_score: '',
+    team1_set_scores: [] as string[],
+    team2_set_scores: [] as string[],
+  });
 
-  const isCompleted = initialData.is_completed;
 
   useEffect(() => {
     if (isOpen && initialData) {
@@ -55,8 +64,26 @@ export default function EditMatchDialog({
         location: initialData.location,
         num_of_sets: initialData.num_of_sets,
       });
+      setMatchStatus(initialData.is_completed ? 'completed' : 'upcoming');
+      // Optionally, you can fetch/set completedData from initialData if available
+      setCompletedData({
+        team1_final_score: '',
+        team2_final_score: '',
+        team1_set_scores: Array(initialData.num_of_sets).fill(''),
+        team2_set_scores: Array(initialData.num_of_sets).fill(''),
+      });
     }
   }, [isOpen, initialData]);
+  const handleSetScoreChange = (team: 'team1' | 'team2', index: number, value: string) => {
+    const scoreArray =
+      team === 'team1' ? [...completedData.team1_set_scores] : [...completedData.team2_set_scores];
+    scoreArray[index] = value;
+    if (team === 'team1') {
+      setCompletedData({ ...completedData, team1_set_scores: scoreArray });
+    } else {
+      setCompletedData({ ...completedData, team2_set_scores: scoreArray });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,16 +93,69 @@ export default function EditMatchDialog({
       return;
     }
 
+    // Validate completed match data
+    if (matchStatus === 'completed') {
+      if (!completedData.team1_final_score || !completedData.team2_final_score) {
+        alert('Please fill in all match result fields');
+        return;
+      }
+
+      const hasEmptySetScores =
+        completedData.team1_set_scores.some((s) => !s) ||
+        completedData.team2_set_scores.some((s) => !s);
+
+      if (hasEmptySetScores) {
+        alert('Please fill in all set scores');
+        return;
+      }
+    }
+
     try {
       setIsSubmitting(true);
       const matchData: MatchUpdate = {
         match_date: new Date(formData.match_date).toISOString(),
         location: formData.location,
         num_of_sets: formData.num_of_sets,
-        is_completed: initialData.is_completed,
+        is_completed: matchStatus === 'completed',
       };
 
       await matchApiService.updateMatch(matchId, matchData);
+
+      // If match is completed, update both teams' match stats individually
+      if (matchStatus === 'completed') {
+        const team1SetsWon = Number(completedData.team1_final_score);
+        const team2SetsWon = Number(completedData.team2_final_score);
+
+        let team1TotalScore = 0;
+        let team2TotalScore = 0;
+        for (let i = 0; i < completedData.team1_set_scores.length; i++) {
+          team1TotalScore += Number(completedData.team1_set_scores[i]) || 0;
+          team2TotalScore += Number(completedData.team2_set_scores[i]) || 0;
+        }
+
+        // Fetch match team stats for this match
+        const matchTeamStats = await matchStatsApiService.getMatchTeamStatsByMatch(matchId);
+        const team1Stats = matchTeamStats.find((stats) => stats.team?.team_id === initialData.team1_id);
+        const team2Stats = matchTeamStats.find((stats) => stats.team?.team_id === initialData.team2_id);
+
+        if (!team1Stats || !team2Stats) {
+          alert('Could not find match team stats for one or both teams.');
+          return;
+        }
+
+        await matchStatsApiService.updateMatchTeamStats(team1Stats.match_team_stats_id, {
+          total_score: team1TotalScore,
+          sets_won: team1SetsWon,
+          sets_lost: team2SetsWon,
+          is_winner: team1SetsWon > team2SetsWon,
+        });
+        await matchStatsApiService.updateMatchTeamStats(team2Stats.match_team_stats_id, {
+          total_score: team2TotalScore,
+          sets_won: team2SetsWon,
+          sets_lost: team1SetsWon,
+          is_winner: team2SetsWon > team1SetsWon,
+        });
+      }
 
       onClose();
       onMatchUpdated?.();
@@ -128,23 +208,22 @@ export default function EditMatchDialog({
             {/* Date */}
             <div className="space-y-2">
               <Label htmlFor="match_date">
-                Match Date {!isCompleted && <span className="text-secondary-alt">*</span>}
+                Match Date <span className="text-secondary-alt">*</span>
               </Label>
               <Input
                 id="match_date"
                 type="date"
                 value={formData.match_date}
                 onChange={(e) => setFormData({ ...formData, match_date: e.target.value })}
-                className={isCompleted ? 'bg-gray-100' : 'cursor-pointer'}
-                disabled={isCompleted}
-                required={!isCompleted}
+                className="cursor-pointer"
+                required
               />
             </div>
 
             {/* Location */}
             <div className="space-y-2">
               <Label htmlFor="location">
-                Location {!isCompleted && <span className="text-secondary-alt">*</span>}
+                Location <span className="text-secondary-alt">*</span>
               </Label>
               <Input
                 id="location"
@@ -152,16 +231,14 @@ export default function EditMatchDialog({
                 placeholder="Enter match location"
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                className={isCompleted ? 'bg-gray-100' : ''}
-                disabled={isCompleted}
-                required={!isCompleted}
+                required
               />
             </div>
 
             {/* Number of Sets */}
             <div className="space-y-2">
               <Label htmlFor="num_of_sets">
-                Number of Sets {!isCompleted && <span className="text-secondary-alt">*</span>}
+                Number of Sets <span className="text-secondary-alt">*</span>
               </Label>
               <Input
                 id="num_of_sets"
@@ -172,45 +249,139 @@ export default function EditMatchDialog({
                 onChange={(e) =>
                   setFormData({ ...formData, num_of_sets: parseInt(e.target.value) || 1 })
                 }
-                className={isCompleted ? 'bg-gray-100' : ''}
-                disabled={isCompleted}
-                required={!isCompleted}
+                required
               />
+              <span className="block pg3 text-muted-foreground mt-1 italic">Maximum set is 5.</span>
             </div>
 
-            {/* Match Status - Read Only */}
+            {/* Match Status - Editable */}
             <div className="space-y-2">
-              <Label htmlFor="is_completed">Match Status</Label>
-              <Input
-                id="is_completed"
-                type="text"
-                value={initialData.is_completed ? 'Completed' : 'Upcoming'}
-                disabled
-                className="bg-gray-100"
-              />
+              <Label>
+                Match Status <span className="text-secondary-alt">*</span>
+              </Label>
+              <RadioGroup
+                value={matchStatus}
+                onValueChange={(value: 'upcoming' | 'completed') => setMatchStatus(value)}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="upcoming" id="upcoming" />
+                  <Label htmlFor="upcoming" className="cursor-pointer pg3 font-normal">
+                    Upcoming
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="completed" id="completed" />
+                  <Label htmlFor="completed" className="cursor-pointer pg3 font-normal">
+                    Completed
+                  </Label>
+                </div>
+              </RadioGroup>
             </div>
+            {/* Completed Match Extra Fields */}
+            {matchStatus === 'completed' && (
+              <>
+                <hr className="w-[calc(100%+3rem)] -ml-6 border-t border-[#A3A3A3] flex-shrink-0" />
+                <div className="grid grid-cols gap-4">
+                  <p className="pg1-bold text-gray-500">Final Results</p>
+                  <div className="grid grid-cols-2 gap-3 pg-3">
+                    <div className="flex flex-col h-full gap-2">
+                      <Label htmlFor="team1_final_score" className="h-full text-center w-full justify-center">
+                        {teams.find((t) => t.team_id === initialData.team1_id)?.team_name || 'Team 1'}
+                        <span className="text-secondary-alt">*</span>
+                      </Label>
+                      <Input
+                        id="team1_final_score"
+                        type="number"
+                        min="0"
+                        max={formData.num_of_sets ? Math.max(0, formData.num_of_sets - Number(completedData.team2_final_score)) : 5}
+                        placeholder="Final score"
+                        value={completedData.team1_final_score}
+                        onChange={(e) =>
+                          setCompletedData({ ...completedData, team1_final_score: e.target.value })
+                        }
+                        required
+                      />
+                    </div>
+
+                    <div className="flex flex-col h-full gap-2">
+                      <Label htmlFor="team2_final_score" className="h-full text-center w-full justify-center">
+                        {teams.find((t) => t.team_id === initialData.team2_id)?.team_name || 'Team 2'}
+                        <span className="text-secondary-alt">*</span>
+                      </Label>
+                      <Input
+                        id="team2_final_score"
+                        type="number"
+                        min="0"
+                        max={formData.num_of_sets ? Math.max(0, formData.num_of_sets - Number(completedData.team1_final_score)) : 5}
+                        placeholder="Final Score"
+                        value={completedData.team2_final_score}
+                        onChange={(e) =>
+                          setCompletedData({ ...completedData, team2_final_score: e.target.value })
+                        }
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Set Scores */}
+                {formData.num_of_sets && formData.num_of_sets > 0 && (
+                  <div className="flex flex-col h-full gap-3 ">
+                    {Array.from({ length: Math.min(formData.num_of_sets, 5) }, (_, i) => (
+                      <div key={i}>
+                        <p className="pg2 text-gray-500 text-center">Set {i + 1}</p>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="flex flex-col h-full gap-2">
+        
+                            <Input
+                              id={`team1_set_${i}`}
+                              type="number"
+                              min="0"
+                              max="25"
+                              placeholder="Score"
+                              value={completedData.team1_set_scores[i] || ''}
+                              onChange={(e) => handleSetScoreChange('team1', i, e.target.value)}
+                              required
+                            />
+                          </div>
+
+                          <div className="flex flex-col h-full gap-2">
+                            <Input
+                              id={`team2_set_${i}`}
+                              type="number"
+                              min="0"
+                              max="25"
+                              placeholder="Score"
+                              value={completedData.team2_set_scores[i] || ''}
+                              onChange={(e) => handleSetScoreChange('team2', i, e.target.value)}
+                              required
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
           </form>
         </div>
-        {!isCompleted && (
-          <>
-            <hr className="w-[calc(100%+3rem)] -ml-6 border-t border-[#A3A3A3] flex-shrink-0" />
-            <div className="flex justify-end gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleCancel}
-                disabled={isSubmitting}
-                className="cursor-pointer"
-              >
-                Cancel
-              </Button>
+        <hr className="w-[calc(100%+3rem)] -ml-6 border-t border-[#A3A3A3] flex-shrink-0" />
+        <div className="flex justify-end gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleCancel}
+            disabled={isSubmitting}
+            className="cursor-pointer"
+          >
+            Cancel
+          </Button>
 
-              <Button type="submit" form="edit-match-form" disabled={isSubmitting}>
-                {isSubmitting ? 'Saving...' : 'Save'}
-              </Button>
-            </div>
-          </>
-        )}
+          <Button type="submit" form="edit-match-form" disabled={isSubmitting}>
+            {isSubmitting ? 'Saving...' : 'Save'}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );

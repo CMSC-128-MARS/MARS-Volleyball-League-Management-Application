@@ -83,6 +83,7 @@ class MatchTeamStatsRepository:
             select(MatchTeamStats)
             .options(
                 selectinload(MatchTeamStats.team),
+                selectinload(MatchTeamStats.match),
             )
             .where(MatchTeamStats.match_id == match_id)
         )
