@@ -39,6 +39,9 @@ const Players = () => {
           jerseyNo: p.jerseyNo ?? 0,
           grade: p.grade ?? null,
           skill_level: p.skill_level ?? p.grade ?? null,
+          // include notes so the table/view can display them
+          notes: p.notes ?? null,
+          skill_notes: (p as any)?.skill_notes ?? null,
         })),
       );
     } catch (err) {

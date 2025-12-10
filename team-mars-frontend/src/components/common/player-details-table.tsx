@@ -30,6 +30,8 @@ interface Player {
   position: string;
   jerseyNo: number;
   grade?: number | null;
+  notes?: string | null;
+ 
 }
 
 export default function PlayerDetailsTable({
@@ -102,7 +104,7 @@ function PlayerDetailsTableComponent({
       jersey_number: p.jerseyNo ?? null,
       default_position: p.position ?? null,
       skill_level: numericSkill != null ? String(numericSkill) : null,
-      notes: null,
+      notes: p.notes ?? null,
     });
     setIsViewOpen(true);
   };
