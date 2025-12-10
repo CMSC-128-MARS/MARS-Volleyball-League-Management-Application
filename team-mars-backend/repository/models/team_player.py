@@ -21,7 +21,9 @@ class TeamPlayer(Base):
         nullable=False,
     )
     player_id = Column(
-        UUID(as_uuid=True), ForeignKey("player.player_id"), nullable=False
+        UUID(as_uuid=True),
+        ForeignKey("player.player_id", ondelete="CASCADE"),
+        nullable=False,
     )
 
     # Relationships
