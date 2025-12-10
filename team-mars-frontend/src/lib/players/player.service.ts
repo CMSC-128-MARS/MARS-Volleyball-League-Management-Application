@@ -36,8 +36,40 @@ export async function fetchPlayerById(id: string): Promise<PlayerUI> {
 }
 
 export async function createPlayer(payload: PlayerCreateDto): Promise<PlayerUI> {
-  const data = await httpClient.post<PlayerDto>(API_BASE, payload);
-  return mapDtoToUi(data);
+  try {
+    const data = await httpClient.post<PlayerDto>(API_BASE, payload);
+    return mapDtoToUi(data);
+  } catch (err: unknown) {
+    // If backend rejects `skill_notes` as an extra field, retry using `notes` instead.
+    const message = (err as Error)?.message ?? '';
+    const lower = String(message).toLowerCase();
+    const mentionsSkillNotes =
+      lower.includes('skill_notes') ||
+      lower.includes('skill-notes') ||
+      lower.includes('skill notes');
+    const mentionsExtra =
+      lower.includes('extra') ||
+      lower.includes('extra_forbidden') ||
+      lower.includes('not permitted') ||
+      lower.includes('not allowed');
+
+    if (mentionsSkillNotes && mentionsExtra && payload.skill_notes) {
+      const alt: Partial<PlayerCreateDto> = { ...payload };
+      const sn = alt.skill_notes;
+      delete (alt as Partial<PlayerCreateDto>).skill_notes;
+      // send under `notes` instead
+      (alt as Partial<PlayerCreateDto>).notes = sn ?? alt.notes;
+
+      try {
+        const created = await httpClient.post<PlayerDto>(API_BASE, alt as PlayerCreateDto);
+        return mapDtoToUi(created);
+      } catch (retryErr) {
+        // Retry failed; fall through and rethrow original error
+      }
+    }
+
+    throw err;
+  }
 }
 
 export async function updatePlayer(id: string, payload: PlayerUpdateDto): Promise<PlayerUI> {
