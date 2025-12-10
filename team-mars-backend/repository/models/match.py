@@ -50,5 +50,5 @@ class Match(Base):
         "MatchTeamStats",
         back_populates="match",
         cascade="all, delete-orphan",
-        passive_deletes=True
+        passive_deletes=True,
     )
