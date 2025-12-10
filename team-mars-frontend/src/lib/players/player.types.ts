@@ -38,5 +38,6 @@ export interface Player {
   grade?: number | null;
   skill_level?: number | null;
   notes?: string | null;
+  skill_notes?: string | null;
   createdAt?: string;
 }

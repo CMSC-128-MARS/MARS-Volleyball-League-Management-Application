@@ -44,14 +44,15 @@ export default function EditMatchDialog({
     location: '',
     num_of_sets: 3,
   });
-  const [matchStatus, setMatchStatus] = useState<'upcoming' | 'completed'>(initialData.is_completed ? 'completed' : 'upcoming');
+  const [matchStatus, setMatchStatus] = useState<'upcoming' | 'completed'>(
+    initialData.is_completed ? 'completed' : 'upcoming',
+  );
   const [completedData, setCompletedData] = useState({
     team1_final_score: '',
     team2_final_score: '',
     team1_set_scores: [] as string[],
     team2_set_scores: [] as string[],
   });
-
 
   useEffect(() => {
     if (isOpen && initialData) {
@@ -135,8 +136,12 @@ export default function EditMatchDialog({
 
         // Fetch match team stats for this match
         const matchTeamStats = await matchStatsApiService.getMatchTeamStatsByMatch(matchId);
-        const team1Stats = matchTeamStats.find((stats) => stats.team?.team_id === initialData.team1_id);
-        const team2Stats = matchTeamStats.find((stats) => stats.team?.team_id === initialData.team2_id);
+        const team1Stats = matchTeamStats.find(
+          (stats) => stats.team?.team_id === initialData.team1_id,
+        );
+        const team2Stats = matchTeamStats.find(
+          (stats) => stats.team?.team_id === initialData.team2_id,
+        );
 
         if (!team1Stats || !team2Stats) {
           alert('Could not find match team stats for one or both teams.');
@@ -285,15 +290,26 @@ export default function EditMatchDialog({
                   <p className="pg1-bold text-gray-500">Final Results</p>
                   <div className="grid grid-cols-2 gap-3 pg-3">
                     <div className="flex flex-col h-full gap-2">
-                      <Label htmlFor="team1_final_score" className="h-full text-center w-full justify-center">
-                        {teams.find((t) => t.team_id === initialData.team1_id)?.team_name || 'Team 1'}
+                      <Label
+                        htmlFor="team1_final_score"
+                        className="h-full text-center w-full justify-center"
+                      >
+                        {teams.find((t) => t.team_id === initialData.team1_id)?.team_name ||
+                          'Team 1'}
                         <span className="text-secondary-alt">*</span>
                       </Label>
                       <Input
                         id="team1_final_score"
                         type="number"
                         min="0"
-                        max={formData.num_of_sets ? Math.max(0, formData.num_of_sets - Number(completedData.team2_final_score)) : 5}
+                        max={
+                          formData.num_of_sets
+                            ? Math.max(
+                                0,
+                                formData.num_of_sets - Number(completedData.team2_final_score),
+                              )
+                            : 5
+                        }
                         placeholder="Final score"
                         value={completedData.team1_final_score}
                         onChange={(e) =>
@@ -304,15 +320,26 @@ export default function EditMatchDialog({
                     </div>
 
                     <div className="flex flex-col h-full gap-2">
-                      <Label htmlFor="team2_final_score" className="h-full text-center w-full justify-center">
-                        {teams.find((t) => t.team_id === initialData.team2_id)?.team_name || 'Team 2'}
+                      <Label
+                        htmlFor="team2_final_score"
+                        className="h-full text-center w-full justify-center"
+                      >
+                        {teams.find((t) => t.team_id === initialData.team2_id)?.team_name ||
+                          'Team 2'}
                         <span className="text-secondary-alt">*</span>
                       </Label>
                       <Input
                         id="team2_final_score"
                         type="number"
                         min="0"
-                        max={formData.num_of_sets ? Math.max(0, formData.num_of_sets - Number(completedData.team1_final_score)) : 5}
+                        max={
+                          formData.num_of_sets
+                            ? Math.max(
+                                0,
+                                formData.num_of_sets - Number(completedData.team1_final_score),
+                              )
+                            : 5
+                        }
                         placeholder="Final Score"
                         value={completedData.team2_final_score}
                         onChange={(e) =>
@@ -332,7 +359,6 @@ export default function EditMatchDialog({
                         <p className="pg2 text-gray-500 text-center">Set {i + 1}</p>
                         <div className="grid grid-cols-2 gap-3">
                           <div className="flex flex-col h-full gap-2">
-        
                             <Input
                               id={`team1_set_${i}`}
                               type="number"

@@ -384,7 +384,10 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
                   <p className="pg1-bold text-gray-500">Final Results</p>
                   <div className="grid grid-cols-2 gap-3 pg-3">
                     <div className="flex flex-col h-full gap-2">
-                      <Label htmlFor="team1_final_score" className="h-full text-center w-full justify-center">
+                      <Label
+                        htmlFor="team1_final_score"
+                        className="h-full text-center w-full justify-center"
+                      >
                         {teams.find((t) => t.team_id === formData.team1_id)?.team_name || 'Team 1'}
                         <span className="text-secondary-alt">*</span>
                       </Label>
@@ -392,7 +395,15 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
                         id="team1_final_score"
                         type="number"
                         min="0"
-                        max={formData.num_of_sets ? Math.max(0, parseInt(formData.num_of_sets) - Number(completedData.team2_final_score)) : 5}
+                        max={
+                          formData.num_of_sets
+                            ? Math.max(
+                                0,
+                                parseInt(formData.num_of_sets) -
+                                  Number(completedData.team2_final_score),
+                              )
+                            : 5
+                        }
                         placeholder="Final score"
                         value={completedData.team1_final_score}
                         onChange={(e) =>
@@ -403,7 +414,10 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
                     </div>
 
                     <div className="flex flex-col h-full gap-2">
-                      <Label htmlFor="team2_final_score" className="h-full text-center w-full justify-center">
+                      <Label
+                        htmlFor="team2_final_score"
+                        className="h-full text-center w-full justify-center"
+                      >
                         {teams.find((t) => t.team_id === formData.team2_id)?.team_name || 'Team 2'}
                         <span className="text-secondary-alt">*</span>
                       </Label>
@@ -411,7 +425,15 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
                         id="team2_final_score"
                         type="number"
                         min="0"
-                        max={formData.num_of_sets ? Math.max(0, parseInt(formData.num_of_sets) - Number(completedData.team1_final_score)) : 5}
+                        max={
+                          formData.num_of_sets
+                            ? Math.max(
+                                0,
+                                parseInt(formData.num_of_sets) -
+                                  Number(completedData.team1_final_score),
+                              )
+                            : 5
+                        }
                         placeholder="Final Score"
                         value={completedData.team2_final_score}
                         onChange={(e) =>
@@ -431,7 +453,7 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
                         <p className="pg2 text-gray-500 text-center">Set {i + 1}</p>
                         <div className="grid grid-cols-2 gap-3">
                           <div className="flex flex-col h-full gap-2">
-                            <Input 
+                            <Input
                               id={`team1_set_${i}`}
                               type="number"
                               min="0"

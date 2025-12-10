@@ -80,6 +80,10 @@ export default function ViewPlayerCard({ open, onOpenChange, player }: ViewPlaye
         last_name: form.lastName || undefined,
         jersey_number: form.jerseyNumber ?? undefined,
         default_position: form.defaultPosition || undefined,
+        // include skill level and notes when saving so backend persists them
+        skill_level: form.skillLevel ? Number(form.skillLevel) : undefined,
+        // backend supports `skill_notes` and `notes`; send `notes` here
+        notes: form.notes || undefined,
       };
       await playerService.updatePlayer(player.id, payload);
       // close and refresh list

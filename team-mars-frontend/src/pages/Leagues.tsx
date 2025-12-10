@@ -15,7 +15,6 @@ const LeagueDashboard = () => {
           backgroundRepeat: 'repeat',
         }}
       >
-        
         <Tabs defaultValue="view" className="w-full">
           {/* Main Container */}
           <div className="py-[56px] md:px-[20px] lg:px-[80px] min-h-full gap-[36px] flex flex-col">

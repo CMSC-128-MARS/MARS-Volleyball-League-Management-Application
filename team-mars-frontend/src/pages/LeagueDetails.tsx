@@ -130,11 +130,9 @@ export default function LeagueDetails() {
             <ViewLeagueMatchesCard
               // Sort matches by most recent match date
               teams={league.teams as Team[]}
-              matches={
-                [...(league.matches as Match[])].sort(
-                  (a, b) => new Date(b.match_date).getTime() - new Date(a.match_date).getTime()
-                )
-              }
+              matches={[...(league.matches as Match[])].sort(
+                (a, b) => new Date(b.match_date).getTime() - new Date(a.match_date).getTime(),
+              )}
               isEditing={isEditing}
               leagueId={league.league_id}
               onMatchesChange={fetchLeagueData}
