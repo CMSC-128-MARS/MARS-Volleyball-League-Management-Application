@@ -19,7 +19,10 @@ class Player(Base):
     skill_level = Column(Integer, nullable=True)
 
     team_memberships = relationship(
-        "TeamPlayer", back_populates="player", lazy="selectin"
+        "TeamPlayer",
+        back_populates="player",
+        lazy="selectin",
+        cascade="all, delete-orphan",
     )
 
     @validates("skill_level")
