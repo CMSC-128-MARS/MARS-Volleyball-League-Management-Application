@@ -23,7 +23,7 @@ class PlayerCreate(BaseModel):
         ge=1,
         le=5,
     )
-    skill_notes: Optional[str] = Field(None, title="Skill Notes", max_length=500)
+    notes: Optional[str] = Field(None, title="Skill Notes", max_length=500)
 
     @field_validator("skill_level")
     @classmethod
