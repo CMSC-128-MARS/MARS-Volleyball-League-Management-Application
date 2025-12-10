@@ -64,7 +64,9 @@ export async function createPlayer(payload: PlayerCreateDto): Promise<PlayerUI> 
         const created = await httpClient.post<PlayerDto>(API_BASE, alt as PlayerCreateDto);
         return mapDtoToUi(created);
       } catch (retryErr) {
-        // Retry failed; fall through and rethrow original error
+        // Retry failed; log for debugging then fall through and rethrow original error
+        // eslint-disable-next-line no-console
+        console.warn('createPlayer retry failed', retryErr);
       }
     }
 

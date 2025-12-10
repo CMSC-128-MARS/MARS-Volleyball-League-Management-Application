@@ -13,6 +13,8 @@ interface Player {
   position: string;
   jerseyNo: number;
   grade?: number | null;
+  notes?: string | null;
+  skill_notes?: string | null;
   skill_level?: number | null;
 }
 
@@ -41,7 +43,7 @@ const Players = () => {
           skill_level: p.skill_level ?? p.grade ?? null,
           // include notes so the table/view can display them
           notes: p.notes ?? null,
-          skill_notes: (p as any)?.skill_notes ?? null,
+          skill_notes: p.skill_notes ?? null,
         })),
       );
     } catch (err) {

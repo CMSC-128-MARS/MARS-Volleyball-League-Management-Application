@@ -31,7 +31,7 @@ interface Player {
   jerseyNo: number;
   grade?: number | null;
   notes?: string | null;
- 
+  skill_notes?: string | null;
 }
 
 export default function PlayerDetailsTable({
@@ -75,7 +75,7 @@ function PlayerDetailsTableComponent({
   onRemoveSelected,
 }: PlayerDetailsTableProps) {
   const [sortConfig, setSortConfig] = useState<SortConfig>(null);
-  const [selectedPlayerIds, setSelectedPlayerIds] = useState<string[]>([]);
+  const [selectedMap, setSelectedMap] = useState<Record<string, true>>({});
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [isRemoveOpen, setIsRemoveOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -140,13 +140,19 @@ function PlayerDetailsTableComponent({
     setSortConfig({ key, direction });
   };
 
-  const handleSelectPlayer = (playerId: string, checked: boolean | 'indeterminate') => {
-    setSelectedPlayerIds((prev) =>
-      checked ? [...prev, playerId] : prev.filter((id) => id !== playerId),
-    );
+  const handleSelectPlayer = (playerId: string, checked: boolean) => {
+    setSelectedMap((prev) => {
+      const next = { ...prev };
+      if (checked) {
+        next[playerId] = true;
+      } else {
+        delete next[playerId];
+      }
+      return next;
+    });
   };
 
-  const numSelected = selectedPlayerIds.length;
+  const numSelected = Object.keys(selectedMap).length;
 
   return (
     <Card className="shadow-lg bg-background">
@@ -203,9 +209,10 @@ function PlayerDetailsTableComponent({
                               try {
                                 setIsDeleting(true);
                                 if (onRemoveSelected) {
-                                  await onRemoveSelected(selectedPlayerIds);
+                                  const ids = Object.keys(selectedMap);
+                                  await onRemoveSelected(ids);
                                 }
-                                setSelectedPlayerIds([]);
+                                setSelectedMap({});
                                 setIsRemoveOpen(false);
                               } catch (err) {
                                 console.error('Failed to delete players', err);
@@ -266,7 +273,7 @@ function PlayerDetailsTableComponent({
               </TableHeader>
               <TableBody>
                 {sortedPlayers.map((player) => {
-                  const isSelected = selectedPlayerIds.includes(player.id);
+                  const isSelected = Boolean(selectedMap[player.id]);
                   const rowBgClass = showRemoveButton
                     ? isSelected
                       ? '!bg-muted-foreground/10'
@@ -280,7 +287,9 @@ function PlayerDetailsTableComponent({
                           <Checkbox
                             className="border-muted"
                             checked={isSelected}
-                            onCheckedChange={(checked) => handleSelectPlayer(player.id, checked)}
+                            onCheckedChange={(checked) =>
+                              handleSelectPlayer(player.id, Boolean(checked))
+                            }
                             aria-label={`Select row for ${player.name}`}
                           />
                         </TableCell>

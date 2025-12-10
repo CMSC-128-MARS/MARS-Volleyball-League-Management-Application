@@ -193,7 +193,7 @@ function MatchStatsDisplay({ matchId }: { matchId: string }) {
 ```typescript
 const handleSubmitResults = async (e: React.FormEvent) => {
   e.preventDefault();
-  
+
   try {
     const results = await matchStatsApiService.updateMatchResults(matchId, {
       team1_id: formData.team1_id,
@@ -209,7 +209,7 @@ const handleSubmitResults = async (e: React.FormEvent) => {
         sets_lost: parseInt(formData.team2_sets_lost),
       },
     });
-    
+
     console.log('Results updated:', results);
     onSuccess?.();
   } catch (error) {
@@ -224,11 +224,11 @@ const handleSubmitResults = async (e: React.FormEvent) => {
 const loadTeamHistory = async (teamId: string) => {
   try {
     const history = await matchStatsApiService.getMatchTeamStatsByTeam(teamId);
-    
+
     // Calculate win percentage
-    const wins = history.filter(stat => stat.is_winner).length;
+    const wins = history.filter((stat) => stat.is_winner).length;
     const winPercentage = (wins / history.length) * 100;
-    
+
     return { history, wins, winPercentage };
   } catch (error) {
     console.error('Failed to load team history:', error);
