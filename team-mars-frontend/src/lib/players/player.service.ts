@@ -36,45 +36,8 @@ export async function fetchPlayerById(id: string): Promise<PlayerUI> {
 }
 
 export async function createPlayer(payload: PlayerCreateDto): Promise<PlayerUI> {
-  try {
-    const data = await httpClient.post<PlayerDto>(API_BASE, payload);
-    return mapDtoToUi(data);
-  } catch (err: unknown) {
-    // If the backend rejects extra fields (e.g. skill_notes), retry without notes
-    const message = (err as Error)?.message ?? '';
-    const looksLikeExtraFieldError = /extra|unexpected|field.*not.*allowed|422/.test(
-      String(message).toLowerCase(),
-    );
-    if (payload.skill_notes && looksLikeExtraFieldError) {
-      try {
-        // Create without the notes fields
-        const skill_notes = payload.skill_notes;
-        const rest: Partial<PlayerCreateDto> = { ...payload };
-        delete (rest as Partial<PlayerCreateDto>).skill_notes;
-        delete (rest as Partial<PlayerCreateDto>).notes;
-
-        const created = await httpClient.post<PlayerDto>(
-          API_BASE,
-          rest as unknown as PlayerCreateDto,
-        );
-
-        // Try to PATCH the created player to add skill_notes (best-effort)
-        try {
-          await httpClient.patch(`${API_BASE}/${created.player_id}`, { skill_notes });
-        } catch (patchErr) {
-          // ignore patch errors but log for debugging
-          console.warn('Failed to patch skill_notes after create:', patchErr);
-        }
-
-        return mapDtoToUi(created);
-      } catch {
-        // rethrow the original error if retry also fails
-        throw err;
-      }
-    }
-
-    throw err;
-  }
+  const data = await httpClient.post<PlayerDto>(API_BASE, payload);
+  return mapDtoToUi(data);
 }
 
 export async function updatePlayer(id: string, payload: PlayerUpdateDto): Promise<PlayerUI> {
