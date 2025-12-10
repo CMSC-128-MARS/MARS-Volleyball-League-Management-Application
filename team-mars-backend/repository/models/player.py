@@ -23,6 +23,7 @@ class Player(Base):
         back_populates="player",
         lazy="selectin",
         cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     @validates("skill_level")
