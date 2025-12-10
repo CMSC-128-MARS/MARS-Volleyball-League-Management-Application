@@ -86,7 +86,7 @@ const Players = () => {
 
   return (
     <div
-      className="w-full min-h-screen"
+      className="w-full relative overflow-auto h-full"
       style={{
         backgroundImage: `url('/assets/Grunge.png')`,
         backgroundSize: 'auto',
