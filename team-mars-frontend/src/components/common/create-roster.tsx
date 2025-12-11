@@ -93,7 +93,7 @@ export default function AddTeamDetails({
         // also emit a global event so any listeners (cards) can refresh
         try {
           window.dispatchEvent(new CustomEvent('team-player-changed', { detail: { teamId } }));
-        } catch (err) {
+        } catch {
           /* ignore */
         }
       } catch (err) {

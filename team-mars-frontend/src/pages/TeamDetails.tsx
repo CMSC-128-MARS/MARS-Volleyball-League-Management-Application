@@ -1,7 +1,6 @@
 import TeamManagementCard from '@/components/common/team-management-card';
 import TeamViewButtons from '@/components/navigation/team-view-buttons';
 import TeamDetailsComponent from '@/components/common/team-details';
-import ViewTeamPlayersCard from '@/components/common/view-team-players-card';
 import AddTeamDetails from '@/components/common/add-team-details';
 import CreateRoster from '@/components/common/create-roster';
 import SelectedPlayersCard from '@/components/common/select-players-card';
@@ -82,7 +81,7 @@ export default function TeamDetails() {
         // notify other components (cards) to reload server-side players
         try {
           window.dispatchEvent(new CustomEvent('team-player-changed', { detail: { teamId } }));
-        } catch (err) {
+        } catch {
           // ignore event dispatch failures
         }
       }
@@ -154,7 +153,7 @@ export default function TeamDetails() {
       try {
         if (team?.team_players && Array.isArray(team.team_players)) {
           await Promise.all(
-            team.team_players.map((tp: any) =>
+            (team.team_players || []).map((tp: { team_player_id?: string }) =>
               tp.team_player_id
                 ? teamApiService.deleteTeamPlayer(tp.team_player_id)
                 : Promise.resolve(),

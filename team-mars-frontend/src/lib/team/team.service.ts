@@ -50,7 +50,15 @@ export class TeamApiService {
   async removePlayerFromTeam(teamId: string, playerId: string): Promise<void> {
     // Find the active team_player row for this team+player, then call the
     // backend endpoint to set the leave_date (soft remove).
-    const teamPlayers = await httpClient.get<any[]>(`/team-players/team/${teamId}`, {
+    type TeamPlayerResp = {
+      team_player_id?: string;
+      teamPlayerId?: string;
+      id?: string;
+      player?: { player_id?: string } | null;
+      player_id?: string;
+    };
+
+    const teamPlayers = await httpClient.get<TeamPlayerResp[]>(`/team-players/team/${teamId}`, {
       params: { active_only: true },
     });
 

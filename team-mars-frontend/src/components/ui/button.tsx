@@ -62,7 +62,7 @@ function Button({
   }) {
   const Comp = asChild ? Slot : 'button';
 
-  const isDisabled = Boolean(disabled || isLoading || props.disabled);
+  const isDisabled = Boolean(disabled || isLoading);
 
   return (
     <Comp

@@ -5,6 +5,28 @@ import type { ApiPlayer } from '@/lib/api';
 import { useEffect, useState } from 'react';
 import { teamApiService } from '@/lib/team';
 
+type TeamPlayerDto = {
+  team_player_id?: string;
+  teamPlayerId?: string;
+  id?: string;
+  leave_date?: string | null;
+  position?: string | null;
+  player?: {
+    player_id: string;
+    first_name: string;
+    last_name?: string | null;
+    jersey_number?: number | null;
+    default_position?: string | null;
+    created_at?: string;
+    skill_level?: number | null;
+    notes?: string | null;
+  } | null;
+};
+
+type TeamDto = {
+  team_players?: TeamPlayerDto[];
+};
+
 type SelectPlayersCardProps = {
   players?: ApiPlayer[];
   onRemovePlayer?: (playerId: string) => void;
@@ -13,7 +35,7 @@ type SelectPlayersCardProps = {
   isSaving?: boolean;
   showButtons?: boolean;
   teamId?: string | null;
-  team?: any;
+  team?: TeamDto | null;
 };
 
 export default function SelectPlayersCard({
@@ -28,7 +50,6 @@ export default function SelectPlayersCard({
 }: SelectPlayersCardProps) {
   const [combinedPlayers, setCombinedPlayers] = useState<ApiPlayer[]>(players);
   const [serverPlayers, setServerPlayers] = useState<ApiPlayer[]>([]);
-  const [serverCount, setServerCount] = useState<number | null>(null);
 
   // Recompute combined players whenever serverPlayers or the selected `players` prop changes.
   useEffect(() => {
@@ -47,17 +68,18 @@ export default function SelectPlayersCard({
     let mounted = true;
     const loadTeamPlayers = async () => {
       if (team) {
-        const apiPlayers: ApiPlayer[] = (team.team_players || [])
-          .filter((tp: any) => tp.leave_date === null && tp.player)
-          .map((tp: any) => ({
-            player_id: tp.player.player_id,
-            first_name: tp.player.first_name,
-            last_name: tp.player.last_name || '',
-            jersey_number: tp.player.jersey_number || null,
-            default_position: tp.position || tp.player.default_position || null,
-            created_at: tp.player.created_at,
-            skill_level: tp.player.skill_level ?? 0,
-            notes: tp.player.notes ?? null,
+        const tObj = team as TeamDto;
+        const apiPlayers: ApiPlayer[] = (tObj.team_players || [])
+          .filter((tp: TeamPlayerDto) => tp.leave_date === null && !!tp.player)
+          .map((tp: TeamPlayerDto) => ({
+            player_id: tp.player!.player_id,
+            first_name: tp.player!.first_name,
+            last_name: tp.player!.last_name || '',
+            jersey_number: tp.player!.jersey_number || null,
+            default_position: tp.position || tp.player!.default_position || null,
+            created_at: tp.player!.created_at,
+            skill_level: tp.player!.skill_level ?? 0,
+            notes: tp.player!.notes ?? null,
           }));
         if (!mounted) return;
         console.log(
@@ -65,7 +87,6 @@ export default function SelectPlayersCard({
           apiPlayers.length,
           team,
         );
-        setServerCount(apiPlayers.length);
         // store server players; combinedPlayers will be derived from serverPlayers + players
         setServerPlayers(apiPlayers);
         return;
@@ -75,16 +96,16 @@ export default function SelectPlayersCard({
       try {
         const t = await teamApiService.getTeamById(teamId);
         const apiPlayers: ApiPlayer[] = (t.team_players || [])
-          .filter((tp: any) => tp.leave_date === null && tp.player)
-          .map((tp: any) => ({
-            player_id: tp.player.player_id,
-            first_name: tp.player.first_name,
-            last_name: tp.player.last_name || '',
-            jersey_number: tp.player.jersey_number || null,
-            default_position: tp.position || tp.player.default_position || null,
-            created_at: tp.player.created_at,
-            skill_level: tp.player.skill_level ?? 0,
-            notes: tp.player.notes ?? null,
+          .filter((tp: TeamPlayerDto) => tp.leave_date === null && !!tp.player)
+          .map((tp: TeamPlayerDto) => ({
+            player_id: tp.player!.player_id,
+            first_name: tp.player!.first_name,
+            last_name: tp.player!.last_name || '',
+            jersey_number: tp.player!.jersey_number || null,
+            default_position: tp.position || tp.player!.default_position || null,
+            created_at: tp.player!.created_at,
+            skill_level: tp.player!.skill_level ?? 0,
+            notes: tp.player!.notes ?? null,
           }));
 
         if (!mounted) return;
@@ -93,9 +114,8 @@ export default function SelectPlayersCard({
           apiPlayers.length,
           t,
         );
-        setServerCount(apiPlayers.length);
         setServerPlayers(apiPlayers);
-      } catch (err) {
+      } catch {
         // best-effort; ignore errors
       }
     };
@@ -108,7 +128,7 @@ export default function SelectPlayersCard({
         if (!ev.detail || ev.detail.teamId !== teamId) return;
         // Re-load players
         loadTeamPlayers();
-      } catch (err) {
+      } catch {
         // ignore
       }
     };
@@ -117,7 +137,7 @@ export default function SelectPlayersCard({
       mounted = false;
       window.removeEventListener('team-player-changed', handler);
     };
-  }, [teamId]);
+  }, [teamId, team]);
 
   return (
     <div className="w-full h-full min-h-[300px] shadow-md bg-white">
