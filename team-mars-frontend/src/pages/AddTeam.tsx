@@ -14,7 +14,7 @@ export default function AddTeamCard() {
   const [teamName, setTeamName] = useState('');
   const [leagueId, setLeagueId] = useState('');
   const [isSaved, setIsSaved] = useState(false);
-  const [isSaving] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleBack = () => {
     navigate('/teams');
@@ -26,6 +26,7 @@ export default function AddTeamCard() {
     }
 
     try {
+      setIsSaving(true);
       const createdTeam = await teamApiService.createTeam({
         team_name: teamName,
         league_id: leagueId,
@@ -48,6 +49,8 @@ export default function AddTeamCard() {
     } catch (error) {
       console.error('Failed to create team:', error);
       alert('Failed to create team. Please try again.');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -94,7 +97,12 @@ export default function AddTeamCard() {
       }}
     >
       <div className="mb-9">
-        <TeamNavigationButtons onBack={handleBack} onNext={handleNext} isDisabled={!isSaved} />
+        <TeamNavigationButtons
+          onBack={handleBack}
+          onNext={handleNext}
+          isDisabled={!isSaved}
+          isCreating={isSaving}
+        />
       </div>
       <div className="flex flex-col lg:flex-row gap-10 items-start justify-center">
         <AddTeamDetails

@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SquarePen, Cog, Search, UserRoundPlus } from 'lucide-react';
 import { useState } from 'react';
+import { teamApiService } from '@/lib/team';
 import { usePlayers } from '@/hooks/use-players';
 import type { ApiPlayer } from '@/lib/api';
 
@@ -23,6 +24,8 @@ export default function AddTeamDetails({
   onPlayerAdd,
   selectedPlayerIds = [],
   isEditMode = false,
+  teamId,
+  onPlayerAssigned,
 }: {
   onRosterMethodSelected?: () => void;
   selectedMethod?: 'manual' | 'automatic' | null;
@@ -30,11 +33,14 @@ export default function AddTeamDetails({
   onPlayerAdd?: (player: ApiPlayer) => void;
   selectedPlayerIds?: string[];
   isEditMode?: boolean;
+  teamId?: string | null;
+  onPlayerAssigned?: () => void;
 }) {
   const { players, isLoading, error } = usePlayers();
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
 
   const handleMethodSelect = (method: 'manual' | 'automatic') => {
     if (selectedMethod === method) {
@@ -50,23 +56,58 @@ export default function AddTeamDetails({
     setIsDialogOpen(true);
   };
 
-  const handleAddPlayer = () => {
-    if (currentPlayer) {
-      const apiPlayer: ApiPlayer = {
-        player_id: currentPlayer.id,
-        first_name: currentPlayer.first_name || '',
-        last_name: currentPlayer.last_name ?? '',
-        jersey_number: currentPlayer.jerseyNo ?? null,
-        default_position: currentPlayer.position ?? null,
-        created_at: currentPlayer.createdAt ?? undefined,
-        skill_level: currentPlayer.skill_level ?? null,
-        notes: currentPlayer.notes ?? null,
-      };
+  const handleAddPlayer = async () => {
+    if (!currentPlayer) return;
 
-      onPlayerAdd?.(apiPlayer);
-      setIsDialogOpen(false);
-      setSelectedPlayer(null);
+    const apiPlayer: ApiPlayer = {
+      player_id: currentPlayer.id,
+      first_name: currentPlayer.first_name || '',
+      last_name: currentPlayer.last_name ?? '',
+      jersey_number: currentPlayer.jerseyNo ?? null,
+      default_position: currentPlayer.position ?? null,
+      created_at: currentPlayer.createdAt ?? undefined,
+      skill_level: currentPlayer.skill_level ?? null,
+      notes: currentPlayer.notes ?? null,
+    };
+
+    // If we're editing an existing team and a teamId is provided, assign immediately via API.
+    if (isEditMode && teamId) {
+      try {
+        setIsAdding(true);
+        const payload = {
+          team_id: teamId,
+          player_id: apiPlayer.player_id,
+          position: apiPlayer.default_position || null,
+          join_date: new Date().toISOString(),
+        };
+        // Debug log: inspect payload and server response when adding player to team
+        console.debug('Adding player to team - payload:', payload);
+        const resp = await teamApiService.addPlayerToTeam(
+          teamId,
+          apiPlayer.player_id,
+          apiPlayer.default_position || undefined,
+        );
+        console.debug('Add player to team response:', resp);
+        // Notify parent to re-fetch team players
+        onPlayerAssigned?.();
+        // also emit a global event so any listeners (cards) can refresh
+        try {
+          window.dispatchEvent(new CustomEvent('team-player-changed', { detail: { teamId } }));
+        } catch (err) {
+          /* ignore */
+        }
+      } catch (err) {
+        console.error('Failed to add player to team:', err);
+        alert('Failed to add player to team. Please try again.');
+        return;
+      } finally {
+        setIsAdding(false);
+      }
     }
+
+    onPlayerAdd?.(apiPlayer);
+    setIsDialogOpen(false);
+    setSelectedPlayer(null);
   };
 
   const currentPlayer = players.find((p) => p.id === selectedPlayer) ?? null;
@@ -233,7 +274,7 @@ export default function AddTeamDetails({
                   </div>
                   <hr className="w-[calc(100%+3rem)] -ml-6 border-t border-[#A3A3A3] mt-6 flex-shrink-0" />
                   <div className="w-full mt-4 flex-shrink-0">
-                    <Button className="w-full" onClick={handleAddPlayer}>
+                    <Button className="w-full" onClick={handleAddPlayer} isLoading={isAdding}>
                       <UserRoundPlus className="mr-2 h-4 w-4" strokeWidth={2.5} />
                       <p className="font-extralight">Add Player</p>
                     </Button>

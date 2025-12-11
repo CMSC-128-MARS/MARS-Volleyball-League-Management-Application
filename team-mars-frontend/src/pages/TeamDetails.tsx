@@ -14,13 +14,13 @@ import { teamApiService } from '@/lib/team';
 export default function TeamDetails() {
   const { teamId } = useParams<{ teamId: string }>();
   const navigate = useNavigate();
-  const { team, isLoading, error } = useTeam(teamId || null);
+  const { team, isLoading, error, refetch } = useTeam(teamId || null);
   const [isEditing, setIsEditing] = useState(false);
   const [editTeamName, setEditTeamName] = useState('');
   const [editLeagueId, setEditLeagueId] = useState('');
   const [selectedPlayers, setSelectedPlayers] = useState<ApiPlayer[]>([]);
   const [selectedMethod, setSelectedMethod] = useState<'manual' | 'automatic' | null>(null);
-  const [isSaving] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const players = useMemo(() => {
     if (!team?.team_players || team.team_players.length === 0) {
@@ -70,14 +70,36 @@ export default function TeamDetails() {
     }
   };
 
-  const handleRemovePlayer = (playerId: string) => {
-    setSelectedPlayers(selectedPlayers.filter((p) => p.player_id !== playerId));
+  const handleRemovePlayer = async (playerId: string) => {
+    // If we're editing an existing team and the player is already assigned on server,
+    // remove immediately via API and refresh. Otherwise just remove locally.
+    try {
+      const isOriginallyAssigned = players.some((p) => p.player_id === playerId);
+      if (isEditing && teamId && isOriginallyAssigned) {
+        await teamApiService.removePlayerFromTeam(teamId, playerId);
+        // refresh team roster
+        await refetch?.();
+        // notify other components (cards) to reload server-side players
+        try {
+          window.dispatchEvent(new CustomEvent('team-player-changed', { detail: { teamId } }));
+        } catch (err) {
+          // ignore event dispatch failures
+        }
+      }
+    } catch (err) {
+      console.error('Failed to remove player from team:', err);
+      alert('Failed to remove player from team. Please try again.');
+      return;
+    }
+
+    setSelectedPlayers((prev) => prev.filter((p) => p.player_id !== playerId));
   };
 
   const handleSave = async () => {
     if (!team || !teamId) return;
 
     try {
+      setIsSaving(true);
       // Update team details (name and league)
       await teamApiService.updateTeam(teamId, {
         team_name: editTeamName,
@@ -114,10 +136,13 @@ export default function TeamDetails() {
 
       // Exit edit mode and reload the team data
       setIsEditing(false);
-      window.location.reload();
+      // Keep SPA-friendly behavior: refetch team rather than full reload
+      await refetch?.();
     } catch (error) {
       console.error('Failed to save team changes:', error);
       alert('Failed to save team changes. Please try again.');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -125,6 +150,22 @@ export default function TeamDetails() {
     if (!teamId) return;
 
     try {
+      // First attempt to remove any team_player records to avoid FK issues
+      try {
+        if (team?.team_players && Array.isArray(team.team_players)) {
+          await Promise.all(
+            team.team_players.map((tp: any) =>
+              tp.team_player_id
+                ? teamApiService.deleteTeamPlayer(tp.team_player_id)
+                : Promise.resolve(),
+            ),
+          );
+        }
+      } catch (cleanupErr) {
+        // Log but continue to attempt deleting the team
+        console.warn('Failed to cleanup team players before delete:', cleanupErr);
+      }
+
       await teamApiService.deleteTeam(teamId);
       navigate('/teams');
     } catch (error) {
@@ -180,6 +221,7 @@ export default function TeamDetails() {
         onSave={handleSave}
         onDelete={handleDelete}
         teamName={team.team_name}
+        isSaving={isSaving}
       />
       <div className="flex flex-col lg:flex-row gap-6 w-full lg:items-start">
         {!isEditing ? (
@@ -197,12 +239,14 @@ export default function TeamDetails() {
               />
             </div>
             <div className="lg:w-2/3">
-              <ViewTeamPlayersCard
+              <SelectedPlayersCard
                 players={players}
+                teamId={teamId}
+                team={team}
                 onRemovePlayer={() => {}}
                 onSave={() => {}}
                 isSaving={false}
-                isEditing={isEditing}
+                showButtons={false}
               />
             </div>
           </>
@@ -222,11 +266,14 @@ export default function TeamDetails() {
                 onPlayerAdd={handleAddPlayer}
                 selectedPlayerIds={selectedPlayers.map((p) => p.player_id)}
                 isEditMode={true}
+                teamId={teamId}
+                onPlayerAssigned={refetch}
               />
             </div>
             <div className="w-full">
               <SelectedPlayersCard
                 players={selectedPlayers}
+                teamId={teamId}
                 onRemovePlayer={handleRemovePlayer}
                 onSave={handleSave}
                 isSaving={isSaving}
