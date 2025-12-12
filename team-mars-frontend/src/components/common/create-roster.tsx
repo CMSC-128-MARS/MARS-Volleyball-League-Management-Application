@@ -366,8 +366,26 @@ export default function AddTeamDetails({
                 </p>
 
                 <Input
+                  type="number"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  min={1}
+                  step={1}
                   value={automaticCriteria}
-                  onChange={(e) => setAutomaticCriteria(e.target.value)}
+                  onChange={(e) => {
+                    const raw = e.target.value || '';
+                    const digits = raw.replace(/[^0-9]/g, '');
+                    if (digits === '') {
+                      setAutomaticCriteria('');
+                      return;
+                    }
+                    const n = parseInt(digits, 10);
+                    if (!Number.isFinite(n) || n <= 0) {
+                      setAutomaticCriteria('');
+                      return;
+                    }
+                    setAutomaticCriteria(String(n));
+                  }}
                   placeholder="Maximum: 7"
                   className="w-full rounded-sm"
                 />
