@@ -19,6 +19,7 @@ dependencies = [
     "asyncpg",
     "email-validator",
     "greenlet",
+    "mangum"
 ]
 
 [tool.mypy]
