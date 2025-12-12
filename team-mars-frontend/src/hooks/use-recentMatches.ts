@@ -49,7 +49,7 @@ export const useRecentMatches = () => {
 
         // Convert to Match format
         const formattedMatches: Match[] = Array.from(matchesMap.entries())
-          .filter(([_, stats]) => stats.length === 2) // Only complete matches with 2 teams
+          .filter(([, stats]) => stats.length === 2)
           .map(([matchId, stats]) => {
             const match = stats[0].match!;
             
