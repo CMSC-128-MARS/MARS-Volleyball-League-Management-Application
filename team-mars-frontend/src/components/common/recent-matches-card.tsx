@@ -1,188 +1,135 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
 import { useRecentMatches } from '@/hooks/use-recentMatches';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useState } from 'react';
+import { Trophy } from 'lucide-react';
 
 export const RecentMatchesCard = () => {
   const { matches, isLoading, error } = useRecentMatches();
-  const [activeTab, setActiveTab] = useState('1');
-  const currentMatch = matches[parseInt(activeTab, 10) - 1];
 
   if (isLoading) {
     return (
-      <Card className="w-full h-[500px] border border-border shadow-md">
-        <CardContent className="space-y-[24px] h-full flex flex-col">
-          <div className="space-y-4">
-            <Skeleton className="h-6 w-1/3" />
-            <Skeleton className="h-4 w-1/4" />
+      <Card className="w-full border border-border shadow-md">
+        <CardContent className="p-6 space-y-6">
+          <div className="flex justify-between">
+            <Skeleton className="h-8 w-1/3" />
+            <Skeleton className="h-6 w-16" />
           </div>
-          <div className="flex-1">
-            <Skeleton className="h-full w-full" />
+          <div className="space-y-4">
+            <Skeleton className="h-[120px] w-full rounded-md" />
+            <Skeleton className="h-[120px] w-full rounded-md" />
           </div>
         </CardContent>
       </Card>
     );
   }
 
-  if (!currentMatch) {
+  if (error) {
     return (
-      <Card className="w-full h-[500px] border border-border shadow-md">
-        <CardContent className="h-full flex items-center justify-center">
-          <p className="paragraph-n-regular text-gray-600">No recent matches available</p>
+      <Card className="w-full border border-border shadow-md">
+        <CardContent className="p-6 text-center text-red-500">
+          Error loading matches: {error}
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="w-full h-full border border-border shadow-md">
-      <CardContent className="space-y-[24px] h-full flex flex-col">
-        {/* Header */}
-        <div className="flex justify-between items-end">
-          <div>
-            <h4 className="text-foreground">Recent Matches</h4>
-            <p className="pg2 text-muted-foreground">
-              {currentMatch.formattedDate} | {currentMatch.time}
-            </p>
-          </div>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-fit shadow-md">
-            <TabsList>
-              {[1, 2, 3, 4, 5].map((num) => (
-                <TabsTrigger key={num} value={num.toString()}>
-                  {num}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+    <Card className="w-full border border-border shadow-md">
+      
+      {/* --- Header Section --- */}
+      
+      <div className="flex justify-between items-center px-6 py-5 border-b border-gray-200">
+        <div>
+          <h4 className="text-foreground text-xl">Recent Matches</h4>
         </div>
+        <span className="text-muted-foreground text-sm font-medium">
+          Total: {matches.length}
+        </span>
+      </div>
 
-        {/* Match Details */}
-        <div className="bg-gray-100 rounded-[2px] p-[24px] border border-border shadow-sm space-y-[32px] flex-1 flex flex-col justify-center">
-          <div className="text-center">
-            <p className="paragraph-n-medium text-foreground">{currentMatch.league}</p>
-            <p className="paragraph-s-regular text-gray-600">{currentMatch.status}</p>
-          </div>
+      <CardContent className="p-6 space-y-6 pt-6">
+        {/* --- Match List --- */}
+        <div className="space-y-4">
+          {matches.map((match) => {
+            // 1. Determine Winner
+            const isTeam1Winner = match.team1.score > match.team2.score;
+            const isTeam2Winner = match.team2.score > match.team1.score;
 
-          {/* Teams 1 Name */}
-          <div className="flex items-center justify-between">
-            <div className="flex-1 text-right">
-              <p
-                className={`paragraph-n-regular ${
-                  currentMatch.team1.score > currentMatch.team2.score
-                    ? 'text-secondary-alt font-bold'
-                    : 'text-gray-600'
-                }`}
-              >
-                {currentMatch.team1.name}
-              </p>
-            </div>
-            {/*Team 1 Score vs Team 2 Score */}
-            <div className="mx-8 flex items-center space-x-4">
-              <span
-                className={`text-6xl font-bold ${
-                  currentMatch.team1.score > currentMatch.team2.score
-                    ? 'text-secondary-alt'
-                    : 'text-foreground'
-                }`}
-              >
-                {currentMatch.team1.score}
-              </span>
-              <span className="text-2xl text-foreground">:</span>
-              <span
-                className={`text-6xl font-bold ${
-                  currentMatch.team2.score > currentMatch.team1.score
-                    ? 'text-secondary-alt'
-                    : 'text-foreground'
-                }`}
-              >
-                {currentMatch.team2.score}
-              </span>
-            </div>
-            {/* Teams 2 Name */}
-            <div className="flex-1 text-left">
-              <p
-                className={`paragraph-n-regular ${
-                  currentMatch.team2.score > currentMatch.team1.score
-                    ? 'text-secondary-alt font-bold'
-                    : 'text-foreground'
-                }`}
-              >
-                {currentMatch.team2.name}
-              </p>
-            </div>
-          </div>
+            // 2. Calculate Total Points from Backend Data
+            const team1TotalPoints = match.sets.reduce((sum, set) => sum + set.team1Score, 0);
+            const team2TotalPoints = match.sets.reduce((sum, set) => sum + set.team2Score, 0);
 
-          {/* Set Scores */}
-          <div className="flex justify-center space-x-4">
-            {currentMatch.sets.map((set, index) => (
-              <div key={index} className="text-center">
-                <span className="paragraph-s-regular">
-                  <span
-                    className={
-                      set.team1Score > set.team2Score ? 'text-secondary-alt font-medium' : ''
-                    }
-                  >
-                    {set.team1Score}
-                  </span>
-                  <span className="text-foreground">-</span>
-                  <span
-                    className={
-                      set.team2Score > set.team1Score ? 'text-secondary-alt font-medium' : ''
-                    }
-                  >
-                    {set.team2Score}
-                  </span>
-                </span>
+            return (
+              <div 
+                key={match.id} 
+                className="w-full bg-white border border-gray-100 rounded-lg p-5 shadow-sm hover:shadow-md transition-all"
+              >
+                  
+                {/* Match Header */}
+                <div className="flex justify-between items-start mb-4">
+                  <div className="bg-slate-800 text-white text-xs font-medium px-3 py-1.5 rounded-sm">
+                    {new Date(match.formattedDate).toLocaleDateString('en-US', {
+                      month: '2-digit',
+                      day: '2-digit',
+                      year: 'numeric'
+                    })}
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-500 text-sm">
+                    <Trophy className="w-4 h-4" />
+                    <span>{match.league}</span>
+                  </div>
+                </div>
+
+                {/* Teams Grid */}
+                <div className="space-y-3">
+                  
+                  {/* Team 1 Row */}
+                  <div className="grid grid-cols-12 items-center pb-3 border-b border-gray-100/80">
+                    <div className={`col-span-4 pg1 ${isTeam1Winner ? 'text-secondary-alt font-bold' : 'text-foreground'}`}>
+                      {match.team1.name}
+                    </div>
+
+                    <div className="col-span-4 flex flex-col items-center justify-center">
+                      <span className={`pg1 ${isTeam1Winner ? 'text-secondary-alt font-bold' : 'text-foreground'}`}>
+                        {match.team1.score} 
+                      </span>
+                      <span className="text-[10px] uppercase tracking-wider text-gray-400 text-center">Sets Won</span>
+                    </div>
+
+                    <div className="col-span-4 flex flex-col items-end justify-center">
+                      <span className={`pg1 ${isTeam1Winner ? 'text-secondary-alt font-bold' : 'text-foreground'}`}>
+                        {team1TotalPoints}
+                      </span>
+                      <span className="text-[10px] uppercase tracking-wider text-gray-400">Pts</span>
+                    </div>
+                  </div>
+
+                  {/* Team 2 Row */}
+                  <div className="grid grid-cols-12 items-center">
+                    <div className={`col-span-4 pg1 ${isTeam2Winner ? 'text-secondary-alt font-bold' : 'text-foreground'}`}>
+                      {match.team2.name}
+                    </div>
+                    
+                    <div className="col-span-4 flex flex-col items-center justify-center">
+                      <span className={`pg1 ${isTeam2Winner ? 'text-secondary-alt font-bold' : 'text-foreground'}`}>
+                        {match.team2.score}
+                      </span>
+                      <span className="text-[10px] uppercase tracking-wider text-gray-400 text-center">Sets Won</span>
+                    </div>
+
+                    <div className="col-span-4 flex flex-col items-end justify-center">
+                      <span className={`pg1 ${isTeam2Winner ? 'text-secondary-alt font-bold' : 'text-foreground'}`}>
+                          {team2TotalPoints}
+                      </span>
+                      <span className="text-[10px] uppercase tracking-wider text-gray-400">Pts</span>
+                    </div>
+                  </div>
+
+                </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
-
-        {/* Navigation Buttons */}
-        <div className="flex justify-between items-center">
-          <Button
-            variant="nav-primary"
-            disabled={activeTab === '1'}
-            onClick={() => setActiveTab((parseInt(activeTab) - 1).toString())}
-            className={`w-[100px] ${activeTab === '1' ? 'opacity-50 cursor-not-allowed' : ''}`}
-            size="sm"
-          >
-            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1" />
-            <span className="pg2-bold">Previous</span>
-          </Button>
-
-          <Button
-            variant="default"
-            className="flex-1 mx-4 cursor-pointer"
-            size="sm"
-            onClick={() => {
-              // Reminder: Replace with actual navigation logic
-              alert(`Navigate to match details for Match ${activeTab}`);
-            }}
-          >
-            <span className="pg2-bold">View Details</span>
-          </Button>
-
-          <Button
-            variant="nav-primary"
-            disabled={activeTab === '5'}
-            onClick={() => setActiveTab((parseInt(activeTab) + 1).toString())}
-            className={`w-[100px] ${activeTab === '5' ? 'opacity-50 cursor-not-allowed' : ''}`}
-            size="sm"
-          >
-            <span className="pg2-bold">Next</span>
-            <ChevronRight className="w-4 h-4 group-hover:translate-x-1" />
-          </Button>
-        </div>
-
-        {error && (
-          <div className="mt-4">
-            <p className="paragraph-xs-regular text-red-500">Error: {error}</p>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

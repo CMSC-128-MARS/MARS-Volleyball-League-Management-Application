@@ -10,6 +10,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
   useSidebar,
 } from '@/components/ui/sidebar';
 import { useEffect, useRef } from 'react';
@@ -60,7 +61,6 @@ export function AppSidebar() {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
 
-      // Check if click is outside sidebar and not on the menu button
       if (
         sidebarRef.current &&
         !sidebarRef.current.contains(target) &&
@@ -84,7 +84,8 @@ export function AppSidebar() {
     <div ref={sidebarRef}>
       <Sidebar
         collapsible="offcanvas"
-        className="!top-[73px] !h-[calc(100vh-73px)] !z-50 !border-none"
+        
+        className="bg-primary-alt !top-[69px] !h-screen md:!top-[73px] md:!h-[calc(100vh-73px)] !z-50 !border-none"
       >
         <SidebarContent className="bg-primary-alt font-paragraph pt-6 pb-6 pr-1 pl-1">
           <SidebarGroup>
@@ -110,6 +111,7 @@ export function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
+        <SidebarRail className="!top-10 md:!top-[100px] !h-screen md:!h-[calc(100vh-73px)] hidden md:flex" />
       </Sidebar>
     </div>
   );
