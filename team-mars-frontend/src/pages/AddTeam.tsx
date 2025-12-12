@@ -118,7 +118,7 @@ export default function AddTeamCard() {
           selectedPlayerIds={selectedPlayers.map((p) => p.player_id)}
         />
       </div>
-      {selectedMethod === 'manual' && (
+      {(selectedMethod === 'manual' || selectedMethod === 'automatic') && (
         <div className="mt-10 flex-1">
           <SelectedPlayersCard
             players={selectedPlayers}
