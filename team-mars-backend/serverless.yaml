@@ -1,0 +1,148 @@
+service: team-mars-backend
+frameworkVersion: "4"
+
+org: null
+app: null
+dashboard: false
+
+custom:
+  stage: ${opt:stage, 'development'}
+  pythonRequirements:
+    fileName: requirements.txt
+    dockerizePip: linux
+    no-deploy:
+      - requests
+      - boto3
+      - botocore
+    layer:
+      name: team-mars-backend-${self:custom.stage}-python-requirements
+      description: Python dependencies for ${self:custom.stage}
+      compatibleRuntimes:
+        - python3.11
+      retain: true
+    useDownloadCache: true  
+    useStaticCache: true
+    slim: true
+    slimPatternsAppendDefaults: false
+    slimPatterns:
+      - "**/*.py[c|o]"
+      - "**/__pycache__/**"
+      - "**/tests/**"
+      - "**/.pytest_cache/**"
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: ap-southeast-1
+  profile: ejminguez
+  timeout: 30
+  memorySize: 512
+  architecture: x86_64
+  
+  logs:
+    restApi:
+      accessLogging: true
+      executionLogging: true
+      level: INFO
+  
+  tracing:
+    lambda: true
+    apiGateway: true
+  
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - ssm:GetParameter
+        - ssm:GetParameters 
+      Resource: arn:aws:ssm:${self:provider.region}:${aws:accountId}:parameter/team-mars-backend/*
+    - Effect: Allow
+      Action:
+        - xray:PutTraceSegments
+        - xray:PutTelemetryRecords
+      Resource: "*"
+  
+  environment:
+    ENV: ${self:custom.stage}
+    SUPABASE_KEY: ${ssm:/team-mars-backend/supabase-key}
+    SUPABASE_SERVICE_ROLE_KEY: ${ssm:/team-mars/supabase-service-role-key}
+    DATABASE_URL: ${ssm:/team-mars-backend/database-url}
+    LOG_LEVEL: INFO
+    POWERTOOLS_SERVICE_NAME: team-mars-backend
+
+functions:
+  app:
+    name: ${self:service}-${self:custom.stage}
+    handler: main.handler
+    description: Team MARS Fastapi Backend
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
+    # reservedConcurrency: 10
+    events:
+      - http:
+          path: /
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Forwarded-For
+              - X-Forwarded-Port
+              - Accept
+              - Origin
+              - Referer
+              - User-Agent
+            allowCredentials: true
+            maxAge: 86400
+      - http:
+          path: /{proxy+}
+          method: any
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Forwarded-For
+              - X-Forwarded-Port
+              - Accept
+              - Origin
+              - Referer
+              - User-Agent
+            allowCredentials: true
+            maxAge: 86400
+
+package:
+  individually: false
+  patterns:
+    - '!./**'  # Exclude everything first
+    - 'main.py'
+    - 'database/**'
+    - 'constants/**'
+    - 'controller/**' 
+    - 'external_gateway/**'  
+    - 'functions/**'  
+    - 'model/**'
+    - 'repository/**'  
+    - 'usecase/**'  
+    - 'utils/**'  
+    - 'service/**'
+    - '!**/__pycache__/**'
+    - '!**/*.pyc'
+    - '!**/*.pyo'
+    - '!.venv/**'
+    - '!node_modules/**'
+    - '!.serverless/**'
+    - '!.git/**'
+    - '!.env.*'
+    - '!tests/**'
+    - '!scripts/**'
+    - '!resources/**'
+
+plugins:
+  - serverless-python-requirements
