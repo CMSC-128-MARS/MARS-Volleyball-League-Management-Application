@@ -9,9 +9,8 @@ class TeamPlayer(Base):
     __tablename__ = "team_player"
     team_player_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     join_date = Column(DateTime(timezone=True), server_default=func.now())
-    leave_date = Column(
-        DateTime(timezone=True), server_default=func.now(), nullable=True
-    )
+    # leave_date should be NULL for active players; do not set a server default.
+    leave_date = Column(DateTime(timezone=True), nullable=True)
     position = Column(String, nullable=True)
 
     # Foreign Keys

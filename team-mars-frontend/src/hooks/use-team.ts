@@ -31,5 +31,21 @@ export function useTeam(teamId: string | null) {
     fetchTeam();
   }, [teamId]);
 
-  return { team, isLoading, error };
+  const refetch = async () => {
+    if (!teamId) return;
+    try {
+      setIsLoading(true);
+      setError(null);
+      const data = await teamApiService.getTeamById(teamId);
+      setTeam(data);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch team';
+      setError(errorMessage);
+      console.error('Failed to fetch team:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { team, isLoading, error, refetch };
 }

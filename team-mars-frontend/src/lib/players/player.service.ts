@@ -65,7 +65,8 @@ export async function createPlayer(payload: PlayerCreateDto): Promise<PlayerUI> 
         return mapDtoToUi(created);
       } catch (retryErr) {
         // Retry failed; log for debugging then fall through and rethrow original error
-        // eslint-disable-next-line no-console
+        // Log a warning but avoid eslint-disable directives
+        // (some environments allow console.warn; keep this minimal)
         console.warn('createPlayer retry failed', retryErr);
       }
     }

@@ -43,13 +43,40 @@ export class TeamApiService {
     });
   }
 
+  async deleteTeamPlayer(teamPlayerId: string): Promise<void> {
+    return httpClient.delete<void>(`/team-players/${teamPlayerId}`);
+  }
+
   async removePlayerFromTeam(teamId: string, playerId: string): Promise<void> {
-    // This sets the leave_date for the team-player relationship
-    return httpClient.patch<void>('/team-players', {
-      team_id: teamId,
-      player_id: playerId,
-      leave_date: new Date().toISOString(),
+    // Find the active team_player row for this team+player, then call the
+    // backend endpoint to set the leave_date (soft remove).
+    type TeamPlayerResp = {
+      team_player_id?: string;
+      teamPlayerId?: string;
+      id?: string;
+      player?: { player_id?: string } | null;
+      player_id?: string;
+    };
+
+    const teamPlayers = await httpClient.get<TeamPlayerResp[]>(`/team-players/team/${teamId}`, {
+      params: { active_only: true },
     });
+
+    const match = teamPlayers.find(
+      (tp) => tp.player?.player_id === playerId || tp.player_id === playerId,
+    );
+    if (!match) {
+      // Nothing to remove
+      return;
+    }
+
+    const teamPlayerId = match.team_player_id || match.teamPlayerId || match.id;
+    if (!teamPlayerId) {
+      // If shape unexpected, fallback to throwing so callers can handle
+      throw new Error('Could not determine team_player id for removal');
+    }
+
+    return httpClient.post<void>(`/team-players/${teamPlayerId}/remove`);
   }
 }
 
