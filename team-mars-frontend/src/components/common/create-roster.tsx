@@ -28,7 +28,7 @@ export default function AddTeamDetails({
   onPlayerAssigned,
 }: {
   onRosterMethodSelected?: () => void;
-  selectedMethod?: 'manual' | 'automatic' | null;
+  selectedMethod?: 'manual' | 'automatic' | null | undefined;
   onMethodChange?: (method: 'manual' | 'automatic' | null) => void;
   onPlayerAdd?: (player: ApiPlayer) => void;
   selectedPlayerIds?: string[];
@@ -37,13 +37,15 @@ export default function AddTeamDetails({
   onPlayerAssigned?: () => void;
 }) {
   const { players, isLoading, error } = usePlayers();
+  const [automaticCriteria, setAutomaticCriteria] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
 
   const handleMethodSelect = (method: 'manual' | 'automatic') => {
-    if (selectedMethod === method) {
+    if ((selectedMethod ?? '') === method) {
       onMethodChange?.(null);
       return;
     }
@@ -53,7 +55,6 @@ export default function AddTeamDetails({
 
   const handlePlayerSelect = (playerId: string) => {
     setSelectedPlayer(playerId);
-    // Close the select dropdown when opening the player details dialog
     setIsSelectOpen(false);
     setIsDialogOpen(true);
   };
@@ -72,7 +73,6 @@ export default function AddTeamDetails({
       notes: currentPlayer.notes ?? null,
     };
 
-    // If we're editing an existing team and a teamId is provided, assign immediately via API.
     if (isEditMode && teamId) {
       try {
         setIsAdding(true);
@@ -82,7 +82,7 @@ export default function AddTeamDetails({
           position: apiPlayer.default_position || null,
           join_date: new Date().toISOString(),
         };
-        // Debug log: inspect payload and server response when adding player to team
+
         console.debug('Adding player to team - payload:', payload);
         const resp = await teamApiService.addPlayerToTeam(
           teamId,
@@ -90,9 +90,7 @@ export default function AddTeamDetails({
           apiPlayer.default_position || undefined,
         );
         console.debug('Add player to team response:', resp);
-        // Notify parent to re-fetch team players
         onPlayerAssigned?.();
-        // also emit a global event so any listeners (cards) can refresh
         try {
           window.dispatchEvent(new CustomEvent('team-player-changed', { detail: { teamId } }));
         } catch {
@@ -108,10 +106,23 @@ export default function AddTeamDetails({
     }
 
     onPlayerAdd?.(apiPlayer);
-    // Ensure select dropdown is closed and dialog is closed
     setIsSelectOpen(false);
     setIsDialogOpen(false);
     setSelectedPlayer(null);
+  };
+
+  const handleGenerateRoster = async () => {
+    try {
+      setIsGenerating(true);
+      console.debug('Generating roster with criteria:', automaticCriteria);
+      await new Promise((r) => setTimeout(r, 600));
+      onRosterMethodSelected?.();
+    } catch (err) {
+      console.error('Failed to generate roster:', err);
+      alert('Failed to generate roster. Please try again.');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const currentPlayer = players.find((p) => p.id === selectedPlayer) ?? null;
@@ -149,7 +160,7 @@ export default function AddTeamDetails({
         </CardHeader>
         <hr className="w-full border-t border-[#A3A3A3]" />
         <CardContent className="flex flex-col md:flex-row gap-6 pb-6 pt-4 items-start justify-center">
-          {!isEditMode && (
+          {!isEditMode && selectedMethod !== 'automatic' && (
             <div
               onClick={() => handleMethodSelect('manual')}
               className={`w-full md:w-1/2 hover:cursor-pointer rounded-sm shadow-md flex flex-col gap-2 items-center justify-center border px-6 py-8 h-[178px] transition-colors ${
@@ -165,7 +176,23 @@ export default function AddTeamDetails({
               </p>
             </div>
           )}
-          {selectedMethod === 'manual' || isEditMode ? (
+          {!isEditMode && (selectedMethod ?? '') === 'automatic' && (
+            <div
+              onClick={() => handleMethodSelect('automatic')}
+              className={`w-full md:w-1/2 hover:cursor-pointer rounded-sm shadow-md flex flex-col gap-2 items-center justify-center border px-6 py-8 h-[178px] transition-colors ${
+                (selectedMethod ?? '') === 'automatic'
+                  ? 'border-primary bg-primary/5'
+                  : 'border-[#E5E5E5] hover:border-[#737373]'
+              }`}
+            >
+              <Cog />
+              <h4>Automatic Creation</h4>
+              <p className="text-sm text-gray-500 font-paragraph text-center">
+                Chooses players by skill to form a balanced roster.
+              </p>
+            </div>
+          )}
+          {(selectedMethod ?? '') === 'manual' || isEditMode ? (
             <div
               className={`flex flex-col gap-2 items-start ${isEditMode ? 'w-full' : 'w-full md:w-1/2'}`}
             >
@@ -179,9 +206,6 @@ export default function AddTeamDetails({
                 >
                   <Search className="w-4 h-4 mr-2 text-muted-foreground" />
                   {selectedPlayer ? (
-                    // Render the selected player's name directly so the dropdown-only acronym
-                    // (absolutely positioned in the SelectItem) does not become part of the
-                    // input's displayed text.
                     <div className="truncate">
                       {(() => {
                         const p = players.find((x) => x.id === selectedPlayer);
@@ -225,7 +249,6 @@ export default function AddTeamDetails({
                               {player.jerseyNo ? ` #${player.jerseyNo}` : ''}
                             </div>
 
-                            {/* Completely safe: no absolute position, no leaking */}
                             <span className="text-sm text-muted-foreground ml-4 shrink-0">
                               {acronym}
                             </span>
@@ -314,7 +337,6 @@ export default function AddTeamDetails({
                             />
                           </div>
                         </div>
-                        {/* Skill Level Description removed per request */}
                         <div>
                           <p className="text-[14px] text-black mb-1">Notes</p>
                           <Input
@@ -336,12 +358,35 @@ export default function AddTeamDetails({
                 </DialogContent>
               </Dialog>
             </div>
+          ) : (selectedMethod ?? '') === 'automatic' ? (
+            <div className="w-full md:w-1/2">
+              <div className="flex flex-col gap-3">
+                <p>
+                  Enter number of players <span className="text-secondary-alt">*</span>
+                </p>
+
+                <Input
+                  value={automaticCriteria}
+                  onChange={(e) => setAutomaticCriteria(e.target.value)}
+                  placeholder="Maximum: 7"
+                  className="w-full rounded-sm"
+                />
+
+                <Button
+                  onClick={handleGenerateRoster}
+                  isLoading={isGenerating}
+                  className="w-full mt-2"
+                >
+                  Generate Roster
+                </Button>
+              </div>
+            </div>
           ) : (
             !isEditMode && (
               <div
                 onClick={() => handleMethodSelect('automatic')}
                 className={`w-full md:w-1/2 hover:cursor-pointer rounded-sm shadow-md flex flex-col gap-2 items-center justify-center border px-6 py-8 h-[178px] transition-colors ${
-                  selectedMethod === 'automatic'
+                  (selectedMethod ?? '') === 'automatic'
                     ? 'border-primary bg-primary/5'
                     : 'border-[#E5E5E5] hover:border-[#737373]'
                 }`}
