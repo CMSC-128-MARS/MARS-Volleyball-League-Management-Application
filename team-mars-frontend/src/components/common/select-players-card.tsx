@@ -36,6 +36,7 @@ type SelectPlayersCardProps = {
   showButtons?: boolean;
   teamId?: string | null;
   team?: TeamDto | null;
+  isViewMode?: boolean;
 };
 
 export default function SelectPlayersCard({
@@ -47,6 +48,7 @@ export default function SelectPlayersCard({
   showButtons = true,
   teamId = null,
   team = null,
+  isViewMode,
 }: SelectPlayersCardProps) {
   const [combinedPlayers, setCombinedPlayers] = useState<ApiPlayer[]>(players);
   const [serverPlayers, setServerPlayers] = useState<ApiPlayer[]>([]);
@@ -161,7 +163,17 @@ export default function SelectPlayersCard({
               isNextDisabled={isSaving || combinedPlayers.length === 0}
             />
           )}
-          <div className="pt-2 pb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6">
+          {
+            // Default behavior: sm=1 md=2 lg=4
+            // TeamDetails view-only: sm=1 md=2 lg=3 (when isViewMode === true)
+          }
+          <div
+            className={
+              isViewMode === true
+                ? 'pt-2 pb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 xl:gap-6'
+                : 'pt-2 pb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-6'
+            }
+          >
             {combinedPlayers.length === 0 ? (
               <div className="col-span-full text-center text-muted-foreground py-8">
                 No players selected yet
@@ -175,7 +187,7 @@ export default function SelectPlayersCard({
                   jerseyNumber={player.jersey_number?.toString() ?? 'N/A'}
                   position={player.default_position ?? 'N/A'}
                   onRemove={() => onRemovePlayer?.(player.player_id)}
-                  showRemove={true}
+                  showRemove={Boolean(onRemovePlayer)}
                 />
               ))
             )}

@@ -242,7 +242,7 @@ export default function TeamDetails() {
                 players={players}
                 teamId={teamId}
                 team={team}
-                onRemovePlayer={() => {}}
+                isViewMode={true}
                 onSave={() => {}}
                 isSaving={false}
                 showButtons={false}
@@ -274,6 +274,7 @@ export default function TeamDetails() {
                 players={selectedPlayers}
                 teamId={teamId}
                 onRemovePlayer={handleRemovePlayer}
+                isViewMode={false}
                 onSave={handleSave}
                 isSaving={isSaving}
                 showButtons={false}
