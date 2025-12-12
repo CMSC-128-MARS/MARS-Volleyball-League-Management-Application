@@ -112,6 +112,24 @@ export default function AddTeamDetails({
 
   const currentPlayer = players.find((p) => p.id === selectedPlayer) ?? null;
 
+  const getPositionAcronym = (pos?: string | null) => {
+    if (!pos) return '';
+    const p = pos.toLowerCase().trim();
+    if (p === 's' || p.includes('setter')) return 'S';
+    if (p === 'mb' || p.includes('middle')) return 'MB';
+    if (p === 'outh' || p.includes('outside')) return 'OutH';
+    if (
+      p === 'opph' ||
+      p.includes('opposite') ||
+      p.includes('opposite hitter') ||
+      p.includes('opp')
+    )
+      return 'OppH';
+    if (p === 'l' || p.includes('libero')) return 'L';
+    if (p === 'ds' || p.includes('defensive')) return 'DS';
+    return '';
+  };
+
   return (
     <div className="w-full h-full shadow-md">
       <Card className={`gap-2 transition-all duration-200 ${isSelectOpen ? 'pb-35 lg:pb-0' : ''}`}>
@@ -169,16 +187,36 @@ export default function AddTeamDetails({
                         No players available
                       </div>
                     )}
-                    {players.map((player) => (
-                      <SelectItem
-                        key={player.id}
-                        value={player.id}
-                        disabled={selectedPlayerIds.includes(player.id)}
-                      >
-                        {player.first_name} {player.last_name || ''}
-                        {player.jerseyNo ? ` #${player.jerseyNo}` : ''}
-                      </SelectItem>
-                    ))}
+                    {players.map((player) => {
+                      const acronym = getPositionAcronym(player.position);
+                      return (
+                        <SelectItem
+                          key={player.id}
+                          value={player.id}
+                          disabled={selectedPlayerIds.includes(player.id)}
+                          className="relative"
+                        >
+                          <div className="w-full flex flex-row">
+                            {/* name + jersey: allow wrapping; give right padding so it doesn't overlap the acronym */}
+                            <div className="min-w-0 flex-1 pr-10">
+                              <div>
+                                {player.first_name} {player.last_name || ''}
+                                {player.jerseyNo ? (
+                                  <span className="ml-1">#{player.jerseyNo}</span>
+                                ) : null}
+                              </div>
+                            </div>
+
+                            {/* acronym is absolutely positioned at the far right of the item */}
+                            {acronym && (
+                              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none whitespace-nowrap">
+                                {acronym}
+                              </div>
+                            )}
+                          </div>
+                        </SelectItem>
+                      );
+                    })}
                   </SelectGroup>
                 </SelectContent>
               </Select>
