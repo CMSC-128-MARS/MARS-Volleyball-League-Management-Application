@@ -38,7 +38,7 @@ export const RecentMatchesCard = () => {
       
       {/* --- Header Section --- */}
       
-      <div className="flex justify-between items-center px-6 py-5 border-b border-gray-200">
+      <div className="flex justify-between items-center px-4 py-5 border-b border-gray-200">
         <div>
           <h4 className="text-foreground text-xl">Recent Matches</h4>
         </div>
@@ -47,7 +47,7 @@ export const RecentMatchesCard = () => {
         </span>
       </div>
 
-      <CardContent className="p-6 space-y-6 pt-6">
+      <CardContent className="p-4 space-y-6 pt-6">
         {/* --- Match List --- */}
         <div className="space-y-4">
           {matches.map((match) => {
@@ -62,11 +62,11 @@ export const RecentMatchesCard = () => {
             return (
               <div 
                 key={match.id} 
-                className="w-full bg-white border border-gray-100 rounded-lg p-5 shadow-sm hover:shadow-md transition-all"
+                className="w-full bg-white border border-gray-100 rounded-lg p-5 shadow-sm hover:shadow-md transition-all "
               >
                   
                 {/* Match Header */}
-                <div className="flex justify-between items-start mb-4">
+                <div className="flex justify-between items-start mb-4 ">
                   <div className="bg-slate-800 text-white text-xs font-medium px-3 py-1.5 rounded-sm">
                     {new Date(match.formattedDate).toLocaleDateString('en-US', {
                       month: '2-digit',
@@ -74,7 +74,7 @@ export const RecentMatchesCard = () => {
                       year: 'numeric'
                     })}
                   </div>
-                  <div className="flex items-center gap-2 text-gray-500 text-sm">
+                  <div className="flex items-center gap-2 text-gray-500 text-sm ">
                     <Trophy className="w-4 h-4" />
                     <span>{match.league}</span>
                   </div>
