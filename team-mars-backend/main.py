@@ -12,6 +12,7 @@ from controller.team_player_controller import router as team_player_router
 from controller.match_controller import router as match_router
 from controller.league_controller import router as league_router
 from controller.match_team_stats_controller import router as match_team_stats_router
+from controller.team_generator_controller import router as team_generator_controller
 
 from model import rebuild_models
 
@@ -49,6 +50,7 @@ app.include_router(team_player_router)
 app.include_router(match_router)
 app.include_router(league_router)
 app.include_router(match_team_stats_router)
+app.include_router(team_generator_controller)
 
 
 @app.get("/", include_in_schema=False)
@@ -58,7 +60,7 @@ def welcome():
         <head>
             <title>Welcome to Team MARS API</title>
         </head>
-        <body>
+        <body style="text-align:center;height:screen; padding:20px;">
             <h1>Welcome to Team MARS API</h1>
             <p>The backend service is running successfully 🎉<
 
