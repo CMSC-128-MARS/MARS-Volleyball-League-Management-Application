@@ -53,6 +53,8 @@ export default function AddTeamDetails({
 
   const handlePlayerSelect = (playerId: string) => {
     setSelectedPlayer(playerId);
+    // Close the select dropdown when opening the player details dialog
+    setIsSelectOpen(false);
     setIsDialogOpen(true);
   };
 
@@ -106,6 +108,8 @@ export default function AddTeamDetails({
     }
 
     onPlayerAdd?.(apiPlayer);
+    // Ensure select dropdown is closed and dialog is closed
+    setIsSelectOpen(false);
     setIsDialogOpen(false);
     setSelectedPlayer(null);
   };
@@ -174,7 +178,27 @@ export default function AddTeamDetails({
                   showChevron={false}
                 >
                   <Search className="w-4 h-4 mr-2 text-muted-foreground" />
-                  <SelectValue placeholder={isLoading ? 'Loading players...' : 'Search players'} />
+                  {selectedPlayer ? (
+                    // Render the selected player's name directly so the dropdown-only acronym
+                    // (absolutely positioned in the SelectItem) does not become part of the
+                    // input's displayed text.
+                    <div className="truncate">
+                      {(() => {
+                        const p = players.find((x) => x.id === selectedPlayer);
+                        if (!p) return isLoading ? 'Loading players...' : 'Search players';
+                        return (
+                          <>
+                            {p.first_name} {p.last_name || ''}
+                            {p.jerseyNo ? ` #${p.jerseyNo}` : ''}
+                          </>
+                        );
+                      })()}
+                    </div>
+                  ) : (
+                    <SelectValue
+                      placeholder={isLoading ? 'Loading players...' : 'Search players'}
+                    />
+                  )}
                 </SelectTrigger>
                 <SelectContent className="max-h-[280px]">
                   <SelectGroup>
@@ -194,25 +218,17 @@ export default function AddTeamDetails({
                           key={player.id}
                           value={player.id}
                           disabled={selectedPlayerIds.includes(player.id)}
-                          className="relative"
                         >
-                          <div className="w-full flex flex-row">
-                            {/* name + jersey: allow wrapping; give right padding so it doesn't overlap the acronym */}
-                            <div className="min-w-0 flex-1 pr-10">
-                              <div>
-                                {player.first_name} {player.last_name || ''}
-                                {player.jerseyNo ? (
-                                  <span className="ml-1">#{player.jerseyNo}</span>
-                                ) : null}
-                              </div>
+                          <div className="flex w-full items-center justify-between">
+                            <div className="min-w-0 truncate">
+                              {player.first_name} {player.last_name}
+                              {player.jerseyNo ? ` #${player.jerseyNo}` : ''}
                             </div>
 
-                            {/* acronym is absolutely positioned at the far right of the item */}
-                            {acronym && (
-                              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none whitespace-nowrap">
-                                {acronym}
-                              </div>
-                            )}
+                            {/* Completely safe: no absolute position, no leaking */}
+                            <span className="text-sm text-muted-foreground ml-4 shrink-0">
+                              {acronym}
+                            </span>
                           </div>
                         </SelectItem>
                       );
