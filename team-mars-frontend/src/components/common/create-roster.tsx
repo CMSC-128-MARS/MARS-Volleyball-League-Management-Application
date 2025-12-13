@@ -78,6 +78,7 @@ export default function AddTeamDetails({
       notes: currentPlayer.notes ?? null,
     };
 
+    let loadingToastId: string | number | undefined;
     if (isEditMode && teamId) {
       try {
         setIsAdding(true);
@@ -120,14 +121,9 @@ export default function AddTeamDetails({
       } catch (err) {
         console.error('Failed to add player to team:', err);
         toast.dismiss(loadingToastId);
-        toast.error('Failed to add player to team. Please try again.', {
-          duration: 5000,
-          style: {
-            color: 'var(--destructive)',
-            borderRadius: '2px',
-            border: '2px solid var(--destructive)',
-          },
-        });
+        toast.error('Failed to add player to team. Please try again.', { duration: 5000, style: {
+          color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+        } })
         return;
       } finally {
         setIsAdding(false);
@@ -142,6 +138,7 @@ export default function AddTeamDetails({
   };
 
   const handleGenerateRoster = async () => {
+    let loadingToastId: string | number | undefined;
     let count = parseInt(automaticCriteria || '0', 10) || 0;
     // clamp count to 1..7
     if (count <= 0) {
@@ -154,6 +151,13 @@ export default function AddTeamDetails({
     onClearPlayers?.();
 
     setIsGenerating(true);
+      loadingToastId = toast.loading('Generating roster...', {
+        duration: 5000,
+        style: {
+          borderRadius: '2px',
+          border: '2px solid var(--border)',
+        },
+      });
     try {
       console.debug('Requesting roster generation (position-prioritized) count=', count);
 
@@ -325,14 +329,9 @@ export default function AddTeamDetails({
     } catch (err) {
       console.error('Failed to generate roster:', err);
       toast.dismiss(loadingToastId);
-      toast.error('Failed to generate roster. Please try again.', {
-        duration: 5000,
-        style: {
-          color: 'var(--destructive)',
-          borderRadius: '2px',
-          border: '2px solid var(--destructive)',
-        },
-      });
+      toast.error('Failed to generate roster. Please try again.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+      } })
     } finally {
       setIsGenerating(false);
     }
@@ -375,7 +374,7 @@ export default function AddTeamDetails({
         <CardContent className="flex flex-col md:flex-row gap-6 pb-6 pt-4 items-start justify-center">
           {!isEditMode && selectedMethod !== 'automatic' && (
             <div
-              onClick={() => handleMethodSelect('manual')}
+              onClick={() => handleMethodSelect('manual') }
               className={`w-full md:w-1/2 hover:cursor-pointer rounded-sm shadow-md flex flex-col gap-2 items-center justify-center border px-6 py-8 h-[178px] transition-colors ${
                 selectedMethod === 'manual'
                   ? 'border-primary bg-primary/5'
