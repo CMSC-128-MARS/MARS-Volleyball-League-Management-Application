@@ -1,35 +1,16 @@
 service: team-mars-backend
 frameworkVersion: "4"
-
 org: null
 app: null
 dashboard: false
-
 custom:
   stage: ${opt:stage, 'dev'}
   pythonRequirements:
     fileName: requirements.txt
     dockerizePip: true
-    no-deploy:
-      - requests
-      - boto3
-      - botocore
-    layer:
-      name: team-mars-backend-${self:custom.stage}-python-requirements
-      description: Python dependencies for ${self:custom.stage}
-      compatibleRuntimes:
-        - python3.11
-      retain: true
     useDownloadCache: true  
     useStaticCache: true
-    slim: true
-    slimPatternsAppendDefaults: false
-    slimPatterns:
-      - "**/*.py[c|o]"
-      - "**/__pycache__/**"
-      - "**/tests/**"
-      - "**/.pytest_cache/**"
-
+    layer: true
 provider:
   name: aws
   runtime: python3.11
@@ -74,6 +55,9 @@ functions:
     name: ${self:service}-${self:custom.stage}
     handler: main.handler
     description: Team MARS Fastapi Backend
+    timeout: 29
+    layers:
+      - !Ref PythonRequirementsLambdaLayer
     events:
       - http:
           path: /
@@ -117,11 +101,12 @@ functions:
 package:
   individually: false
   patterns:
-    - '!./**'  # Exclude everything first
+    - '!./**'
     - 'main.py'
     - 'database/**'
     - 'constants/**'
     - 'controller/**' 
+    - 'core/*"'
     - 'external_gateway/**'  
     - 'functions/**'  
     - 'model/**'
