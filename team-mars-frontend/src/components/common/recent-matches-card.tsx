@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useRecentMatches } from '@/hooks/use-recentMatches';
-import { Trophy } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 
 export const RecentMatchesCard = () => {
   const { matches, isLoading, error } = useRecentMatches();
@@ -9,7 +9,7 @@ export const RecentMatchesCard = () => {
   if (isLoading) {
     return (
       <Card className="w-full border border-border shadow-md">
-        <CardContent className="p-6 space-y-6">
+        <CardContent className="px-6 space-y-6 mb-6">
           <div className="flex justify-between">
             <Skeleton className="h-8 w-1/3" />
             <Skeleton className="h-6 w-16" />
@@ -26,7 +26,7 @@ export const RecentMatchesCard = () => {
   if (error) {
     return (
       <Card className="w-full border border-border shadow-md">
-        <CardContent className="p-6 text-center text-red-500">
+        <CardContent className="px-6 text-center text-red-500 mb-6">
           Error loading matches: {error}
         </CardContent>
       </Card>
@@ -38,19 +38,23 @@ export const RecentMatchesCard = () => {
       
       {/* --- Header Section --- */}
       
-      <div className="flex justify-between items-center px-4 py-5 border-b border-gray-200">
+      <div className="flex justify-between items-center px-6 py-5 border-b border-gray-400">
         <div>
           <h4 className="text-foreground text-xl">Recent Matches</h4>
         </div>
         <span className="text-muted-foreground text-sm font-medium">
           Total: {matches.length}
         </span>
+        {/* --- if the total matches should also be recent matches only (max of 3)
+        <span className="text-muted-foreground text-sm font-medium">
+            Total: {Math.min(matches.length, 3)}
+        </span> --- */}
       </div>
 
-      <CardContent className="p-4 space-y-6 pt-6">
+      <CardContent className="px-6 mb-6">
         {/* --- Match List --- */}
         <div className="space-y-4">
-          {matches.map((match) => {
+          {matches.slice(0, 3).map((match) => {
             // 1. Determine Winner
             const isTeam1Winner = match.team1.score > match.team2.score;
             const isTeam2Winner = match.team2.score > match.team1.score;
@@ -67,7 +71,7 @@ export const RecentMatchesCard = () => {
                   
                 {/* Match Header */}
                 <div className="flex justify-between items-start mb-4 ">
-                  <div className="bg-slate-800 text-white text-xs font-medium px-3 py-1.5 rounded-sm">
+                  <div className="bg-primary text-primary-foreground text-xs font-medium px-3 py-1.5 rounded-sm">
                     {new Date(match.formattedDate).toLocaleDateString('en-US', {
                       month: '2-digit',
                       day: '2-digit',
@@ -75,7 +79,7 @@ export const RecentMatchesCard = () => {
                     })}
                   </div>
                   <div className="flex items-center gap-2 text-gray-500 text-sm ">
-                    <Trophy className="w-4 h-4" />
+                    <MapPin className="w-4 h-4" />
                     <span>{match.league}</span>
                   </div>
                 </div>

@@ -63,20 +63,20 @@ export const LeagueOverviewCard = () => {
 
   return (
     <Card className="w-full border border-border shadow-md ">
-      <div className="flex justify-between items-center px-6 py-4.5 border-b border-gray-200">
+      <div className="flex justify-between items-center px-4 py-4.5 border-b border-gray-400">
         <div>
           <h4 className="text-foreground text-xl">Leagues</h4>
         </div>
         <Button
           variant="default"
-          className="bg-primary text-primary-foreground h-6 px-3 py-4 text-sm mr-2 font-medium cursor-pointer"
+          className="bg-primary text-primary-foreground h-6 px-3 py-4 text-sm  font-medium cursor-pointer"
           onClick={() => navigate('/leagues')}
         >
           Manage
         </Button>
       </div>
 
-      <CardContent className="space-y-[24px] flex flex-col p-6 pt-6"> 
+      <CardContent className="space-y-[24px] flex flex-col px-6 mb-6"> 
         {/* --- Table --- */}
         <div className="space-y-0">
           <div className="overflow-x-auto">
