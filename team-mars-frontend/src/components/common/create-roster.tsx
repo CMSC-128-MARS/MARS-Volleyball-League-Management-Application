@@ -46,6 +46,8 @@ export default function AddTeamDetails({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
+  // Toast id used for dismissing loading toasts from multiple handlers
+  let loadingToastId: string | number | undefined;
 
   const handleMethodSelect = (method: 'manual' | 'automatic') => {
     if ((selectedMethod ?? '') === method) {
@@ -76,7 +78,6 @@ export default function AddTeamDetails({
       notes: currentPlayer.notes ?? null,
     };
 
-    let loadingToastId: string | number | undefined;
     if (isEditMode && teamId) {
       try {
         setIsAdding(true);
@@ -119,9 +120,14 @@ export default function AddTeamDetails({
       } catch (err) {
         console.error('Failed to add player to team:', err);
         toast.dismiss(loadingToastId);
-        toast.error('Failed to add player to team. Please try again.', { duration: 5000, style: {
-          color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
-        } })
+        toast.error('Failed to add player to team. Please try again.', {
+          duration: 5000,
+          style: {
+            color: 'var(--destructive)',
+            borderRadius: '2px',
+            border: '2px solid var(--destructive)',
+          },
+        });
         return;
       } finally {
         setIsAdding(false);
@@ -319,9 +325,14 @@ export default function AddTeamDetails({
     } catch (err) {
       console.error('Failed to generate roster:', err);
       toast.dismiss(loadingToastId);
-      toast.error('Failed to generate roster. Please try again.', { duration: 5000, style: {
-        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
-      } })
+      toast.error('Failed to generate roster. Please try again.', {
+        duration: 5000,
+        style: {
+          color: 'var(--destructive)',
+          borderRadius: '2px',
+          border: '2px solid var(--destructive)',
+        },
+      });
     } finally {
       setIsGenerating(false);
     }
@@ -364,7 +375,7 @@ export default function AddTeamDetails({
         <CardContent className="flex flex-col md:flex-row gap-6 pb-6 pt-4 items-start justify-center">
           {!isEditMode && selectedMethod !== 'automatic' && (
             <div
-              onClick={() => handleMethodSelect('manual') }
+              onClick={() => handleMethodSelect('manual')}
               className={`w-full md:w-1/2 hover:cursor-pointer rounded-sm shadow-md flex flex-col gap-2 items-center justify-center border px-6 py-8 h-[178px] transition-colors ${
                 selectedMethod === 'manual'
                   ? 'border-primary bg-primary/5'
