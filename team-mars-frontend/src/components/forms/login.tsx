@@ -1,4 +1,5 @@
 import { LogIn } from 'lucide-react';
+import { toast } from 'sonner';
 import {
   Form,
   FormField,
@@ -29,12 +30,24 @@ export default function Login({ onContactClick }: LoginFormProps) {
   const setUser = useAuthStore((s) => s.setUser);
   const setLoading = useAuthStore((s) => s.setLoading);
   const handleSubmit = async (data: LoginFormData) => {
+    let loadingToastId: string | number | undefined;
     try {
       setLoading(true);
+      loadingToastId = toast.loading('Signing in...', {
+        duration: 10000,
+        style: {
+          borderRadius: '2px',
+          border: '2px solid var(--border)',
+        },
+      });
       const result = await authSignIn({ username: data.username, password: data.password });
 
       if (!result.success) {
         console.error('Login failed:', result.error);
+        toast.dismiss(loadingToastId);
+        toast.error('Login failed. Please try again.', { duration: 5000, style: {
+          color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+        } });
         return;
       }
 
@@ -44,6 +57,10 @@ export default function Login({ onContactClick }: LoginFormProps) {
         (result as { success: true; challenge?: string }).challenge === 'NEW_PASSWORD_REQUIRED'
       ) {
         console.warn('NEW_PASSWORD_REQUIRED challenge returned. Complete new password flow.');
+        toast.dismiss(loadingToastId);
+        toast.warning('Warning: NEW_PASSWORD_REQUIRED challenge returned. Complete new password flow.', { duration: 5000, style: {
+        color: "var(--warning)", borderRadius: "2px", border: "2px solid var(--warning)"
+        } });
         // TODO: show modal to complete new password
         return;
       }
@@ -51,7 +68,11 @@ export default function Login({ onContactClick }: LoginFormProps) {
       // Mark user authenticated and navigate to dashboard
       setUser(data.username);
       console.log('Login successful:', { username: data.username });
+      toast.dismiss(loadingToastId);
       navigate('/dashboard');
+      toast.success('Login successful!', { duration: 5000, style: {
+        color: "var(--success)", borderRadius: "2px", border: "2px solid var(--success)"
+      } })
     } finally {
       setLoading(false);
     }

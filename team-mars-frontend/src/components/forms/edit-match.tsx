@@ -91,8 +91,8 @@ export default function EditMatchDialog({
     e.preventDefault();
 
     if (!formData.match_date || !formData.location || !formData.num_of_sets) {
-      toast.warning('Warning: Missing required fields.', { duration: 5000, style: {
-        background: "var(--warning)", color: "white", borderRadius: "2px", border: "none"
+      toast.error('Missing required fields.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
       } })
       return;
     }
@@ -100,8 +100,8 @@ export default function EditMatchDialog({
     // Validate completed match data
     if (matchStatus === 'completed') {
       if (!completedData.team1_final_score || !completedData.team2_final_score) {
-        toast.warning('Warning: Missing final scores.', { duration: 5000, style: {
-        background: "var(--warning)", color: "white", borderRadius: "2px", border: "none"
+        toast.error('Missing final scores.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
       } })
         return;
       }
@@ -111,15 +111,23 @@ export default function EditMatchDialog({
         completedData.team2_set_scores.some((s) => !s);
 
       if (hasEmptySetScores) {
-        toast.warning('Warning: Missing set scores.', { duration: 5000, style: {
-        background: "var(--warning)", color: "white", borderRadius: "2px", border: "none"
+        toast.error('Missing set scores.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
       } })
         return;
       }
     }
 
+    let loadingToastId;
     try {
       setIsSubmitting(true);
+      loadingToastId = toast.loading('Updating match...', {
+        duration: 10000,
+        style: {
+          borderRadius: '2px',
+          border: '2px solid var(--border)',
+        },
+      });
       const matchData: MatchUpdate = {
         match_date: new Date(formData.match_date).toISOString(),
         location: formData.location,
@@ -151,9 +159,10 @@ export default function EditMatchDialog({
         );
 
         if (!team1Stats || !team2Stats) {
+          toast.dismiss(loadingToastId);
           toast.error('Could not find match team stats for one or both teams.', { duration: 5000, style: {
-        background: "var(--error)", color: "white", borderRadius: "2px", border: "none"
-      } })
+            color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+          } })
           return;
         }
 
@@ -169,14 +178,34 @@ export default function EditMatchDialog({
           sets_lost: team1SetsWon,
           is_winner: team2SetsWon > team1SetsWon,
         });
+        toast.dismiss(loadingToastId);
+        toast.success('Match successfully updated!', {
+          duration: 5000,
+          style: {
+            color: "var(--success)",
+            borderRadius: "2px",
+            border: "1px solid var(--success)"
+          }
+        });
+      } else {
+        toast.dismiss(loadingToastId);
+        toast.success('Match successfully updated!', {
+          duration: 5000,
+          style: {
+            color: "var(--success)",
+            borderRadius: "2px",
+            border: "1px solid var(--success)"
+          }
+        });
       }
 
       onClose();
       onMatchUpdated?.();
     } catch (error) {
       console.error('Failed to update match:', error);
+      if (loadingToastId) toast.dismiss(loadingToastId);
       toast.error('Failed to update match. Please try again.', { duration: 5000, style: {
-        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
       } })
     } finally {
       setIsSubmitting(false);

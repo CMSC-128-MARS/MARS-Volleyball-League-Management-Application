@@ -30,21 +30,31 @@ export default function RemoveTeamCard({
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleRemove = async () => {
+    let loadingToastId;
     try {
       setIsDeleting(true);
+      loadingToastId = toast.loading('Deleting team...', {
+        duration: 10000,
+        style: {
+          borderRadius: '2px',
+          border: '2px solid var(--border)',
+        },
+      });
       await teamApiService.deleteTeam(teamId);
+      toast.dismiss(loadingToastId);
+      toast.info('Team has been deleted. Refresh the page.', { duration: 5000, style: {
+        color: "var(--primary)", borderRadius: "2px", border: "2px solid var(--primary)"
+      } });
       setOpen(false);
       if (onRemoveSuccess) {
         onRemoveSuccess();
       }
-      window.location.reload();
     } catch (error) {
       console.error('Failed to delete team:', error);
+      if (loadingToastId) toast.dismiss(loadingToastId);
       toast.error('Failed to delete team. Please try again.', { duration: 5000, style: {
-        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
-      } })
-
-
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+      } });
       setIsDeleting(false);
     }
   };

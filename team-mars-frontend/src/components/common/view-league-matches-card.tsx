@@ -109,7 +109,7 @@ export default function ViewLeagueMatchesCard({
     } catch (error) {
       console.error('Failed to delete match:', error);
       toast.error('Failed to delete match. Please try again.', { duration: 5000, style: {
-        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
       } })
 
 

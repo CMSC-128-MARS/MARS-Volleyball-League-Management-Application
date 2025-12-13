@@ -49,10 +49,13 @@ export default function LeagueDetails() {
     try {
       await leagueApiService.deleteLeague(leagueId);
       navigate('/leagues');
+      toast.info('League has been deleted.', { duration: 5000, style: {
+        color: "var(--primary)", borderRadius: "2px", border: "2px solid var(--primary)"
+      } })
     } catch (error) {
       console.error('Failed to delete league:', error);
       toast.error('Failed to delete league. Please try again.', { duration: 5000, style: {
-        background: "var(--error)", color: "white", borderRadius: "2px", border: "none"
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
       } })
     }
   };

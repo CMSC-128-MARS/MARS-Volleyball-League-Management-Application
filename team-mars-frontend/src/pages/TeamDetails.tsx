@@ -89,7 +89,7 @@ export default function TeamDetails() {
     } catch (err) {
       console.error('Failed to remove player from team:', err);
       toast.error('Failed to remove player from team. Please try again.', { duration: 5000, style: {
-        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+      color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
       } })
       return;
     }
@@ -100,8 +100,17 @@ export default function TeamDetails() {
   const handleSave = async () => {
     if (!team || !teamId) return;
 
+    let loadingToastId: string | number | undefined;
     try {
       setIsSaving(true);
+      loadingToastId = toast.loading('Saving team changes...', {
+        duration: 5000,
+        style: {
+          color: 'var(--primary)',
+          borderRadius: '2px',
+          border: '2px solid var(--primary)',
+        },
+      });
       // Update team details (name and league)
       await teamApiService.updateTeam(teamId, {
         team_name: editTeamName,
@@ -140,10 +149,20 @@ export default function TeamDetails() {
       setIsEditing(false);
       // Keep SPA-friendly behavior: refetch team rather than full reload
       await refetch?.();
+      toast.dismiss(loadingToastId);
+      toast.success('Team changes saved successfully!', {
+        duration: 5000,
+        style: {
+          color: 'var(--success)',
+          borderRadius: '2px',
+          border: '2px solid var(--success)',
+        },
+      });
     } catch (error) {
       console.error('Failed to save team changes:', error);
+      toast.dismiss(loadingToastId);
       toast.error('Failed to save team changes. Please try again.', { duration: 5000, style: {
-        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
       } })
     } finally {
       setIsSaving(false);
@@ -153,7 +172,16 @@ export default function TeamDetails() {
   const handleDelete = async () => {
     if (!teamId) return;
 
+    let loadingToastId: string | number | undefined;
     try {
+      loadingToastId = toast.loading('Deleting team...', {
+        duration: 10000,
+        style: {
+          color: 'var(--primary)',
+          borderRadius: '2px',
+          border: '2px solid var(--primary)',
+        },
+      });
       // First attempt to remove any team_player records to avoid FK issues
       try {
         if (team?.team_players && Array.isArray(team.team_players)) {
@@ -171,11 +199,21 @@ export default function TeamDetails() {
       }
 
       await teamApiService.deleteTeam(teamId);
+      toast.dismiss(loadingToastId);
+      toast.info('Team has been deleted.', {
+        duration: 5000,
+        style: {
+          color: 'var(--primary)',
+          borderRadius: '2px',
+          border: '2px solid var(--primary)',
+        },
+      });
       navigate('/teams');
     } catch (error) {
       console.error('Failed to delete team:', error);
+      toast.dismiss(loadingToastId);
       toast.error('Failed to delete team. Please try again.', { duration: 5000, style: {
-        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
       } })
     }
   };

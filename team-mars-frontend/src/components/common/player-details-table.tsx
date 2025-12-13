@@ -94,6 +94,7 @@ function PlayerDetailsTableComponent({
     // call parent handler if provided (keeps backward compatibility)
     try {
       _handleViewDetails?.(p);
+
     } catch {
       // ignore handler errors
     }
@@ -218,7 +219,7 @@ function PlayerDetailsTableComponent({
                               } catch (err) {
                                 console.error('Failed to delete players', err);
                                 toast.error('Failed to delete players. Please try again.', { duration: 5000, style: {
-        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
       } })
                               } finally {
                                 setIsDeleting(false);

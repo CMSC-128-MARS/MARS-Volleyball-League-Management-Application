@@ -26,8 +26,16 @@ export default function AddTeamCard() {
       return;
     }
 
+    let loadingToastId;
     try {
       setIsSaving(true);
+      loadingToastId = toast.loading('Creating team...', {
+        duration: 10000,
+        style: {
+          borderRadius: '2px',
+          border: '2px solid var(--border)',
+        },
+      });
       const createdTeam = await teamApiService.createTeam({
         team_name: teamName,
         league_id: leagueId,
@@ -45,12 +53,21 @@ export default function AddTeamCard() {
           ),
         );
       }
-
+      toast.dismiss(loadingToastId);
+      toast.success('Team successfully created!', {
+        duration: 5000,
+        style: {
+          color: "var(--success)",
+          borderRadius: "2px",
+          border: "2px solid var(--success)"
+        }
+      });
       navigate('/teams');
     } catch (error) {
       console.error('Failed to create team:', error);
+      if (loadingToastId) toast.dismiss(loadingToastId);
       toast.error('Failed to create team. Please try again.', { duration: 5000, style: {
-        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+       borderRadius: "2px", border: "2px solid var(--destructive)"
       } })
     } finally {
       setIsSaving(false);
@@ -59,15 +76,15 @@ export default function AddTeamCard() {
 
   const handleSave = () => {
     if (!teamName || !leagueId) {
-      toast.warning('Warning: Missing team name or league input.', { duration: 5000, style: {
-        background: "var(--warning)", color: "white", borderRadius: "2px", border: "none"
+      toast.error('Missing team name or league input.', { duration: 5000, style: {
+        borderRadius: "2px", border: "2px solid var(--destructive)"
       } })
       return;
     }
 
     if (selectedPlayers.length === 0) {
-      toast.warning('Warning: Select at least one player.', { duration: 5000, style: {
-        background: "var(--warning)", color: "white", borderRadius: "2px", border: "none"
+      toast.error('Select at least one player.', { duration: 5000, style: {
+        borderRadius: "2px", border: "2px solid var(--destructive)"
       } })
       return;
     }

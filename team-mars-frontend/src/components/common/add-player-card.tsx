@@ -73,19 +73,29 @@ export default function AddPlayerCard({ open, onOpenChange, onCreate }: AddPlaye
     };
 
     setIsSubmitting(true);
+    let loadingToastId;
     try {
       if (onCreate) await onCreate(payload);
+      toast.dismiss(loadingToastId);
+      toast.success('Player successfully created!', {
+        duration: 5000,
+        style: {
+          color: "var(--success)",
+          borderRadius: "2px",
+          border: "2px solid var(--success)"
+        }
+      });
       onOpenChange(false);
     } catch (err: unknown) {
       console.error('Failed to create player', err);
+      if (loadingToastId) toast.dismiss(loadingToastId);
       setSubmitError((err as Error)?.message || 'Failed to create player');
       toast.error('Failed to create player. Please try again.', {
         duration: 5000,
         style: {
-          background: "var(--destructive)",
-          color: "white",
+          color: "var(--destructive)",
           borderRadius: "2px",
-          border: "none"
+          border: "2px solid var(--destructive)"
         }
       });
     } finally {

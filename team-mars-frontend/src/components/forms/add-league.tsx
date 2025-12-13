@@ -42,20 +42,27 @@ export default function AddLeagueDialog({ children }: AddLeagueDialogProps) {
     const trimmedLeagueName = formData.league_name.trim();
     const trimmedLocation = formData.location.trim();
     if (!trimmedLeagueName || !trimmedLocation) {
-      toast.warning("Warning: Missing league name or location input.", {
+      toast.error("Missing league name or location input.", {
         duration: 5000,
         style: {
-          background: "var(--warning)",
-          color: "white",
+          color: "var(--destructive)",
           borderRadius: "2px",
-          border: "none"
+          border: "2px solid var(--destructive)"
         }
       });
       return;
     }
 
+    let loadingToastId;
     try {
       setIsSubmitting(true);
+      loadingToastId = toast.loading('Creating league...', {
+        duration: 10000,
+        style: {
+          borderRadius: '2px',
+          border: '2px solid var(--border)',
+        },
+      });
       const leagueData: Partial<League> = {
         league_name: trimmedLeagueName,
         location: trimmedLocation,
@@ -65,6 +72,15 @@ export default function AddLeagueDialog({ children }: AddLeagueDialogProps) {
 
       try {
         const createdLeague = await leagueApiService.createLeague(leagueData);
+        toast.dismiss(loadingToastId);
+        toast.success('League successfully created!', {
+          duration: 5000,
+          style: {
+            color: "var(--success)",
+            borderRadius: "2px",
+            border: "2px solid var(--success)"
+          }
+        });
         setIsOpen(false);
         setFormData({
           league_name: '',
@@ -74,8 +90,9 @@ export default function AddLeagueDialog({ children }: AddLeagueDialogProps) {
         navigate(`/leagues/${createdLeague.league_id}`);
       } catch (err: unknown) {
         console.error('Failed to create league:', err);
+        toast.dismiss(loadingToastId);
         toast.error("Failed to create league. Please try again.", { duration: 5000, style: {
-          background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+          color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
         } });
       }
     } finally {

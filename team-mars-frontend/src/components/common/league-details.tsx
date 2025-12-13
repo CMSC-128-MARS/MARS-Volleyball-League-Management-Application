@@ -40,17 +40,15 @@ export default function LeagueDetails({
 
   const handleSave = async () => {
     if (!formData.league_name) {
-      toast.warning('Warning: League Name input missing.', { duration: 5000, style: {
-        background: "var(--warning)", color: "white", borderRadius: "2px", border: "none"
+      toast.error('League Name input missing.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
       } })
-      toast
       return;
     }
     if (!formData.location) {
-      toast.warning('Warning: Location input missing.', { duration: 5000, style: {
-        background: "var(--warning)", color: "white", borderRadius: "2px", border: "none"
+      toast.error('Location input missing.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
       } })
-      toast
       return;
     }
     
@@ -63,12 +61,12 @@ export default function LeagueDetails({
       });
       onSaved?.();
       toast.success('League details updated successfully!', { duration: 5000, style: {
-        background: "var(--success)", color: "white", borderRadius: "2px", border: "none"
+        color: "var(--success)", borderRadius: "2px", border: "2px solid var(--success)"
       } })
     } catch (error) {
       console.error('Failed to update league:', error);
       toast.error('Failed to update league details. Please try again.', { duration: 5000, style: {
-        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
       } })
 
 

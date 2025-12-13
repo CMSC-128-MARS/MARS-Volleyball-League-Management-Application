@@ -75,7 +75,15 @@ export default function ViewPlayerCard({ open, onOpenChange, player }: ViewPlaye
       setIsEditing(false);
       return;
     }
+    let loadingToastId;
     try {
+      loadingToastId = toast.loading('Saving player details...', {
+        duration: 10000,
+        style: {
+          borderRadius: '2px',
+          border: '2px solid var(--border)',
+        },
+      });
       const payload: PlayerUpdateDto = {
         first_name: form.firstName || undefined,
         last_name: form.lastName || undefined,
@@ -87,15 +95,23 @@ export default function ViewPlayerCard({ open, onOpenChange, player }: ViewPlaye
         notes: form.notes || undefined,
       };
       await playerService.updatePlayer(player.id, payload);
+      toast.dismiss(loadingToastId);
+      toast.success('Player details saved successfully! Refresh the page.', {
+        duration: 5000,
+        style: {
+          color: "var(--success)",
+          borderRadius: "2px",
+          border: "2px solid var(--success)"
+        }
+      });
       // close and refresh list
       setIsEditing(false);
       onOpenChange(false);
-      // refresh parent list to reflect changes
-      window.location.reload();
     } catch (err) {
       console.error('Failed to save player', err);
+      if (loadingToastId) toast.dismiss(loadingToastId);
       toast.error('Failed to save player. Please try again.', { duration: 5000, style: {
-        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
       } })
       setIsEditing(false);
     }

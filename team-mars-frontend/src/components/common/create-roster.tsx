@@ -74,9 +74,17 @@ export default function AddTeamDetails({
       notes: currentPlayer.notes ?? null,
     };
 
+    let loadingToastId: string | number | undefined;
     if (isEditMode && teamId) {
       try {
         setIsAdding(true);
+        loadingToastId = toast.loading('Adding player to team...', {
+          duration: 5000,
+          style: {
+            borderRadius: '2px',
+            border: '2px solid var(--border)',
+          },
+        });
         const payload = {
           team_id: teamId,
           player_id: apiPlayer.player_id,
@@ -97,11 +105,21 @@ export default function AddTeamDetails({
         } catch {
           /* ignore */
         }
+        toast.dismiss(loadingToastId);
+        toast.success('Player added to team!', {
+          duration: 5000,
+          style: {
+            color: 'var(--success)',
+            borderRadius: '2px',
+            border: '2px solid var(--success)',
+          },
+        });
       } catch (err) {
         console.error('Failed to add player to team:', err);
+        toast.dismiss(loadingToastId);
         toast.error('Failed to add player to team. Please try again.', { duration: 5000, style: {
-        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
-      } })
+          color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+        } })
         return;
       } finally {
         setIsAdding(false);
@@ -115,15 +133,33 @@ export default function AddTeamDetails({
   };
 
   const handleGenerateRoster = async () => {
+    let loadingToastId: string | number | undefined;
     try {
       setIsGenerating(true);
+      loadingToastId = toast.loading('Generating roster...', {
+        duration: 5000,
+        style: {
+          borderRadius: '2px',
+          border: '2px solid var(--border)',
+        },
+      });
       console.debug('Generating roster with criteria:', automaticCriteria);
       await new Promise((r) => setTimeout(r, 600));
       onRosterMethodSelected?.();
+      toast.dismiss(loadingToastId);
+      toast.success('Roster generated successfully!', {
+        duration: 5000,
+        style: {
+          color: 'var(--success)',
+          borderRadius: '2px',
+          border: '2px solid var(--success)',
+        },
+      });
     } catch (err) {
       console.error('Failed to generate roster:', err);
+      toast.dismiss(loadingToastId);
       toast.error('Failed to generate roster. Please try again.', { duration: 5000, style: {
-        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
       } })
     } finally {
       setIsGenerating(false);
