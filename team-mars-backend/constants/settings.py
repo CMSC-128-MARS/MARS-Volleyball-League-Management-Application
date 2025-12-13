@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Optional, List
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 
@@ -11,7 +11,12 @@ class Settings(BaseSettings):
 
     # Project
     PROJECT_NAME: str = "Team MARS API"
-    CONTACT_EMAIL: str = "contact@example.com"
+    CONTACT_EMAIL: str = "ebminguez@up.edu.ph"
+
+    CORS_ORIGINS: List[str] = [
+        "http://localhost:5173",
+        "https://staging.d2g2imcna7zljc.amplifyapp.com/",
+    ]
 
     # Database - Support both naming conventions
     DATABASE_URL: Optional[str] = None
@@ -24,6 +29,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=(
             f".env.{os.getenv('STAGE', 'development')}"
+            f".env.{os.getenv('FRONTEND_URL', '')}"
             if os.path.exists(f".env.{os.getenv('STAGE', 'development')}")
             else ".env"
         ),
