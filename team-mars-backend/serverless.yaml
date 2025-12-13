@@ -64,7 +64,7 @@ provider:
   environment:
     ENV: ${self:custom.stage}
     SUPABASE_KEY: ${ssm:/team-mars-backend/supabase-key}
-    SUPABASE_SERVICE_ROLE_KEY: ${ssm:/team-mars/supabase-service-role-key}
+    SUPABASE_SERVICE_ROLE_KEY: ${ssm:/team-mars-backend/supabase-service-role-key}
     DATABASE_URL: ${ssm:/team-mars-backend/database-url}
     LOG_LEVEL: INFO
     POWERTOOLS_SERVICE_NAME: team-mars-backend
