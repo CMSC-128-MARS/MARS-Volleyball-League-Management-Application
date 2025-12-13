@@ -28,12 +28,15 @@ export default function TeamDetails() {
 
     return team.team_players
       .filter((tp) => tp.leave_date === null && tp.player)
-      .map((tp) => ({
-        ...tp.player!,
+      .map((tp) => {
+        const p = tp.player as (ApiPlayer & { grade?: number | null }) | null | undefined;
         // Preserve numeric skill from backend; some backends use `grade` instead of `skill_level`.
-        skill_level: (tp.player as any).skill_level ?? (tp.player as any).grade ?? 0,
-        position: tp.position || tp.player!.default_position,
-      }));
+        return {
+          ...(p || {}),
+          skill_level: p?.skill_level ?? p?.grade ?? 0,
+          position: tp.position || p?.default_position,
+        } as ApiPlayer & { position?: string | null };
+      });
   }, [team]);
 
   const handleBack = () => {

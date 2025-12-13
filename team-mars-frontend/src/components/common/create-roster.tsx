@@ -139,8 +139,26 @@ export default function AddTeamDetails({
         { key: 'libero', max: 1 },
       ];
 
-      const normalizeToApi = (p: any): ApiPlayer => ({
-        player_id: p.player_id ?? p.id,
+      type Candidate = {
+        player_id?: string;
+        id?: string;
+        first_name?: string;
+        name?: string;
+        last_name?: string | null;
+        jersey_number?: number | null;
+        jerseyNo?: number | null;
+        default_position?: string | null;
+        position?: string | null;
+        created_at?: string;
+        createdAt?: string;
+        skill_level?: number | null;
+        grade?: number | null;
+        skillLevel?: number | null;
+        notes?: string | null;
+      };
+
+      const normalizeToApi = (p: Candidate): ApiPlayer => ({
+        player_id: p.player_id ?? p.id ?? '',
         first_name: p.first_name ?? p.name ?? '',
         last_name: p.last_name ?? '',
         jersey_number: p.jersey_number ?? p.jerseyNo ?? null,

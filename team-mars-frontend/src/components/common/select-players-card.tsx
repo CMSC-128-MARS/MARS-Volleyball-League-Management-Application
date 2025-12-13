@@ -19,6 +19,8 @@ type TeamPlayerDto = {
     default_position?: string | null;
     created_at?: string;
     skill_level?: number | null;
+    // some backends may return `grade` instead of `skill_level`
+    grade?: number | null;
     notes?: string | null;
   } | null;
 };
@@ -81,7 +83,7 @@ export default function SelectPlayersCard({
             default_position: tp.position || tp.player!.default_position || null,
             created_at: tp.player!.created_at,
             // Accept either `skill_level` or legacy `grade` from backend
-            skill_level: (tp.player! as any).skill_level ?? (tp.player! as any).grade ?? 0,
+            skill_level: tp.player!.skill_level ?? tp.player!.grade ?? 0,
             notes: tp.player!.notes ?? null,
           }));
         if (!mounted) return;
@@ -108,7 +110,7 @@ export default function SelectPlayersCard({
             default_position: tp.position || tp.player!.default_position || null,
             created_at: tp.player!.created_at,
             // Accept either `skill_level` or legacy `grade` from backend
-            skill_level: (tp.player! as any).skill_level ?? (tp.player! as any).grade ?? 0,
+            skill_level: tp.player!.skill_level ?? tp.player!.grade ?? 0,
             notes: tp.player!.notes ?? null,
           }));
 
