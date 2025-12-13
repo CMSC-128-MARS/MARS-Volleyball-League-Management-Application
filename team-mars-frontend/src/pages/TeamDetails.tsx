@@ -30,7 +30,8 @@ export default function TeamDetails() {
       .filter((tp) => tp.leave_date === null && tp.player)
       .map((tp) => ({
         ...tp.player!,
-        skill_level: 0,
+        // Preserve numeric skill from backend; some backends use `grade` instead of `skill_level`.
+        skill_level: (tp.player as any).skill_level ?? (tp.player as any).grade ?? 0,
         position: tp.position || tp.player!.default_position,
       }));
   }, [team]);

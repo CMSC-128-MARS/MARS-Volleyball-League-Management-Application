@@ -128,73 +128,145 @@ export default function AddTeamDetails({
 
     setIsGenerating(true);
     try {
-      console.debug('Requesting roster generation from backend, count=', count);
-      // Try backend generator first
+      console.debug('Requesting roster generation (position-prioritized) count=', count);
+
+      // Priority targets for a 7-player roster (fills from top for smaller rosters)
+      const positionPriority: { key: string; max: number }[] = [
+        { key: 'outside', max: 2 },
+        { key: 'middle', max: 2 },
+        { key: 'setter', max: 1 },
+        { key: 'opposite', max: 1 },
+        { key: 'libero', max: 1 },
+      ];
+
+      const normalizeToApi = (p: any): ApiPlayer => ({
+        player_id: p.player_id ?? p.id,
+        first_name: p.first_name ?? p.name ?? '',
+        last_name: p.last_name ?? '',
+        jersey_number: p.jersey_number ?? p.jerseyNo ?? null,
+        default_position: p.default_position ?? p.position ?? null,
+        created_at: p.created_at ?? p.createdAt ?? undefined,
+        skill_level: p.skill_level ?? p.grade ?? p.skillLevel ?? null,
+        notes: p.notes ?? null,
+      });
+
+      // Build local pool (shuffle later)
+      const localPool: ApiPlayer[] = players.map((p) => ({
+        player_id: p.id,
+        first_name: p.first_name || '',
+        last_name: p.last_name || '',
+        jersey_number: p.jerseyNo ?? null,
+        default_position: p.position ?? null,
+        created_at: p.createdAt ?? undefined,
+        skill_level: p.skill_level ?? null,
+        notes: p.notes ?? null,
+      }));
+
+      // Try backend generator; if available use it as candidate source
+      let backendCandidates: ApiPlayer[] = [];
       try {
-        const generated = await teamApiService.generateTeam(count);
-        if (Array.isArray(generated) && generated.length >= 0) {
-          // If backend returned fewer players than requested, fill the rest
-          const addedIds = new Set<string>();
-          const toAdd: ApiPlayer[] = [];
-          // Add all generated players (avoid duplicates within generated set)
-          (generated || []).forEach((g) => {
-            if (!addedIds.has(g.player_id)) {
-              toAdd.push(g);
-              addedIds.add(g.player_id);
-            }
-          });
-
-          const needed = Math.max(0, count - toAdd.length);
-          if (needed > 0) {
-            // Exclude only already-added ids (we cleared parent selections beforehand)
-            const exclude = new Set(Array.from(addedIds));
-            const supplemental = players
-              .filter((p) => !exclude.has(p.id))
-              .sort((a, b) => (b.skill_level ?? 0) - (a.skill_level ?? 0))
-              .slice(0, needed)
-              .map((p) => ({
-                player_id: p.id,
-                first_name: p.first_name || '',
-                last_name: p.last_name || '',
-                jersey_number: p.jerseyNo ?? null,
-                default_position: p.position ?? null,
-                created_at: p.createdAt ?? undefined,
-                skill_level: p.skill_level ?? null,
-                notes: p.notes ?? null,
-              }));
-
-            supplemental.forEach((s) => toAdd.push(s));
-          }
-
-          // push the combined set to parent
-          toAdd.forEach((g) => onPlayerAdd?.(g));
-          onRosterMethodSelected?.();
-          return;
+        const gen = await teamApiService.generateTeam(count);
+        if (Array.isArray(gen)) {
+          backendCandidates = gen.map(normalizeToApi);
         }
       } catch (err) {
-        console.warn('Backend generateTeam failed, falling back to local generator', err);
+        console.warn('Backend generateTeam failed or unavailable, continuing with local pool', err);
       }
 
-      // Fallback: pick top-N players locally by skill level (ignore parent's snapshot)
-      const candidates = players
-        .slice()
-        .sort((a, b) => (b.skill_level ?? 0) - (a.skill_level ?? 0))
-        .slice(0, count)
-        .map((p) => ({
-          player_id: p.id,
-          first_name: p.first_name || '',
-          last_name: p.last_name || '',
-          jersey_number: p.jerseyNo ?? null,
-          default_position: p.position ?? null,
-          created_at: p.createdAt ?? undefined,
-          skill_level: p.skill_level ?? null,
-          notes: p.notes ?? null,
-        }));
+      // Shuffle helper
+      const shuffle = <T,>(arr: T[]) => {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          const tmp = arr[i];
+          arr[i] = arr[j];
+          arr[j] = tmp;
+        }
+      };
 
-      if (candidates.length > 0) {
-        candidates.forEach((c) => onPlayerAdd?.(c));
+      shuffle(backendCandidates);
+      shuffle(localPool);
+
+      // Combine backend first (if any), then local
+      const combinedPool: ApiPlayer[] = [];
+      const seen = new Set<string>();
+      backendCandidates.forEach((p) => {
+        if (p.player_id && !seen.has(p.player_id)) {
+          combinedPool.push(p);
+          seen.add(p.player_id);
+        }
+      });
+      localPool.forEach((p) => {
+        if (p.player_id && !seen.has(p.player_id)) {
+          combinedPool.push(p);
+          seen.add(p.player_id);
+        }
+      });
+
+      const skillOf = (p?: ApiPlayer | null) =>
+        p && typeof p.skill_level === 'number' ? p.skill_level : 0;
+      const poolAvgSkill =
+        combinedPool.reduce((s, x) => s + skillOf(x), 0) / Math.max(1, combinedPool.length);
+
+      const pickBest = (
+        candidates: ApiPlayer[],
+        chosenIds: Set<string>,
+        currentTotal: number,
+        currentCount: number,
+      ) => {
+        let best: ApiPlayer | null = null;
+        let bestDelta = Number.POSITIVE_INFINITY;
+        for (const cand of candidates) {
+          if (chosenIds.has(cand.player_id)) continue;
+          const candSkill = skillOf(cand);
+          const projectedAvg = (currentTotal + candSkill) / Math.max(1, currentCount + 1);
+          const delta = Math.abs(projectedAvg - poolAvgSkill);
+          if (delta < bestDelta) {
+            bestDelta = delta;
+            best = cand;
+          }
+        }
+        return best;
+      };
+
+      const chosen: ApiPlayer[] = [];
+      const chosenIds = new Set<string>();
+      let remaining = count;
+      let currentTotalSkill = 0;
+
+      // Fill by priority
+      for (const pos of positionPriority) {
+        if (remaining <= 0) break;
+        const want = Math.min(pos.max, remaining);
+        if (want <= 0) continue;
+
+        const matches = combinedPool.filter(
+          (p) =>
+            !chosenIds.has(p.player_id) &&
+            (p.default_position ?? '').toLowerCase().includes(pos.key),
+        );
+
+        for (let i = 0; i < want; i++) {
+          const pick = pickBest(matches, chosenIds, currentTotalSkill, chosen.length);
+          if (!pick) break;
+          chosen.push(pick);
+          chosenIds.add(pick.player_id);
+          currentTotalSkill += skillOf(pick);
+          remaining -= 1;
+        }
       }
 
+      // Fill remaining from whole pool
+      while (remaining > 0) {
+        const pick = pickBest(combinedPool, chosenIds, currentTotalSkill, chosen.length);
+        if (!pick) break;
+        chosen.push(pick);
+        chosenIds.add(pick.player_id);
+        currentTotalSkill += skillOf(pick);
+        remaining -= 1;
+      }
+
+      // Notify parent
+      chosen.forEach((c) => onPlayerAdd?.(c));
       onRosterMethodSelected?.();
     } catch (err) {
       console.error('Failed to generate roster:', err);
