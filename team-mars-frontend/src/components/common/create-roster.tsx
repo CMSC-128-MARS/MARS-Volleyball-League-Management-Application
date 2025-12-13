@@ -105,6 +105,7 @@ export default function AddTeamDetails({
       }
     }
 
+    // notify parent so the shared SelectedPlayers area (in AddTeam) updates
     onPlayerAdd?.(apiPlayer);
     setIsSelectOpen(false);
     setIsDialogOpen(false);
@@ -112,10 +113,82 @@ export default function AddTeamDetails({
   };
 
   const handleGenerateRoster = async () => {
+    let count = parseInt(automaticCriteria || '0', 10) || 0;
+    // clamp count to 1..7
+    if (count <= 0) {
+      alert('Please enter a positive number of players to generate.');
+      return;
+    }
+    if (count > 7) count = 7;
+
+    setIsGenerating(true);
     try {
-      setIsGenerating(true);
-      console.debug('Generating roster with criteria:', automaticCriteria);
-      await new Promise((r) => setTimeout(r, 600));
+      console.debug('Requesting roster generation from backend, count=', count);
+      // Try backend generator first
+      try {
+        const generated = await teamApiService.generateTeam(count);
+        if (Array.isArray(generated) && generated.length >= 0) {
+          // If backend returned fewer players than requested, fill the rest
+          const addedIds = new Set<string>();
+          const toAdd: ApiPlayer[] = [];
+          (generated || []).forEach((g) => {
+            if (!selectedPlayerIds.includes(g.player_id) && !addedIds.has(g.player_id)) {
+              toAdd.push(g);
+              addedIds.add(g.player_id);
+            }
+          });
+
+          const needed = Math.max(0, count - toAdd.length);
+          if (needed > 0) {
+            const exclude = new Set([...selectedPlayerIds, ...Array.from(addedIds)]);
+            const supplemental = players
+              .filter((p) => !exclude.has(p.id))
+              .sort((a, b) => (b.skill_level ?? 0) - (a.skill_level ?? 0))
+              .slice(0, needed)
+              .map((p) => ({
+                player_id: p.id,
+                first_name: p.first_name || '',
+                last_name: p.last_name || '',
+                jersey_number: p.jerseyNo ?? null,
+                default_position: p.position ?? null,
+                created_at: p.createdAt ?? undefined,
+                skill_level: p.skill_level ?? null,
+                notes: p.notes ?? null,
+              }));
+
+            supplemental.forEach((s) => toAdd.push(s));
+          }
+
+          // push the combined set to parent
+          toAdd.forEach((g) => onPlayerAdd?.(g));
+          onRosterMethodSelected?.();
+          return;
+        }
+      } catch (err) {
+        console.warn('Backend generateTeam failed, falling back to local generator', err);
+      }
+
+      // Fallback: pick top-N players locally by skill level
+      const existingIds = new Set(selectedPlayerIds || []);
+      const candidates = players
+        .filter((p) => !existingIds.has(p.id) && !selectedPlayerIds.includes(p.id))
+        .sort((a, b) => (b.skill_level ?? 0) - (a.skill_level ?? 0))
+        .slice(0, count)
+        .map((p) => ({
+          player_id: p.id,
+          first_name: p.first_name || '',
+          last_name: p.last_name || '',
+          jersey_number: p.jerseyNo ?? null,
+          default_position: p.position ?? null,
+          created_at: p.createdAt ?? undefined,
+          skill_level: p.skill_level ?? null,
+          notes: p.notes ?? null,
+        }));
+
+      if (candidates.length > 0) {
+        candidates.forEach((c) => onPlayerAdd?.(c));
+      }
+
       onRosterMethodSelected?.();
     } catch (err) {
       console.error('Failed to generate roster:', err);
@@ -370,6 +443,7 @@ export default function AddTeamDetails({
                   inputMode="numeric"
                   pattern="[0-9]*"
                   min={1}
+                  max={7}
                   step={1}
                   value={automaticCriteria}
                   onChange={(e) => {
@@ -379,11 +453,13 @@ export default function AddTeamDetails({
                       setAutomaticCriteria('');
                       return;
                     }
-                    const n = parseInt(digits, 10);
+                    let n = parseInt(digits, 10);
                     if (!Number.isFinite(n) || n <= 0) {
                       setAutomaticCriteria('');
                       return;
                     }
+                    // Enforce cap between 1 and 7
+                    if (n > 7) n = 7;
                     setAutomaticCriteria(String(n));
                   }}
                   placeholder="Maximum: 7"

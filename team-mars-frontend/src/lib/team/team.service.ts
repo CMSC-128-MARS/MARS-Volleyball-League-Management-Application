@@ -1,5 +1,6 @@
 import { httpClient } from '../http/axios-client';
 import type { Team } from '@/types/base_types';
+import type { ApiPlayer } from '@/lib/api';
 import type { TeamCreate } from '@/types/create_types';
 import type { TeamWithCounts, TeamsEnvelope, FetchTeamsParams } from './team.types';
 import { normalizeTeamsResponse } from './team.utils';
@@ -77,6 +78,14 @@ export class TeamApiService {
     }
 
     return httpClient.post<void>(`/team-players/${teamPlayerId}/remove`);
+  }
+
+  /**
+   * Request backend automatic roster generation. Expects the backend to return
+   * an array of player objects compatible with `ApiPlayer`.
+   */
+  async generateTeam(count: number): Promise<ApiPlayer[]> {
+    return httpClient.post<ApiPlayer[]>(`${this.baseUrl}/generate`, { count });
   }
 }
 
