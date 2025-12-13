@@ -136,17 +136,12 @@ export default function AddTeamDetails({
   };
 
   const handleGenerateRoster = async () => {
-    const loadingToastId: string | number | undefined = toast.loading('Generating roster...', {
-      duration: 5000,
-      style: {
-        borderRadius: '2px',
-        border: '2px solid var(--border)',
-      },
-    });
     let count = parseInt(automaticCriteria || '0', 10) || 0;
     // clamp count to 1..7
     if (count <= 0) {
-      alert('Please enter a positive number of players to generate.');
+      toast.warning('Warning: Please enter a positive number.', { duration: 5000, style: {
+        color: "var(--warning)", borderRadius: "2px", border: "2px solid var(--warning)"
+      } });
       return;
     }
     if (count > 7) count = 7;
@@ -155,7 +150,13 @@ export default function AddTeamDetails({
     onClearPlayers?.();
 
     setIsGenerating(true);
-      // loading toast already created above
+    const loadingToastId: string | number | undefined = toast.loading('Generating roster...', {
+      duration: 5000,
+      style: {
+        borderRadius: '2px',
+        border: '2px solid var(--border)',
+      },
+    });
     try {
       console.debug('Requesting roster generation (position-prioritized) count=', count);
 
