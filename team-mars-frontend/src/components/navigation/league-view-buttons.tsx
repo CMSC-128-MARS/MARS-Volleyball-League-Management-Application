@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import {
   Dialog,
   DialogContent,
@@ -35,12 +36,30 @@ export default function LeagueViewButtons({
   };
 
   const handleDelete = async () => {
+    let loadingToastId;
     try {
       setIsDeleting(true);
+      loadingToastId = toast.loading('Deleting league...', {
+        duration: 10000,
+        style: {
+          borderRadius: '2px',
+          border: '2px solid var(--border)',
+        },
+      });
       await onDelete?.();
+      toast.dismiss(loadingToastId);
       setIsDialogOpen(false);
     } catch (error) {
       console.error('Failed to delete league:', error);
+      if (loadingToastId) toast.dismiss(loadingToastId);
+      toast.error('Failed to delete league. Please try again.', {
+        duration: 5000,
+        style: {
+          color: "var(--destructive)",
+          borderRadius: "2px",
+          border: "2px solid var(--destructive)"
+        }
+      });
       setIsDeleting(false);
     }
   };

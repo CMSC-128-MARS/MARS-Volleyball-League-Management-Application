@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { SquarePen, Cog, Search, UserRoundPlus } from 'lucide-react';
 import { useState } from 'react';
 import { teamApiService } from '@/lib/team';
+import { toast } from 'sonner';
 import { usePlayers } from '@/hooks/use-players';
 import type { ApiPlayer } from '@/lib/api';
 
@@ -73,9 +74,17 @@ export default function AddTeamDetails({
       notes: currentPlayer.notes ?? null,
     };
 
+    let loadingToastId: string | number | undefined;
     if (isEditMode && teamId) {
       try {
         setIsAdding(true);
+        loadingToastId = toast.loading('Adding player to team...', {
+          duration: 5000,
+          style: {
+            borderRadius: '2px',
+            border: '2px solid var(--border)',
+          },
+        });
         const payload = {
           team_id: teamId,
           player_id: apiPlayer.player_id,
@@ -96,9 +105,21 @@ export default function AddTeamDetails({
         } catch {
           /* ignore */
         }
+        toast.dismiss(loadingToastId);
+        toast.success('Player added to team!', {
+          duration: 5000,
+          style: {
+            color: 'var(--success)',
+            borderRadius: '2px',
+            border: '2px solid var(--success)',
+          },
+        });
       } catch (err) {
         console.error('Failed to add player to team:', err);
-        alert('Failed to add player to team. Please try again.');
+        toast.dismiss(loadingToastId);
+        toast.error('Failed to add player to team. Please try again.', { duration: 5000, style: {
+          color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+        } })
         return;
       } finally {
         setIsAdding(false);
@@ -112,14 +133,34 @@ export default function AddTeamDetails({
   };
 
   const handleGenerateRoster = async () => {
+    let loadingToastId: string | number | undefined;
     try {
       setIsGenerating(true);
+      loadingToastId = toast.loading('Generating roster...', {
+        duration: 5000,
+        style: {
+          borderRadius: '2px',
+          border: '2px solid var(--border)',
+        },
+      });
       console.debug('Generating roster with criteria:', automaticCriteria);
       await new Promise((r) => setTimeout(r, 600));
       onRosterMethodSelected?.();
+      toast.dismiss(loadingToastId);
+      toast.success('Roster generated successfully!', {
+        duration: 5000,
+        style: {
+          color: 'var(--success)',
+          borderRadius: '2px',
+          border: '2px solid var(--success)',
+        },
+      });
     } catch (err) {
       console.error('Failed to generate roster:', err);
-      alert('Failed to generate roster. Please try again.');
+      toast.dismiss(loadingToastId);
+      toast.error('Failed to generate roster. Please try again.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+      } })
     } finally {
       setIsGenerating(false);
     }
@@ -162,7 +203,7 @@ export default function AddTeamDetails({
         <CardContent className="flex flex-col md:flex-row gap-6 pb-6 pt-4 items-start justify-center">
           {!isEditMode && selectedMethod !== 'automatic' && (
             <div
-              onClick={() => handleMethodSelect('manual')}
+              onClick={() => handleMethodSelect('manual') }
               className={`w-full md:w-1/2 hover:cursor-pointer rounded-sm shadow-md flex flex-col gap-2 items-center justify-center border px-6 py-8 h-[178px] transition-colors ${
                 selectedMethod === 'manual'
                   ? 'border-primary bg-primary/5'

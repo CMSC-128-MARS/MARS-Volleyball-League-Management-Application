@@ -2,6 +2,7 @@ import LeagueViewButtons from '@/components/navigation/league-view-buttons';
 import LeagueDetailsComponent from '@/components/common/league-details';
 import ViewLeagueTeamsCard from '@/components/common/view-league-teams-card';
 import ViewLeagueMatchesCard from '@/components/common/view-league-matches-card';
+import { toast } from 'sonner';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useCallback } from 'react';
 import { leagueApiService } from '@/lib/league';
@@ -48,9 +49,14 @@ export default function LeagueDetails() {
     try {
       await leagueApiService.deleteLeague(leagueId);
       navigate('/leagues');
+      toast.info('League has been deleted.', { duration: 5000, style: {
+        color: "var(--primary)", borderRadius: "2px", border: "2px solid var(--primary)"
+      } })
     } catch (error) {
       console.error('Failed to delete league:', error);
-      alert('Failed to delete league. Please try again.');
+      toast.error('Failed to delete league. Please try again.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+      } })
     }
   };
 

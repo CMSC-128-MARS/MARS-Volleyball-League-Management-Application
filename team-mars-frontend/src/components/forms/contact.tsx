@@ -7,6 +7,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { toast } from 'sonner'
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Headset } from 'lucide-react';
@@ -65,9 +66,15 @@ export default function Contact({ onSuccess }: ContactProps) {
 
       if (onSuccess) {
         onSuccess();
+        toast.success('Contact form submitted successfully!', { duration: 5000, style: {
+        color: "var(--success)", borderRadius: "2px", border: "1px solid var(--success)"
+      } })
       }
     } catch (error) {
       console.error('Failed to submit contact form:', error);
+      toast.error('Failed to submit contact form.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+      } })
     }
   };
 

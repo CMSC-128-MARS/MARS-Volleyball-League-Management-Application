@@ -4,6 +4,7 @@ import type { PlayerCreateDto } from '@/lib/players';
 import PlayerDetailsTable from '@/components/common/player-details-table';
 import { playerService } from '@/lib/players';
 import AddPlayerCard from '@/components/common/add-player-card';
+import { toast } from 'sonner';
 
 interface Player {
   id: string;
@@ -48,6 +49,9 @@ const Players = () => {
       );
     } catch (err) {
       console.error('Failed to load players', err);
+      toast.error('Failed to load players. Please try again.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+      } })
       setPlayers([]);
     } finally {
       setLoading(false);
@@ -63,24 +67,58 @@ const Players = () => {
   };
 
   const handleCreatePlayer = async (payload: PlayerCreateDto) => {
+    let loadingToastId: string | number | undefined;
     try {
+      loadingToastId = toast.loading('Creating player...', {
+        duration: 5000,
+        style: {
+          borderRadius: '2px',
+          border: '2px solid var(--border)',
+        },
+      });
       await playerService.createPlayer(payload);
       await loadPlayers();
+      toast.dismiss(loadingToastId);
       setIsAddDialogOpen(false);
     } catch (err) {
       console.error('Failed to create player', err);
+      toast.dismiss(loadingToastId);
+      toast.error('Failed to create player. Please try again.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+      } })
     }
   };
 
   const handleRemoveSelected = async (ids: string[]) => {
     if (!ids || ids.length === 0) return;
+    let loadingToastId: string | number | undefined;
     try {
+      loadingToastId = toast.loading('Deleting player(s)...', {
+        duration: 5000,
+        style: {
+          borderRadius: '2px',
+          border: '2px solid var(--border)',
+        },
+      });
       for (const id of ids) {
         await playerService.deletePlayer(id);
       }
       await loadPlayers();
+      toast.dismiss(loadingToastId);
+      toast.info('Player(s) have been deleted.', {
+        duration: 5000,
+        style: {
+          color: "var(--primary)",
+          borderRadius: "2px",
+          border: "2px solid var(--primary)"
+        }
+      });
     } catch (err) {
       console.error('Failed to delete players', err);
+      toast.dismiss(loadingToastId);
+      toast.error('Failed to delete players. Please try again.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+      } })
     }
   };
 

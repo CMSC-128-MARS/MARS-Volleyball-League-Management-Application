@@ -6,6 +6,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -67,21 +68,39 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+
     e.preventDefault();
+
+    const trimmedLocation = formData.location.trim();
+    if (!trimmedLocation) {
+      toast.error('Missing location input.', {
+        duration: 5000,
+        style: {
+          color: "var(--destructive)",
+          borderRadius: "2px",
+          border: "2px solid var(--destructive)"
+        }
+      });
+      return;
+    }
 
     if (
       !formData.team1_id ||
       !formData.team2_id ||
       !formData.match_date ||
-      !formData.location ||
+      !trimmedLocation ||
       !formData.num_of_sets
     ) {
-      alert('Please fill in all fields');
+      toast.error('Missing required fields.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+      } })
       return;
     }
 
     if (formData.team1_id === formData.team2_id) {
-      alert('Please select different teams');
+      toast.error('Selected teams must be different.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+      } })
       return;
     }
 
@@ -95,12 +114,15 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
           winner_team_id = formData.team1_id;
         } else if (team2Score > team1Score) {
           winner_team_id = formData.team2_id;
-        } // If tie, winner_team_id remains ''
+        } 
+        // If tie, winner_team_id remains ''
       }
       setCompletedData((prev) => ({ ...prev, winner_team_id }));
 
       if (!completedData.team1_final_score || !completedData.team2_final_score) {
-        alert('Please fill in all match result fields');
+        toast.error('Missing final scores.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+      } })
         return;
       }
 
@@ -109,19 +131,29 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
         completedData.team2_set_scores.some((s) => !s);
 
       if (hasEmptySetScores) {
-        alert('Please fill in all set scores');
+        toast.error('Missing set scores.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+      } })
         return;
       }
     }
 
+    let loadingToastId;
     try {
       setIsSubmitting(true);
+      loadingToastId = toast.loading('Creating match...', {
+        duration: 10000,
+        style: {
+          borderRadius: '2px',
+          border: '2px solid var(--border)',
+        },
+      });
       const matchData: MatchCreate = {
         league_id: leagueId,
         team1_id: formData.team1_id,
         team2_id: formData.team2_id,
         match_date: new Date(formData.match_date).toISOString(),
-        location: formData.location,
+        location: trimmedLocation,
         num_of_sets: parseInt(formData.num_of_sets),
         is_completed: matchStatus === 'completed',
       };
@@ -129,7 +161,6 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
       const createdMatch = await matchApiService.createMatch(matchData);
 
       if (matchStatus === 'completed') {
-        // ...existing code for completed match stats creation...
         const team1SetsWon = Number(completedData.team1_final_score);
         const team2SetsWon = Number(completedData.team2_final_score);
         let team1TotalScore = 0;
@@ -154,6 +185,15 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
           sets_lost: team1SetsWon,
           is_winner: team2SetsWon > team1SetsWon,
         });
+        toast.dismiss(loadingToastId);
+        toast.success('Completed match successfully created!', {
+          duration: 5000,
+          style: {
+            color: "var(--success)",
+            borderRadius: "2px",
+            border: "1px solid var(--success)"
+          }
+        });
       } else {
         // If upcoming, initialize empty match stats for both teams
         await matchStatsApiService.createMatchTeamStats({
@@ -163,6 +203,15 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
         await matchStatsApiService.createMatchTeamStats({
           match_id: createdMatch.match_id,
           team_id: formData.team2_id,
+        });
+        toast.dismiss(loadingToastId);
+        toast.success('Upcoming match successfully created!', {
+          duration: 5000,
+          style: {
+            color: "var(--success)",
+            borderRadius: "2px",
+            border: "1px solid var(--success)"
+          }
         });
       }
 
@@ -180,7 +229,10 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
       onMatchAdded?.();
     } catch (error) {
       console.error('Failed to create match:', error);
-      alert('Failed to create match. Please try again.');
+      if (loadingToastId) toast.dismiss(loadingToastId);
+      toast.error('Failed to create match. Please try again.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+      } });
     } finally {
       setIsSubmitting(false);
     }
