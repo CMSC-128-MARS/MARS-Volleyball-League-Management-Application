@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { UserRoundPlus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { PlayerCreateDto } from '@/lib/players/player.types';
+import { toast } from 'sonner';
 
 interface AddPlayerCardProps {
   open: boolean;
@@ -72,12 +73,31 @@ export default function AddPlayerCard({ open, onOpenChange, onCreate }: AddPlaye
     };
 
     setIsSubmitting(true);
+    let loadingToastId;
     try {
       if (onCreate) await onCreate(payload);
+      toast.dismiss(loadingToastId);
+      toast.success('Player successfully created!', {
+        duration: 5000,
+        style: {
+          color: "var(--success)",
+          borderRadius: "2px",
+          border: "2px solid var(--success)"
+        }
+      });
       onOpenChange(false);
     } catch (err: unknown) {
       console.error('Failed to create player', err);
+      if (loadingToastId) toast.dismiss(loadingToastId);
       setSubmitError((err as Error)?.message || 'Failed to create player');
+      toast.error('Failed to create player. Please try again.', {
+        duration: 5000,
+        style: {
+          color: "var(--destructive)",
+          borderRadius: "2px",
+          border: "2px solid var(--destructive)"
+        }
+      });
     } finally {
       setIsSubmitting(false);
     }

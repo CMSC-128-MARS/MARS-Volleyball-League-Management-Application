@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { MapPin, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { leagueApiService } from '@/lib/league';
 import { useNavigate } from 'react-router-dom';
 
@@ -35,16 +36,36 @@ export const LeagueCard = ({
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleRemove = async () => {
+    let loadingToastId;
     try {
       setIsDeleting(true);
+      loadingToastId = toast.loading('Deleting league...', {
+        duration: 10000,
+        style: {
+          borderRadius: '2px',
+          border: '2px solid var(--border)',
+        },
+      });
       await leagueApiService.deleteLeague(leagueId);
       setOpen(false);
       if (onRemoveSuccess) {
         onRemoveSuccess();
       }
-      window.location.reload();
+      toast.dismiss(loadingToastId);
+      toast.info('You have deleted a league.', {
+        duration: 5000,
+        style: {
+          color: "var(--primary)",
+          borderRadius: "2px",
+          border: "2px solid var(--primary)"
+        }
+      });
     } catch (error) {
       console.error('Failed to delete league:', error);
+      if (loadingToastId) toast.dismiss(loadingToastId);
+      toast.error('Failed to delete league. Please try again.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+      } })
       setIsDeleting(false);
     }
   };

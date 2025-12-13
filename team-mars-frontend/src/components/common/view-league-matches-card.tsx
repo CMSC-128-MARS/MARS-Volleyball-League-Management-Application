@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,
@@ -107,7 +108,11 @@ export default function ViewLeagueMatchesCard({
       onMatchesChange?.();
     } catch (error) {
       console.error('Failed to delete match:', error);
-      alert('Failed to delete match. Please try again.');
+      toast.error('Failed to delete match. Please try again.', { duration: 5000, style: {
+        color: "var(--destructive)", borderRadius: "2px", border: "2px solid var(--destructive)"
+      } })
+
+
     } finally {
       setIsDeleting(false);
     }

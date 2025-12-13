@@ -2,6 +2,7 @@ import AddTeamDetails from '@/components/common/add-team-details';
 import CreateRoster from '@/components/common/create-roster';
 import TeamNavigationButtons from '@/components/common/team-navigation-buttons';
 import SelectedPlayersCard from '@/components/common/select-players-card';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import type { ApiPlayer } from '@/lib/api';
@@ -25,8 +26,16 @@ export default function AddTeamCard() {
       return;
     }
 
+    let loadingToastId;
     try {
       setIsSaving(true);
+      loadingToastId = toast.loading('Creating team...', {
+        duration: 10000,
+        style: {
+          borderRadius: '2px',
+          border: '2px solid var(--border)',
+        },
+      });
       const createdTeam = await teamApiService.createTeam({
         team_name: teamName,
         league_id: leagueId,
@@ -44,11 +53,22 @@ export default function AddTeamCard() {
           ),
         );
       }
-
+      toast.dismiss(loadingToastId);
+      toast.success('Team successfully created!', {
+        duration: 5000,
+        style: {
+          color: "var(--success)",
+          borderRadius: "2px",
+          border: "2px solid var(--success)"
+        }
+      });
       navigate('/teams');
     } catch (error) {
       console.error('Failed to create team:', error);
-      alert('Failed to create team. Please try again.');
+      if (loadingToastId) toast.dismiss(loadingToastId);
+      toast.error('Failed to create team. Please try again.', { duration: 5000, style: {
+       borderRadius: "2px", border: "2px solid var(--destructive)"
+      } })
     } finally {
       setIsSaving(false);
     }
@@ -56,12 +76,16 @@ export default function AddTeamCard() {
 
   const handleSave = () => {
     if (!teamName || !leagueId) {
-      alert('Please enter team name and select a league');
+      toast.error('Missing team name or league input.', { duration: 5000, style: {
+        borderRadius: "2px", border: "2px solid var(--destructive)"
+      } })
       return;
     }
 
     if (selectedPlayers.length === 0) {
-      alert('Please select at least one player');
+      toast.error('Select at least one player.', { duration: 5000, style: {
+        borderRadius: "2px", border: "2px solid var(--destructive)"
+      } })
       return;
     }
 
