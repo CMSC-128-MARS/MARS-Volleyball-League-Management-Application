@@ -117,7 +117,31 @@ class TeamGeneratorUseCase:
                     )
                 )
 
-        # Step 4: Bulk insert assignments
+        # Step 4: Validate no duplicate player assignments
+        player_team_map = {}
+        duplicate_errors = []
+
+        for assignment in assignments:
+            if assignment.player_id in player_team_map:
+                duplicate_errors.append(
+                    f"Player {assignment.player_id} assigned to multiple teams: "
+                    f"{player_team_map[assignment.player_id]} and {assignment.team_id}"
+                )
+            else:
+                player_team_map[assignment.player_id] = assignment.team_id
+
+        if duplicate_errors:
+            logger.error("CRITICAL: Duplicate assignments detected before save!")
+            for error in duplicate_errors:
+                logger.error(error)
+            result.warnings.extend(duplicate_errors)
+            result.warnings.append(
+                "❌ Generation failed: Duplicate player assignments detected. "
+                "This should not happen - please report this issue."
+            )
+            return result
+
+        # Step 5: Bulk insert assignments
         if assignments:
             logger.info("Creating %s team-player assignments", len(assignments))
             try:

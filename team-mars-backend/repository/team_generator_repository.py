@@ -176,6 +176,84 @@ class TeamGeneratorRepository:
         )
         return result.rowcount
 
+    # VALIDATION QUERIES
+
+    async def check_player_league_assignment(
+        self, db: AsyncSession, player_id: UUID, league_id: UUID
+    ) -> Optional[TeamPlayer]:
+        """
+        Check if a player is already assigned to a team in a specific league
+
+        Args:
+            db: Database session
+            player_id: Player ID to check
+            league_id: League ID to check
+
+        Returns:
+            TeamPlayer if assigned, None if not assigned
+        """
+        result = await db.execute(
+            select(TeamPlayer)
+            .join(Team, TeamPlayer.team_id == Team.team_id)
+            .where(
+                and_(
+                    TeamPlayer.player_id == player_id,
+                    Team.league_id == league_id,
+                    TeamPlayer.leave_date.is_(None),
+                )
+            )
+            .options(selectinload(TeamPlayer.team), selectinload(TeamPlayer.player))
+        )
+        return result.scalars().first()
+
+    async def get_duplicate_assignments_in_league(
+        self, db: AsyncSession, league_id: UUID
+    ) -> List[dict]:
+        """
+        Find players assigned to multiple teams in the same league
+
+        Args:
+            db: Database session
+            league_id: League ID to check
+
+        Returns:
+            List of dicts with player info and their teams
+        """
+        # Get all active assignments in league
+        assignments = await self.get_active_assignments_by_league(db, league_id)
+
+        # Group by player_id
+        player_teams = {}
+        for assignment in assignments:
+            player_id = assignment.player_id
+            if player_id not in player_teams:
+                player_teams[player_id] = []
+            player_teams[player_id].append(
+                {
+                    "team_id": assignment.team_id,
+                    "team_name": (
+                        assignment.team.team_name if assignment.team else "Unknown"
+                    ),
+                    "player_name": (
+                        assignment.player.first_name if assignment.player else "Unknown"
+                    ),
+                }
+            )
+
+        # Find duplicates
+        duplicates = []
+        for player_id, teams in player_teams.items():
+            if len(teams) > 1:
+                duplicates.append(
+                    {
+                        "player_id": player_id,
+                        "player_name": teams[0]["player_name"],
+                        "teams": teams,
+                    }
+                )
+
+        return duplicates
+
     # STATISTICS
 
     async def get_league_stats(self, db: AsyncSession, league_id: UUID) -> dict:

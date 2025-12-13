@@ -28,6 +28,42 @@ def get_team_generator_use_case() -> TeamGeneratorUseCase:
     return TeamGeneratorUseCase(service=service, repo=repo)
 
 
+@router.get(
+    "/validate/{league_id}",
+    summary="Validate League Assignments",
+    description="Check for duplicate player assignments in a league",
+)
+async def validate_league_assignments(
+    league_id: UUID,
+    session: AsyncSession = Depends(get_async_session),
+    use_case: TeamGeneratorUseCase = Depends(get_team_generator_use_case),
+) -> dict:
+    """
+    Validate that no player is assigned to multiple teams in the league.
+
+    This ensures the 1 player = 1 team per league rule is enforced.
+
+    Returns:
+        Validation status and any duplicate assignments found
+    """
+    repo = TeamGeneratorRepository()
+    duplicates = await repo.get_duplicate_assignments_in_league(session, league_id)
+
+    if duplicates:
+        return {
+            "is_valid": False,
+            "league_id": league_id,
+            "message": f"Found {len(duplicates)} player(s) assigned to multiple teams",
+            "duplicates": duplicates,
+        }
+
+    return {
+        "is_valid": True,
+        "league_id": league_id,
+        "message": "All assignments are valid - no duplicates found",
+    }
+
+
 @router.post(
     "/preview",
     response_model=TeamGenerationResult,

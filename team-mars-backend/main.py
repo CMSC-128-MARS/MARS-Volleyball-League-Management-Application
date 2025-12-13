@@ -64,9 +64,8 @@ def welcome():
         </head>
         <body style="text-align:center;height:screen; padding:20px;">
             <h1>Welcome to Team MARS API</h1>
-            <p>The backend service is running successfully 🎉<
-
-/           <p><a href="/docs">View API Documentation</a></p>
+            <p>The backend service is running successfully 🎉 </p>
+            <p><a href="/docs">View API Documentation</a></p>
         </body>
 
     </html>

@@ -477,6 +477,100 @@ class TeamGeneratorService:
 
         return teams, unassigned, warnings
 
+    # ============= PLAYER VALIDATION =============
+
+    async def filter_already_assigned_players(
+        self, session: AsyncSession, players: List[PlayerForGeneration], league_id: UUID
+    ) -> Tuple[List[PlayerForGeneration], List[str]]:
+        """
+        Filter out players already assigned to teams in this league
+
+        Ensures 1 player = 1 team per league rule
+
+        Args:
+            session: Database session
+            players: Players to check
+            league_id: League ID to check against
+
+        Returns:
+            Tuple of (available_players, warnings)
+        """
+        warnings = []
+
+        # Get all active assignments in this league
+        assignments = await self.repo.get_active_assignments_by_league(
+            session, league_id
+        )
+
+        # Build set of already assigned player IDs
+        assigned_player_ids = {a.player_id for a in assignments}
+
+        if not assigned_player_ids:
+            logger.info("No existing assignments in league, all players available")
+            return players, warnings
+
+        # Filter out already assigned players
+        available_players = []
+        skipped_players = []
+
+        for player in players:
+            if player.player_id in assigned_player_ids:
+                skipped_players.append(player)
+                logger.debug(
+                    "Skipping player %s - already assigned in league",
+                    player.player_name,
+                )
+            else:
+                available_players.append(player)
+
+        # Add warnings for skipped players
+        if skipped_players:
+            player_names = [p.player_name for p in skipped_players]
+            warnings.append(
+                f"⚠️  Skipped {len(skipped_players)} player(s) already assigned in this league: "
+                f"{', '.join(player_names[:5])}"
+                f"{' and ' + str(len(player_names) - 5) + ' more' if len(player_names) > 5 else ''}"
+            )
+            logger.info(
+                "Filtered out %s already-assigned players", len(skipped_players)
+            )
+
+        return available_players, warnings
+
+    def validate_no_duplicate_players(
+        self, teams: List[GeneratedTeam]
+    ) -> Tuple[bool, List[str]]:
+        """
+        Validate that no player appears in multiple teams
+
+        Args:
+            teams: Teams to validate
+
+        Returns:
+            Tuple of (is_valid, list_of_errors)
+        """
+        player_assignments = {}  # player_id -> team_name
+        errors = []
+
+        for team in teams:
+            for member in team.members:
+                player_id = member.player_id
+
+                if player_id in player_assignments:
+                    errors.append(
+                        f"❌ Player {member.player_name} assigned to multiple teams: "
+                        f"{player_assignments[player_id]} and {team.team_name}"
+                    )
+                else:
+                    player_assignments[player_id] = team.team_name
+
+        if errors:
+            logger.error("Duplicate player assignments detected!")
+            for error in errors:
+                logger.error(error)
+
+        return len(errors) == 0, errors
+
     # ============= MAIN GENERATION METHOD =============
 
     async def generate_teams(
@@ -488,6 +582,8 @@ class TeamGeneratorService:
     ) -> TeamGenerationResult:
         """
         Main method to generate balanced teams
+
+        Ensures 1 player = 1 team per league
 
         Args:
             session: Database session
@@ -522,7 +618,29 @@ class TeamGeneratorService:
                 teams_created=False,
             )
 
-        # Step 2: Get teams from league
+        # Step 2: Filter out players already assigned to this league
+        # This ensures 1 player = 1 team per league
+        if not unassigned_only:  # Skip if we already got unassigned players
+            players, assignment_warnings = await self.filter_already_assigned_players(
+                session, players, config.league_id
+            )
+
+            if not players:
+                logger.warning("All players already assigned in this league")
+                return TeamGenerationResult(
+                    teams=[],
+                    unassigned_players=[],
+                    warnings=[
+                        "All players are already assigned to teams in this league. "
+                        "Use clear_existing=true to reassign."
+                    ]
+                    + assignment_warnings,
+                    teams_created=False,
+                )
+        else:
+            assignment_warnings = []
+
+        # Step 3: Get teams from league
         teams = await self.get_existing_teams(
             session, config.league_id, config.num_teams
         )
@@ -541,22 +659,37 @@ class TeamGeneratorService:
                 teams_created=False,
             )
 
-        # Step 3: Sort players
+        # Step 4: Sort players
         sorted_players = self.sort_players_by_skill_and_position(players)
 
-        # Step 4 & 5: Distribute using snake draft
+        # Step 5 & 6: Distribute using snake draft
         teams, unassigned, warnings = self.snake_draft_distribute(
             sorted_players, teams, config
         )
 
-        # Step 6: Calculate metrics
+        # Combine all warnings
+        all_warnings = assignment_warnings + warnings
+
+        # Step 7: CRITICAL VALIDATION - Ensure no duplicate players
+        is_valid, duplicate_errors = self.validate_no_duplicate_players(teams)
+
+        if not is_valid:
+            logger.error("CRITICAL: Duplicate player assignments detected!")
+            return TeamGenerationResult(
+                teams=[],
+                unassigned_players=players,
+                warnings=duplicate_errors + all_warnings,
+                teams_created=False,
+            )
+
+        # Step 8: Calculate metrics
         balance_score = self.calculate_team_balance_score(teams)
 
-        # Step 7: Create result
+        # Step 9: Create result
         result = TeamGenerationResult(
             teams=teams,
             unassigned_players=unassigned,
-            warnings=warnings,
+            warnings=all_warnings,
             teams_created=False,
         )
 
