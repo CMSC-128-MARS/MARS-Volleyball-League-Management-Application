@@ -14,10 +14,10 @@ const Navbar2 = () => {
   return (
     <>
       <nav className="bg-primary w-full">
-        <div className="flex flex-row items-center justify-between px-[20px] md:px-[80px] py-[12px]">
+        <div className="flex flex-row items-start justify-between px-[20px] md:px-[80px] py-[12px]">
           {/* Left Section */}
-          <div className="flex items-center gap-2">
-            <button onClick={toggleSidebar} className="cursor-pointer" aria-label="Toggle sidebar">
+          <div className="flex items-start">
+            <button onClick={toggleSidebar} className="cursor-pointer self-center" aria-label="Toggle sidebar">
               <Menu className="text-white border border-white p-2 w-9 h-9 rounded-sm bg-[rgba(255,255,255,0.10)]" />
             </button>
 
@@ -42,17 +42,7 @@ const Navbar2 = () => {
           </div>
 
           {/* Right Section */}
-          <div className="flex flex-row items-center gap-6 md:gap-20 rounded-[2px] bg-[rgba(255,255,255,0.10)] px-4 py-2">
-            <div className="flex flex-row items-center">
-              <p className="border-secondary bg-primary border-2 rounded-[8px] w-8 h-8 justify-center flex items-center text-secondary">
-                A
-              </p>
-
-              <div className="text-white leading-tight font-paragraph text-left mx-2 md:mx-4">
-                <p className="text-sm">Admin</p>
-              </div>
-            </div>
-
+          <div className="flex items-center md:self-center">
             <button
               onClick={async () => {
                 try {
@@ -72,11 +62,11 @@ const Navbar2 = () => {
                 }
               }}
               aria-label="Sign out"
-              className="h-9 w-9"
+              className="cursor-pointer self-center"
               title="Sign out"
             >
               <LogOut
-                className="text-white border border-white p-2 w-9 h-9 rounded-sm hover:cursor-pointer "
+                className="text-white border border-white p-2 w-9 h-9 hover:cursor-pointer rounded-sm bg-[rgba(255,255,255,0.10)]"
                 aria-hidden={isSigningOut}
               />
             </button>

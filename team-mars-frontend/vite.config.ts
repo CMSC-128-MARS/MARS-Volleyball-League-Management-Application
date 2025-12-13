@@ -12,9 +12,10 @@ export default defineConfig(({ mode }) => {
     plugins: [
       tailwindcss(),
       react({
-        babel: {
-          plugins: [['babel-plugin-react-compiler']],
-        },
+        // Remove the babel config - React 18 doesn't need the compiler
+        // babel: {
+        //   plugins: [['babel-plugin-react-compiler']],
+        // },
       }),
     ],
     resolve: {

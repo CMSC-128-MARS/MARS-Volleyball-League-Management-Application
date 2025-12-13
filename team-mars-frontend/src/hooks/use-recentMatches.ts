@@ -1,20 +1,19 @@
 import { useState, useEffect } from 'react';
-
-/**
- * Fetches recent matches data from the API
- * @returns {matches, isLoading, error}
- */
+import { matchStatsApiService } from '@/lib/match-stats/match-stats.service';
+import type { MatchTeamStatsFull } from '@/lib/match-stats/match-stats.types';
 
 interface Match {
-  id: number;
-  date: string; // ISO date string from database
-  time: string; // Time in HH:MM format
+  id: string;
+  date: string;
+  time: string;
   league: string;
   team1: {
+    id: string;
     name: string;
     score: number;
   };
   team2: {
+    id: string;
     name: string;
     score: number;
   };
@@ -33,86 +32,81 @@ export const useRecentMatches = () => {
   useEffect(() => {
     const fetchMatches = async () => {
       try {
-        // Mock data for development - replace with real API when backend is ready
-        const mockMatches = [
-          {
-            id: 1,
-            date: '2025-12-01T19:00:00Z',
-            time: '19:00',
-            league: 'Premier League',
-            team1: {
-              name: 'Thunder Bolts',
-              score: 3,
-            },
-            team2: {
-              name: 'Fire Dragons',
-              score: 1,
-            },
-            sets: [
-              { team1Score: 25, team2Score: 22 },
-              { team1Score: 23, team2Score: 25 },
-              { team1Score: 25, team2Score: 18 },
-              { team1Score: 25, team2Score: 20 },
-            ],
-            status: 'Final' as const,
-          },
-          {
-            id: 2,
-            date: '2025-11-30T20:30:00Z',
-            time: '20:30',
-            league: 'Championship League',
-            team1: {
-              name: 'Golden Hawks',
-              score: 2,
-            },
-            team2: {
-              name: 'Storm Riders',
-              score: 3,
-            },
-            sets: [
-              { team1Score: 25, team2Score: 23 },
-              { team1Score: 22, team2Score: 25 },
-              { team1Score: 25, team2Score: 19 },
-              { team1Score: 18, team2Score: 25 },
-              { team1Score: 13, team2Score: 15 },
-            ],
-            status: 'Final' as const,
-          },
-          {
-            id: 3,
-            date: '2025-11-29T18:00:00Z',
-            time: '18:00',
-            league: 'Premier League',
-            team1: {
-              name: 'Ice Eagles',
-              score: 3,
-            },
-            team2: {
-              name: "Jaepril's Warriors",
-              score: 0,
-            },
-            sets: [
-              { team1Score: 25, team2Score: 16 },
-              { team1Score: 25, team2Score: 20 },
-              { team1Score: 25, team2Score: 18 },
-            ],
-            status: 'Final' as const,
-          },
-        ];
+        setIsLoading(true);
+        
+        // Fetch all match team stats
+        const allStats = await matchStatsApiService.listMatchTeamStats(0, 20);
+        
+        // Group stats by match_id
+        const matchesMap = new Map<string, MatchTeamStatsFull[]>();
+        
+        allStats.forEach(stat => {
+          if (stat.match?.match_id) {
+            const existing = matchesMap.get(stat.match.match_id) || [];
+            matchesMap.set(stat.match.match_id, [...existing, stat]);
+          }
+        });
 
-        // Simulate API delay (configurable via REACT_APP_API_DELAY_MS, defaults to 400ms)
-        const apiDelay = Number(process.env.REACT_APP_API_DELAY_MS) || 400;
-        await new Promise((resolve) => setTimeout(resolve, apiDelay));
+        // Convert to Match format
+        const formattedMatches: Match[] = Array.from(matchesMap.entries())
+          .filter(([, stats]) => stats.length === 2)
+          .map(([matchId, stats]) => {
+            const match = stats[0].match!;
+            
+            // Find team1 and team2 stats
+            const team1Stats = stats.find(s => s.team?.team_id === match.team1_id);
+            const team2Stats = stats.find(s => s.team?.team_id === match.team2_id);
 
-        setMatches(mockMatches);
+            if (!team1Stats || !team2Stats) {
+              return null;
+            }
 
-        // Uncomment below when your backend is ready:
-        // const response = await fetch('/api/recent-matches')
-        // if (!response.ok) throw new Error('Failed to fetch matches')
-        // const data = await response.json()
-        // setMatches(data.matches || [])
+            // Parse date and time
+            const matchDate = new Date(match.match_date);
+            const timeString = matchDate.toLocaleTimeString('en-US', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            });
+
+            // Create placeholder sets based on sets won/lost
+            const totalSets = (team1Stats.sets_won || 0) + (team1Stats.sets_lost || 0);
+            const sets: Array<{ team1Score: number; team2Score: number }> = [];
+            
+            // Generate placeholder set scores
+            for (let i = 0; i < totalSets; i++) {
+              sets.push({
+                team1Score: i < (team1Stats.sets_won || 0) ? 25 : 20,
+                team2Score: i < (team1Stats.sets_won || 0) ? 20 : 25,
+              });
+            }
+
+            return {
+              id: matchId,
+              date: match.match_date,
+              time: timeString,
+              league: match.location || 'Unknown League',
+              team1: {
+                id: team1Stats.team!.team_id,
+                name: team1Stats.team!.team_name,
+                score: team1Stats.sets_won || 0,
+              },
+              team2: {
+                id: team2Stats.team!.team_id,
+                name: team2Stats.team!.team_name,
+                score: team2Stats.sets_won || 0,
+              },
+              sets,
+              status: 'Final' as const,
+            };
+          })
+          .filter((match): match is Match => match !== null)
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+          .slice(0, 5);
+
+        setMatches(formattedMatches);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
+        setError(err instanceof Error ? err.message : 'Failed to fetch matches');
         console.error('Recent matches error:', err);
       } finally {
         setIsLoading(false);
@@ -122,7 +116,6 @@ export const useRecentMatches = () => {
     fetchMatches();
   }, []);
 
-  // Format date to readable format
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -132,7 +125,6 @@ export const useRecentMatches = () => {
     });
   };
 
-  // Format matches for display
   const formattedMatches = matches.map((match) => ({
     ...match,
     formattedDate: formatDate(match.date),

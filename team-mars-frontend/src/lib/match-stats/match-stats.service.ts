@@ -1,4 +1,4 @@
-import { apiClient } from '../api';
+import { apiClient } from '@/lib/api'; // Use your fetch-based client
 import type {
   MatchTeamStatsSimple,
   MatchTeamStatsFull,
