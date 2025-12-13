@@ -19,6 +19,7 @@ import type { ApiPlayer } from '@/lib/api';
 
 export default function AddTeamDetails({
   onRosterMethodSelected,
+  onClearPlayers,
   selectedMethod,
   onMethodChange,
   onPlayerAdd,
@@ -28,6 +29,7 @@ export default function AddTeamDetails({
   onPlayerAssigned,
 }: {
   onRosterMethodSelected?: () => void;
+  onClearPlayers?: () => void;
   selectedMethod?: 'manual' | 'automatic' | null | undefined;
   onMethodChange?: (method: 'manual' | 'automatic' | null) => void;
   onPlayerAdd?: (player: ApiPlayer) => void;
@@ -121,6 +123,9 @@ export default function AddTeamDetails({
     }
     if (count > 7) count = 7;
 
+    // Clear current roster in parent before generating new players
+    onClearPlayers?.();
+
     setIsGenerating(true);
     try {
       console.debug('Requesting roster generation from backend, count=', count);
@@ -131,8 +136,9 @@ export default function AddTeamDetails({
           // If backend returned fewer players than requested, fill the rest
           const addedIds = new Set<string>();
           const toAdd: ApiPlayer[] = [];
+          // Add all generated players (avoid duplicates within generated set)
           (generated || []).forEach((g) => {
-            if (!selectedPlayerIds.includes(g.player_id) && !addedIds.has(g.player_id)) {
+            if (!addedIds.has(g.player_id)) {
               toAdd.push(g);
               addedIds.add(g.player_id);
             }
@@ -140,7 +146,8 @@ export default function AddTeamDetails({
 
           const needed = Math.max(0, count - toAdd.length);
           if (needed > 0) {
-            const exclude = new Set([...selectedPlayerIds, ...Array.from(addedIds)]);
+            // Exclude only already-added ids (we cleared parent selections beforehand)
+            const exclude = new Set(Array.from(addedIds));
             const supplemental = players
               .filter((p) => !exclude.has(p.id))
               .sort((a, b) => (b.skill_level ?? 0) - (a.skill_level ?? 0))
@@ -168,10 +175,9 @@ export default function AddTeamDetails({
         console.warn('Backend generateTeam failed, falling back to local generator', err);
       }
 
-      // Fallback: pick top-N players locally by skill level
-      const existingIds = new Set(selectedPlayerIds || []);
+      // Fallback: pick top-N players locally by skill level (ignore parent's snapshot)
       const candidates = players
-        .filter((p) => !existingIds.has(p.id) && !selectedPlayerIds.includes(p.id))
+        .slice()
         .sort((a, b) => (b.skill_level ?? 0) - (a.skill_level ?? 0))
         .slice(0, count)
         .map((p) => ({

@@ -116,6 +116,7 @@ export default function AddTeamCard() {
           selectedMethod={selectedMethod}
           onMethodChange={setSelectedMethod}
           onPlayerAdd={handleAddPlayer}
+          onClearPlayers={handleResetPlayers}
           selectedPlayerIds={selectedPlayers.map((p) => p.player_id)}
         />
       </div>
