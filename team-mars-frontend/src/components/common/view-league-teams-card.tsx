@@ -5,8 +5,6 @@ import { Button } from '@/components/ui/button';
 type Team = {
   team_id: string;
   team_name: string;
-  wins?: number;
-  losses?: number;
 };
 
 type Match = {
@@ -75,10 +73,8 @@ export default function ViewLeagueTeamsCard(props: ViewLeagueTeamsCardProps) {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-[#A3A3A3] pg3-bold">
-                        <th className="text-center py-2 px-2">Rank</th>
+                        <th className="text-center py-2 px-2">No.</th>
                         <th className="text-center py-2 px-2">Team</th>
-                        <th className="text-center py-2 px-2">W</th>
-                        <th className="text-center py-2 px-2">L</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -88,8 +84,6 @@ export default function ViewLeagueTeamsCard(props: ViewLeagueTeamsCardProps) {
                           <td className="py-3 px-2 font-medium text-center pg2-bold">
                             {team.team_name}
                           </td>
-                          <td className="py-3 px-2 text-center pg2">{team.wins ?? '-'}</td>
-                          <td className="py-3 px-2 text-center pg2">{team.losses ?? '-'}</td>
                         </tr>
                       ))}
                     </tbody>
