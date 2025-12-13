@@ -1,14 +1,7 @@
-import { useDashboardStats } from '@/hooks/use-dashboardStats';
 import { RecentMatchesCard } from '@/components/common/recent-matches-card';
 import { LeagueOverviewCard } from '@/components/common/leagues-overview-card';
 
 const Dashboard = () => {
-  const {error} = useDashboardStats();
-
-  if (error) {
-    console.error('Dashboard error:', error);
-  }
-
   return (
     <div
       className="bg-background text-primary-foreground relative overflow-auto h-full"

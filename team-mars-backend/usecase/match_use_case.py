@@ -34,8 +34,6 @@ class MatchUseCase:
     # READ - GET ALL MATCHES
     async def get_matches(self, session: AsyncSession) -> List[MatchNested]:
         matches = await self.repo.get_matches(session)
-        if not matches:
-            raise NotFoundException("No matches found.")
         return [MatchNested.model_validate(m) for m in matches]
 
     # READ - GET ALL MATCHES BY LEAGUE
