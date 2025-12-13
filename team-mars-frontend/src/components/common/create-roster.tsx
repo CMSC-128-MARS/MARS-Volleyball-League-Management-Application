@@ -46,8 +46,6 @@ export default function AddTeamDetails({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
-  // Toast id used for dismissing loading toasts from multiple handlers
-  let loadingToastId: string | number | undefined;
 
   const handleMethodSelect = (method: 'manual' | 'automatic') => {
     if ((selectedMethod ?? '') === method) {
@@ -138,7 +136,13 @@ export default function AddTeamDetails({
   };
 
   const handleGenerateRoster = async () => {
-    let loadingToastId: string | number | undefined;
+    const loadingToastId: string | number | undefined = toast.loading('Generating roster...', {
+      duration: 5000,
+      style: {
+        borderRadius: '2px',
+        border: '2px solid var(--border)',
+      },
+    });
     let count = parseInt(automaticCriteria || '0', 10) || 0;
     // clamp count to 1..7
     if (count <= 0) {
@@ -151,13 +155,7 @@ export default function AddTeamDetails({
     onClearPlayers?.();
 
     setIsGenerating(true);
-      loadingToastId = toast.loading('Generating roster...', {
-        duration: 5000,
-        style: {
-          borderRadius: '2px',
-          border: '2px solid var(--border)',
-        },
-      });
+      // loading toast already created above
     try {
       console.debug('Requesting roster generation (position-prioritized) count=', count);
 
