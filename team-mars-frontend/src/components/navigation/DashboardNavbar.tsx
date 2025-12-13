@@ -68,7 +68,7 @@ const Navbar2 = () => {
               title="Sign out"
             >
               <LogOut
-                className="text-white border border-white p-2 w-9 h-9 rounded-sm bg-[rgba(255,255,255,0.10)]"
+                className="text-white border border-white p-2 w-9 h-9 hover:cursor-pointer rounded-sm bg-[rgba(255,255,255,0.10)]"
                 aria-hidden={isSigningOut}
               />
             </button>
