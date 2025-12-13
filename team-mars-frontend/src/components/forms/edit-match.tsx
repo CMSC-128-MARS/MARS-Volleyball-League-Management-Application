@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { matchApiService } from '@/lib/match';
 import type { MatchUpdate } from '@/lib/match';
@@ -90,14 +91,18 @@ export default function EditMatchDialog({
     e.preventDefault();
 
     if (!formData.match_date || !formData.location || !formData.num_of_sets) {
-      alert('Please fill in all fields');
+      toast.warning('Warning: Missing required fields.', { duration: 5000, style: {
+        background: "var(--warning)", color: "white", borderRadius: "2px", border: "none"
+      } })
       return;
     }
 
     // Validate completed match data
     if (matchStatus === 'completed') {
       if (!completedData.team1_final_score || !completedData.team2_final_score) {
-        alert('Please fill in all match result fields');
+        toast.warning('Warning: Missing final scores.', { duration: 5000, style: {
+        background: "var(--warning)", color: "white", borderRadius: "2px", border: "none"
+      } })
         return;
       }
 
@@ -106,7 +111,9 @@ export default function EditMatchDialog({
         completedData.team2_set_scores.some((s) => !s);
 
       if (hasEmptySetScores) {
-        alert('Please fill in all set scores');
+        toast.warning('Warning: Missing set scores.', { duration: 5000, style: {
+        background: "var(--warning)", color: "white", borderRadius: "2px", border: "none"
+      } })
         return;
       }
     }
@@ -144,7 +151,9 @@ export default function EditMatchDialog({
         );
 
         if (!team1Stats || !team2Stats) {
-          alert('Could not find match team stats for one or both teams.');
+          toast.error('Could not find match team stats for one or both teams.', { duration: 5000, style: {
+        background: "var(--error)", color: "white", borderRadius: "2px", border: "none"
+      } })
           return;
         }
 
@@ -166,7 +175,9 @@ export default function EditMatchDialog({
       onMatchUpdated?.();
     } catch (error) {
       console.error('Failed to update match:', error);
-      alert('Failed to update match. Please try again.');
+      toast.error('Failed to update match. Please try again.', { duration: 5000, style: {
+        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+      } })
     } finally {
       setIsSubmitting(false);
     }

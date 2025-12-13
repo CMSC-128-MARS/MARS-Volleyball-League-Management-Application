@@ -9,6 +9,7 @@ import {
   SelectGroup,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
@@ -93,7 +94,9 @@ export default function ViewPlayerCard({ open, onOpenChange, player }: ViewPlaye
       window.location.reload();
     } catch (err) {
       console.error('Failed to save player', err);
-      // TODO: show user-facing error
+      toast.error('Failed to save player. Please try again.', { duration: 5000, style: {
+        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+      } })
       setIsEditing(false);
     }
   };

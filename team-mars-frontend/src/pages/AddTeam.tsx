@@ -2,6 +2,7 @@ import AddTeamDetails from '@/components/common/add-team-details';
 import CreateRoster from '@/components/common/create-roster';
 import TeamNavigationButtons from '@/components/common/team-navigation-buttons';
 import SelectedPlayersCard from '@/components/common/select-players-card';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import type { ApiPlayer } from '@/lib/api';
@@ -48,7 +49,9 @@ export default function AddTeamCard() {
       navigate('/teams');
     } catch (error) {
       console.error('Failed to create team:', error);
-      alert('Failed to create team. Please try again.');
+      toast.error('Failed to create team. Please try again.', { duration: 5000, style: {
+        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+      } })
     } finally {
       setIsSaving(false);
     }
@@ -56,12 +59,16 @@ export default function AddTeamCard() {
 
   const handleSave = () => {
     if (!teamName || !leagueId) {
-      alert('Please enter team name and select a league');
+      toast.warning('Warning: Missing team name or league input.', { duration: 5000, style: {
+        background: "var(--warning)", color: "white", borderRadius: "2px", border: "none"
+      } })
       return;
     }
 
     if (selectedPlayers.length === 0) {
-      alert('Please select at least one player');
+      toast.warning('Warning: Select at least one player.', { duration: 5000, style: {
+        background: "var(--warning)", color: "white", borderRadius: "2px", border: "none"
+      } })
       return;
     }
 

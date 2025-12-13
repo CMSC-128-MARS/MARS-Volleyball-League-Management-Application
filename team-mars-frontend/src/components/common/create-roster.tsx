@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { SquarePen, Cog, Search, UserRoundPlus } from 'lucide-react';
 import { useState } from 'react';
 import { teamApiService } from '@/lib/team';
+import { toast } from 'sonner';
 import { usePlayers } from '@/hooks/use-players';
 import type { ApiPlayer } from '@/lib/api';
 
@@ -98,7 +99,9 @@ export default function AddTeamDetails({
         }
       } catch (err) {
         console.error('Failed to add player to team:', err);
-        alert('Failed to add player to team. Please try again.');
+        toast.error('Failed to add player to team. Please try again.', { duration: 5000, style: {
+        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+      } })
         return;
       } finally {
         setIsAdding(false);
@@ -119,7 +122,9 @@ export default function AddTeamDetails({
       onRosterMethodSelected?.();
     } catch (err) {
       console.error('Failed to generate roster:', err);
-      alert('Failed to generate roster. Please try again.');
+      toast.error('Failed to generate roster. Please try again.', { duration: 5000, style: {
+        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+      } })
     } finally {
       setIsGenerating(false);
     }
@@ -162,7 +167,7 @@ export default function AddTeamDetails({
         <CardContent className="flex flex-col md:flex-row gap-6 pb-6 pt-4 items-start justify-center">
           {!isEditMode && selectedMethod !== 'automatic' && (
             <div
-              onClick={() => handleMethodSelect('manual')}
+              onClick={() => handleMethodSelect('manual') }
               className={`w-full md:w-1/2 hover:cursor-pointer rounded-sm shadow-md flex flex-col gap-2 items-center justify-center border px-6 py-8 h-[178px] transition-colors ${
                 selectedMethod === 'manual'
                   ? 'border-primary bg-primary/5'

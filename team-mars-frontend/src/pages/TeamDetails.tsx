@@ -4,6 +4,7 @@ import TeamDetailsComponent from '@/components/common/team-details';
 import AddTeamDetails from '@/components/common/add-team-details';
 import CreateRoster from '@/components/common/create-roster';
 import SelectedPlayersCard from '@/components/common/select-players-card';
+import { toast } from 'sonner';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTeam } from '@/hooks/use-team';
 import { useMemo, useState } from 'react';
@@ -87,7 +88,9 @@ export default function TeamDetails() {
       }
     } catch (err) {
       console.error('Failed to remove player from team:', err);
-      alert('Failed to remove player from team. Please try again.');
+      toast.error('Failed to remove player from team. Please try again.', { duration: 5000, style: {
+        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+      } })
       return;
     }
 
@@ -139,7 +142,9 @@ export default function TeamDetails() {
       await refetch?.();
     } catch (error) {
       console.error('Failed to save team changes:', error);
-      alert('Failed to save team changes. Please try again.');
+      toast.error('Failed to save team changes. Please try again.', { duration: 5000, style: {
+        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+      } })
     } finally {
       setIsSaving(false);
     }
@@ -169,7 +174,9 @@ export default function TeamDetails() {
       navigate('/teams');
     } catch (error) {
       console.error('Failed to delete team:', error);
-      alert('Failed to delete team. Please try again.');
+      toast.error('Failed to delete team. Please try again.', { duration: 5000, style: {
+        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+      } })
     }
   };
 

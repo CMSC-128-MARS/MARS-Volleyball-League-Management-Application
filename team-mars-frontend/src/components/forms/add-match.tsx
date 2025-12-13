@@ -6,6 +6,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -67,21 +68,40 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+
     e.preventDefault();
+
+    const trimmedLocation = formData.location.trim();
+    if (!trimmedLocation) {
+      toast.warning('Warning: Missing location input.', {
+        duration: 5000,
+        style: {
+          background: "var(--warning)",
+          color: "white",
+          borderRadius: "2px",
+          border: "none"
+        }
+      });
+      return;
+    }
 
     if (
       !formData.team1_id ||
       !formData.team2_id ||
       !formData.match_date ||
-      !formData.location ||
+      !trimmedLocation ||
       !formData.num_of_sets
     ) {
-      alert('Please fill in all fields');
+      toast.warning('Warning: Missing required fields.', { duration: 5000, style: {
+        background: "var(--warning)", color: "white", borderRadius: "2px", border: "none"
+      } })
       return;
     }
 
     if (formData.team1_id === formData.team2_id) {
-      alert('Please select different teams');
+      toast.warning('Warning: Selected teams must be different.', { duration: 5000, style: {
+        background: "var(--warning)", color: "white", borderRadius: "2px", border: "none"
+      } })
       return;
     }
 
@@ -95,12 +115,15 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
           winner_team_id = formData.team1_id;
         } else if (team2Score > team1Score) {
           winner_team_id = formData.team2_id;
-        } // If tie, winner_team_id remains ''
+        } 
+        // If tie, winner_team_id remains ''
       }
       setCompletedData((prev) => ({ ...prev, winner_team_id }));
 
       if (!completedData.team1_final_score || !completedData.team2_final_score) {
-        alert('Please fill in all match result fields');
+        toast.warning('Warning: Missing final scores.', { duration: 5000, style: {
+        background: "var(--warning)", color: "white", borderRadius: "2px", border: "none"
+      } })
         return;
       }
 
@@ -109,7 +132,9 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
         completedData.team2_set_scores.some((s) => !s);
 
       if (hasEmptySetScores) {
-        alert('Please fill in all set scores');
+        toast.warning('Warning: Missing set scores.', { duration: 5000, style: {
+        background: "var(--warning)", color: "white", borderRadius: "2px", border: "none"
+      } })
         return;
       }
     }
@@ -121,7 +146,7 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
         team1_id: formData.team1_id,
         team2_id: formData.team2_id,
         match_date: new Date(formData.match_date).toISOString(),
-        location: formData.location,
+        location: trimmedLocation,
         num_of_sets: parseInt(formData.num_of_sets),
         is_completed: matchStatus === 'completed',
       };
@@ -129,7 +154,6 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
       const createdMatch = await matchApiService.createMatch(matchData);
 
       if (matchStatus === 'completed') {
-        // ...existing code for completed match stats creation...
         const team1SetsWon = Number(completedData.team1_final_score);
         const team2SetsWon = Number(completedData.team2_final_score);
         let team1TotalScore = 0;
@@ -180,7 +204,9 @@ export default function AddMatchDialog({ leagueId, teams, onMatchAdded }: AddMat
       onMatchAdded?.();
     } catch (error) {
       console.error('Failed to create match:', error);
-      alert('Failed to create match. Please try again.');
+      toast.error('Failed to create match. Please try again.', { duration: 5000, style: {
+        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+      } })
     } finally {
       setIsSubmitting(false);
     }

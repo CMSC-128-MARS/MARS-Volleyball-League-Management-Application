@@ -3,6 +3,7 @@ import LoginNavbar from './components/navigation/LoginNavbar';
 import DashboardNavbar from './components/navigation/DashboardNavbar';
 import Sidebar from './components/navigation/Sidebar';
 import { SidebarProvider } from './components/ui/sidebar';
+import { Toaster } from 'sonner';
 
 function App() {
   const location = useLocation();
@@ -16,6 +17,7 @@ function App() {
         <main className="flex-1 overflow-auto">
           <Outlet />
         </main>
+        <Toaster />
       </div>
     </SidebarProvider>
   );

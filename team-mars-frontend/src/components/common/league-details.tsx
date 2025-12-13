@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { leagueApiService } from '@/lib/league';
+import { toast } from 'sonner';
 
 type LeagueDetailsProps = {
   leagueId: string;
@@ -38,11 +39,21 @@ export default function LeagueDetails({
   }, [leagueName, location, description]);
 
   const handleSave = async () => {
-    if (!formData.location) {
-      alert('Location is required');
+    if (!formData.league_name) {
+      toast.warning('Warning: League Name input missing.', { duration: 5000, style: {
+        background: "var(--warning)", color: "white", borderRadius: "2px", border: "none"
+      } })
+      toast
       return;
     }
-
+    if (!formData.location) {
+      toast.warning('Warning: Location input missing.', { duration: 5000, style: {
+        background: "var(--warning)", color: "white", borderRadius: "2px", border: "none"
+      } })
+      toast
+      return;
+    }
+    
     try {
       setIsSubmitting(true);
       await leagueApiService.updateLeague(leagueId, {
@@ -51,10 +62,16 @@ export default function LeagueDetails({
         description: formData.description || null,
       });
       onSaved?.();
-      alert('League details updated successfully');
+      toast.success('League details updated successfully!', { duration: 5000, style: {
+        background: "var(--success)", color: "white", borderRadius: "2px", border: "none"
+      } })
     } catch (error) {
       console.error('Failed to update league:', error);
-      alert('Failed to update league details. Please try again.');
+      toast.error('Failed to update league details. Please try again.', { duration: 5000, style: {
+        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+      } })
+
+
     } finally {
       setIsSubmitting(false);
     }

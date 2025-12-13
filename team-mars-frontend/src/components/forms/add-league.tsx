@@ -7,6 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -37,16 +38,27 @@ export default function AddLeagueDialog({ children }: AddLeagueDialogProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.league_name || !formData.location) {
-      alert('Please fill in all required fields');
+    // Validate for whitespace-only input
+    const trimmedLeagueName = formData.league_name.trim();
+    const trimmedLocation = formData.location.trim();
+    if (!trimmedLeagueName || !trimmedLocation) {
+      toast.warning("Warning: Missing league name or location input.", {
+        duration: 5000,
+        style: {
+          background: "var(--warning)",
+          color: "white",
+          borderRadius: "2px",
+          border: "none"
+        }
+      });
       return;
     }
 
     try {
       setIsSubmitting(true);
       const leagueData: Partial<League> = {
-        league_name: formData.league_name,
-        location: formData.location,
+        league_name: trimmedLeagueName,
+        location: trimmedLocation,
         description: formData.description || null,
         start_date: getTodayISOString(),
       };
@@ -61,18 +73,10 @@ export default function AddLeagueDialog({ children }: AddLeagueDialogProps) {
         });
         navigate(`/leagues/${createdLeague.league_id}`);
       } catch (err: unknown) {
-        // Basic error handling for security
-        let msg = 'Failed to create league. Please try again.';
-        if (
-          typeof err === 'object' &&
-          err !== null &&
-          'response' in err &&
-          typeof (err as { response?: { status?: number } }).response === 'object' &&
-          (err as { response?: { status?: number } }).response?.status === 422
-        ) {
-          msg = 'Invalid input. Please check your entries.';
-        }
-        alert(msg);
+        console.error('Failed to create league:', err);
+        toast.error("Failed to create league. Please try again.", { duration: 5000, style: {
+          background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+        } });
       }
     } finally {
       setIsSubmitting(false);

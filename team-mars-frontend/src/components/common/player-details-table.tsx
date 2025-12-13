@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import ViewPlayerCard from '@/components/common/view-player-details';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent } from '@/components/ui/card';
+import { toast } from 'sonner';
 import {
   Table,
   TableBody,
@@ -216,6 +217,9 @@ function PlayerDetailsTableComponent({
                                 setIsRemoveOpen(false);
                               } catch (err) {
                                 console.error('Failed to delete players', err);
+                                toast.error('Failed to delete players. Please try again.', { duration: 5000, style: {
+        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+      } })
                               } finally {
                                 setIsDeleting(false);
                               }

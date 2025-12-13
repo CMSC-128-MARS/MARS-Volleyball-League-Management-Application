@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Trash, User } from 'lucide-react';
+import { toast } from 'sonner';
 import { useState } from 'react';
 
 type RemovePlayerCardProps = {
@@ -34,6 +35,9 @@ export default function RemovePlayerCard({
       if (onRemoveSuccess) onRemoveSuccess();
     } catch (error) {
       console.error('Failed to delete player(s):', error);
+      toast.error('Failed to delete player(s). Please try again.', { duration: 5000, style: {
+        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+      } })
       setIsDeleting(false);
     }
   };

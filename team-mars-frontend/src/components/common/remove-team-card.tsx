@@ -1,4 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card';
+import { toast } from 'sonner';
 import {
   Dialog,
   DialogContent,
@@ -39,7 +40,11 @@ export default function RemoveTeamCard({
       window.location.reload();
     } catch (error) {
       console.error('Failed to delete team:', error);
-      // TODO: Show error toast/notification
+      toast.error('Failed to delete team. Please try again.', { duration: 5000, style: {
+        background: "var(--destructive)", color: "white", borderRadius: "2px", border: "none"
+      } })
+
+
       setIsDeleting(false);
     }
   };
