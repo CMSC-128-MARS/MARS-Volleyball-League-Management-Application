@@ -1,0 +1,130 @@
+service: team-mars-backend
+frameworkVersion: "4"
+org: null
+app: null
+dashboard: false
+custom:
+  stage: ${opt:stage, 'dev'}
+  pythonRequirements:
+    fileName: requirements.txt
+    dockerizePip: true
+    useDownloadCache: true  
+    useStaticCache: true
+    layer: true
+provider:
+  name: aws
+  runtime: python3.11
+  region: ap-southeast-1
+  profile: ejminguez
+  timeout: 30
+  memorySize: 512
+  architecture: x86_64
+  
+  logs:
+    restApi:
+      accessLogging: true
+      executionLogging: true
+      level: INFO
+  
+  tracing:
+    lambda: true
+    apiGateway: true
+  
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - ssm:GetParameter
+        - ssm:GetParameters 
+      Resource: arn:aws:ssm:${self:provider.region}:${aws:accountId}:parameter/team-mars-backend/*
+    - Effect: Allow
+      Action:
+        - xray:PutTraceSegments
+        - xray:PutTelemetryRecords
+      Resource: "*"
+  
+  environment:
+    ENV: ${self:custom.stage}
+    SUPABASE_KEY: ${ssm:/team-mars-backend/supabase-key}
+    SUPABASE_SERVICE_ROLE_KEY: ${ssm:/team-mars-backend/supabase-service-role-key}
+    DATABASE_URL: ${ssm:/team-mars-backend/database-url}
+    LOG_LEVEL: INFO
+    POWERTOOLS_SERVICE_NAME: team-mars-backend
+
+functions:
+  app:
+    name: ${self:service}-${self:custom.stage}
+    handler: main.handler
+    description: Team MARS Fastapi Backend
+    timeout: 29
+    layers:
+      - !Ref PythonRequirementsLambdaLayer
+    events:
+      - http:
+          path: /
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Forwarded-For
+              - X-Forwarded-Port
+              - Accept
+              - Origin
+              - Referer
+              - User-Agent
+            allowCredentials: true
+            maxAge: 86400
+      - http:
+          path: /{proxy+}
+          method: any
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Forwarded-For
+              - X-Forwarded-Port
+              - Accept
+              - Origin
+              - Referer
+              - User-Agent
+            allowCredentials: true
+            maxAge: 86400
+
+package:
+  individually: false
+  patterns:
+    - '!./**'
+    - 'main.py'
+    - 'database/**'
+    - 'constants/**'
+    - 'controller/**' 
+    - 'core/*"'
+    - 'external_gateway/**'  
+    - 'functions/**'  
+    - 'model/**'
+    - 'repository/**'  
+    - 'usecase/**'  
+    - 'utils/**'  
+    - 'service/**'
+    - '!**/__pycache__/**'
+    - '!**/*.pyc'
+    - '!**/*.pyo'
+    - '!.venv/**'
+    - '!node_modules/**'
+    - '!.serverless/**'
+    - '!.git/**'
+    - '!.env.*'
+    - '!tests/**'
+    - '!scripts/**'
+    - '!resources/**'
+
+plugins:
+  - serverless-python-requirements

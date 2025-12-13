@@ -16,6 +16,8 @@ from controller.team_generator_controller import router as team_generator_contro
 
 from model import rebuild_models
 
+from mangum import Mangum
+
 rebuild_models()
 
 # Get settings
@@ -62,9 +64,8 @@ def welcome():
         </head>
         <body style="text-align:center;height:screen; padding:20px;">
             <h1>Welcome to Team MARS API</h1>
-            <p>The backend service is running successfully 🎉<
-
-/           <p><a href="/docs">View API Documentation</a></p>
+            <p>The backend service is running successfully 🎉 </p>
+            <p><a href="/docs">View API Documentation</a></p>
         </body>
 
     </html>
@@ -86,6 +87,8 @@ def health_check():
         },
     )
 
+
+handler = Mangum(app)
 
 if __name__ == "__main__":
     import uvicorn
