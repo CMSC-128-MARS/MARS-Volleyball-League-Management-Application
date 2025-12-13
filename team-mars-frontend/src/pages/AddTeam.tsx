@@ -93,17 +93,18 @@ export default function AddTeamCard() {
   };
 
   const handleAddPlayer = (player: ApiPlayer) => {
-    if (!selectedPlayers.find((p) => p.player_id === player.player_id)) {
-      setSelectedPlayers([...selectedPlayers, player]);
-    }
+    setSelectedPlayers((prev) => {
+      if (prev.find((p) => p.player_id === player.player_id)) return prev;
+      return [...prev, player];
+    });
   };
 
   const handleRemovePlayer = (playerId: string) => {
-    setSelectedPlayers(selectedPlayers.filter((p) => p.player_id !== playerId));
-    // Reset saved state if removing players
-    if (selectedPlayers.length <= 1) {
-      setIsSaved(false);
-    }
+    setSelectedPlayers((prev) => {
+      const next = prev.filter((p) => p.player_id !== playerId);
+      if (next.length === 0) setIsSaved(false);
+      return next;
+    });
   };
 
   const handleResetPlayers = () => {
@@ -139,6 +140,7 @@ export default function AddTeamCard() {
           selectedMethod={selectedMethod}
           onMethodChange={setSelectedMethod}
           onPlayerAdd={handleAddPlayer}
+          onClearPlayers={handleResetPlayers}
           selectedPlayerIds={selectedPlayers.map((p) => p.player_id)}
         />
       </div>
