@@ -14,10 +14,10 @@ const Navbar2 = () => {
   return (
     <>
       <nav className="bg-primary w-full">
-        <div className="flex flex-row items-center justify-between px-[20px] md:px-[80px] py-[12px]">
+        <div className="flex flex-row items-start justify-between px-[20px] md:px-[80px] py-[12px]">
           {/* Left Section */}
-          <div className="flex items-center">
-            <button onClick={toggleSidebar} className="cursor-pointer" aria-label="Toggle sidebar">
+          <div className="flex items-start">
+            <button onClick={toggleSidebar} className="cursor-pointer self-center" aria-label="Toggle sidebar">
               <Menu className="text-white border border-white p-2 w-9 h-9 rounded-sm bg-[rgba(255,255,255,0.10)]" />
             </button>
 
@@ -42,9 +42,7 @@ const Navbar2 = () => {
           </div>
 
           {/* Right Section */}
-          <div>
-
-
+          <div className="flex items-center md:self-center">
             <button
               onClick={async () => {
                 try {
@@ -64,7 +62,7 @@ const Navbar2 = () => {
                 }
               }}
               aria-label="Sign out"
-              className="h-9 w-9"
+              className="cursor-pointer self-center"
               title="Sign out"
             >
               <LogOut

@@ -81,7 +81,7 @@ export const LeagueOverviewCard = () => {
         <div className="space-y-0">
           <div className="overflow-x-auto">
             
-            <div className="grid grid-cols-12 border-b-2 border-foreground/10 pb-2">
+            <div className="grid grid-cols-12 border-b-2 border-foreground/10 pb-2 px-6">
               <div className="col-span-4">
                 <span className="pg2-bold block w-full text-xs">Name</span>
               </div>
@@ -109,7 +109,7 @@ export const LeagueOverviewCard = () => {
                       <div className="col-span-4 text-center">
                         <span className="pg1 text-foreground">{league.location || '—'}</span>
                       </div>
-                      <div className="col-span-4 flex justify-end pr-4">
+                      <div className="col-span-4 flex justify-end">
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button

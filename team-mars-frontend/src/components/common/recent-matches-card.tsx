@@ -43,12 +43,8 @@ export const RecentMatchesCard = () => {
           <h4 className="text-foreground text-xl">Recent Matches</h4>
         </div>
         <span className="text-muted-foreground text-sm font-medium">
-          Total: {matches.length}
+          Total: {Math.min(matches.length, 3)}
         </span>
-        {/* --- if the total matches should also be recent matches only (max of 3)
-        <span className="text-muted-foreground text-sm font-medium">
-            Total: {Math.min(matches.length, 3)}
-        </span> --- */}
       </div>
 
       <CardContent className="px-6 mb-6">
